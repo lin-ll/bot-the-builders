@@ -3,6 +3,24 @@
 /* and motor control.                                                         */
 /*----------------------------------------------------------------------------*/
 
-int main(int argc, char *argv[]) {
+// Visualize the maze and parse it into a graph. Descritize each unit of maze
+// into a vertex, and connect them with edges of unit length. Uses DFS.
+Graph discoverMaze() {
 
+}
+
+// Find the shortest path given the graph representaion of the maze. Use
+// Dijkstra's algorithm.
+stackqueuelist findShortestPath(Graph) {
+
+}
+
+// Traverse the shortest path.
+void traverseShortestPath(stackqueuelist) {
+    
+}
+
+// Find the maze, solve it for shortest path, and traverse this path.
+int main(int argc, char *argv[]) {
+    
 }
