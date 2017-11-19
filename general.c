@@ -37,9 +37,24 @@ double checkDistanceRight() {
 
 }
 
+// maintains robot in center of path
+void maintainLR() {
+    // calls check Distance Front and Back
+}
+
+void maintiainFB() {
+    // calls check Distance Left and Right
+}
+
 // returns value read from sensor s
-double sensorLong(int s) {
+double sensor(int s) {
     // something to distinguish short and long sensors?
+}
+
+
+// checks if there is Wall in moving direction
+bool checkWall() {
+
 }
 
 int main(int argc, char *argv[]) {
