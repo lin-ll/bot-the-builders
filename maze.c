@@ -11,16 +11,16 @@ Graph discoverMaze() {
 
 // Find the shortest path given the graph representaion of the maze. Use
 // Dijkstra's algorithm.
-stackqueuelist findShortestPath(Graph) {
+Stack findShortestPath(Graph g) {
 
 }
 
 // Traverse the shortest path.
-void traverseShortestPath(stackqueuelist) {
+void traverseShortestPath(Stack s) {
     
 }
 
 // Find the maze, solve it for shortest path, and traverse this path.
 int main(int argc, char *argv[]) {
-    
+
 }
