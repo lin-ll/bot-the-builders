@@ -2,6 +2,8 @@
 /* Maze solving and traversal. Calls on general.c methods for sensor reading  */
 /* and motor control.                                                         */
 /*----------------------------------------------------------------------------*/
+#include <stdio.h>
+#include <graph.h>
 
 // Visualize the maze and parse it into a graph. Descritize each unit of maze
 // into a vertex, and connect them with edges of unit length. Uses DFS.

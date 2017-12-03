@@ -1,6 +1,7 @@
 # Macros
 CC = gcc
-CFLAGS = 
+IDIR = ./inc
+CFLAGS = -I$(IDIR) 
 
 # Pattern rule
 %.o: %.c
@@ -13,6 +14,7 @@ clean:
 
 # Dependency rules for file targets
 robot: maze.o graph.o motors.o
-	$(CC) $(CFLAGS) -o $@
+	$(CC) -o $@ $^ $(CFLAGS)
 motors.o: motors.h
+sensors.o: sensors.h
 graph.o: graph.h
