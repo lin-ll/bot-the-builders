@@ -13,7 +13,7 @@
 #define LEFT_FORWARD 16
 #define LEFT_BACKWARD 25
 #define RIGHT_FORWARD 6
-#defineRIGHT_BACKWARD 5
+#define RIGHT_BACKWARD 5
 #define MOTOR_RANGE 255
 
 //-------------------
