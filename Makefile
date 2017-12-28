@@ -13,8 +13,10 @@ clean:
 	rm -f *.o
 
 # Dependency rules for file targets
-robot: maze.o graph.o motors.o
+robot: maze.o graph.o motors.o kalman.o
 	$(CC) -o $@ $^ $(CFLAGS)
-motors.o: motors.h
-sensors.o: sensors.h
-graph.o: graph.h
+
+
+#motors.o: motors.h
+#sensors.o: sensors.h
+#graph.o: graph.h

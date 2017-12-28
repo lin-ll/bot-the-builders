@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
 /* Taken from Yale CS.                                                        */
-/* http://www.cs.yale.edu/homes/aspnes/pinewiki/C(2f)Graphs.html              */                                               */
+//* http://www.cs.yale.edu/homes/aspnes/pinewiki/C(2f)Graphs.html              */                                               */
 /*----------------------------------------------------------------------------*/
 
 #include <stdlib.h>
