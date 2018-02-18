@@ -85,7 +85,13 @@ int getIntFromCoordinates(int row, int col) {
 // Find the shortest path given the graph representaion of the maze. Use
 // Dijkstra's algorithm.
 Stack findShortestPath(Graph g) {
-
+		int distances[mazeSize][mazeSize];
+		for (int i = 0; i < mazeSize; i++) {
+				for (int j = 0; j < mazeSize; j++) {
+						distances[i][j] = INT_MAX;
+				}
+		}
+		distances[0][0] = 0;
 }
 
 // Traverse the shortest path.
