@@ -4,6 +4,7 @@
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
 #include <graph.h>
+#include <controls.h>
 
 typedef struct Stack_t{
 	int *values;
@@ -11,30 +12,35 @@ typedef struct Stack_t{
 	int length_allocated;
 } Stack;
 
-typedef struct{
-		Graph maze;
-		int **traversed; // 0 for false, 1 for true
-} mazeSolver;
+// typedef struct{
+// 		Graph maze;
+// 		int **traversed; // 0 for false, 1 for true
+// } mazeSolver;
 
 static int mazeSize = 16;
 
 // Visualize the maze and parse it into a graph. Descritize each unit of maze
 // into a vertex, and connect them with edges of unit length. Uses DFS.
 Graph discoverMaze() {
-		mazeSolver solver;
-		solver.maze = graph_create(mazeSize * mazeSize);
-		solver.traversed = int[mazeSize][mazeSize];
+		Graph maze = graph_create(mazeSize * mazeSize);
+		int traversed[mazeSize][mazeSize];
 		for (int i = 0; i < mazeSize; i++) {
 				for (int j = 0; j < mazeSize; j++) {
 						if (traversed[i][j] == 0) {
-								dfs(row, col);
+								dfs(maze, row, col);
 						}
 				}
 		}
 }
 
 // implements depth first search
-void dfs(int row, int col) {
+void dfs(Graph maze, int row, int col) {
+		if (row < 0 || row >= mazeSize) {
+				return; // invalid row
+		}
+		if (col < 0 || col >= mazeSize) {
+				return; // invalid col
+		}
 		// if square has already been travelled to
 		if (traversed[row][col] == 1) {
 				return;
@@ -43,6 +49,11 @@ void dfs(int row, int col) {
 		traversed[row][col] = 1;
 		int nodeRef = getIntFromCoordinates(row, col);
 
+		// assumes there is an isWall function
+		// left
+		if (col != 0 && !isWall(row, col, row, col - 1)) {
+				graph_add_edge(Graph )
+		}
 }
 
 // converts row and column to label of node in graph
