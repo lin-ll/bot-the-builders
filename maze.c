@@ -23,14 +23,13 @@ static int mazeSize = 16;
 // into a vertex, and connect them with edges of unit length. Uses DFS.
 Graph discoverMaze() {
 		Graph maze = graph_create(mazeSize * mazeSize);
+		// connect center squares
+		graph_add_edge(maze, 119, 120);
+		graph_add_edge(maze, 119, 135);
+		graph_add_edge(maze, 120, 136);
+		graph_add_edge(maze, 135, 136);
 		int traversed[mazeSize][mazeSize];
-		for (int i = 0; i < mazeSize; i++) {
-				for (int j = 0; j < mazeSize; j++) {
-						if (traversed[i][j] == 0) {
-								dfs(maze, row, col);
-						}
-				}
-		}
+		dfs(maze, 0, 0);
 }
 
 // implements depth first search
@@ -41,6 +40,7 @@ void dfs(Graph maze, int row, int col) {
 		if (col < 0 || col >= mazeSize) {
 				return; // invalid col
 		}
+
 		// if square has already been travelled to
 		if (traversed[row][col] == 1) {
 				return;
@@ -54,29 +54,32 @@ void dfs(Graph maze, int row, int col) {
 		// left
 		if (col != 0 && isWall(row, col, row, col - 1) == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef - 1);
+				// move Left
+				dfs(maze, row, col - 1);
 		}
 		// right
 		if (col != mazeSize - 1 && isWall(row, col, row, col + 1) == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef + 1);
+				// move right
+				dfs(maze, row, col + 1);
 		}
 		// up
 		if (row != 0 && isWall(row, col, row - 1, col) == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef - mazeSize);
+				// move up
+				dfs(maze, row - 1, col);
 		}
 		// down
 		if (row != mazeSize - 1 && isWall(row, col, row + 1, col) == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef + mazeSize);
+				// move down
+				dfs(maze, row + 1, col);
 		}
-
-		dfs(maze, row, col + 1);
-		dfs(maze, row + 1, col);
-		dfs(maze, row, col - 1);
-		dfs(maze, row - 1, col);
 }
 
 // converts row and column to label of node in graph
 int getIntFromCoordinates(int row, int col) {
-		return row * 16 + col;
+		return row * mazeSize + col;
 }
 
 // Find the shortest path given the graph representaion of the maze. Use
