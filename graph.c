@@ -47,7 +47,7 @@ graph_create(int n)
         g->alist[i]->len = 1;
         g->alist[i]->is_sorted= 1;
     }
-    
+
     return g;
 }
 
@@ -74,7 +74,7 @@ graph_add_edge(Graph g, int u, int v)
     while(g->alist[u]->d >= g->alist[u]->len) {
         g->alist[u]->len *= 2;
         g->alist[u] =
-            realloc(g->alist[u], 
+            realloc(g->alist[u],
                 sizeof(struct successors) + sizeof(int) * (g->alist[u]->len - 1));
     }
 
@@ -93,7 +93,7 @@ graph_vertex_count(Graph g)
     return g->n;
 }
 
-/* return the number of vertices in the graph */
+/* return the number of edges in the graph */
 int
 graph_edge_count(Graph g)
 {
@@ -138,9 +138,9 @@ graph_has_edge(Graph g, int source, int sink)
                     sizeof(int),
                     intcmp);
         }
-        
+
         /* call bsearch to do binary search for us */
-        return 
+        return
             bsearch(&sink,
                     g->alist[source]->list,
                     g->alist[source]->d,
