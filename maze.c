@@ -49,11 +49,29 @@ void dfs(Graph maze, int row, int col) {
 		traversed[row][col] = 1;
 		int nodeRef = getIntFromCoordinates(row, col);
 
-		// assumes there is an isWall function
+		/* assumes there is an isWall function which senses if a wall is present
+		*  between each adjacent node and current node */
 		// left
-		if (col != 0 && !isWall(row, col, row, col - 1)) {
-				graph_add_edge(Graph )
+		if (col != 0 && isWall(row, col, row, col - 1) == 0) {
+				graph_add_edge(maze, nodeRef, nodeRef - 1);
 		}
+		// right
+		if (col != mazeSize - 1 && isWall(row, col, row, col + 1) == 0) {
+				graph_add_edge(maze, nodeRef, nodeRef + 1);
+		}
+		// up
+		if (row != 0 && isWall(row, col, row - 1, col) == 0) {
+				graph_add_edge(maze, nodeRef, nodeRef - mazeSize);
+		}
+		// down
+		if (row != mazeSize - 1 && isWall(row, col, row + 1, col) == 0) {
+				graph_add_edge(maze, nodeRef, nodeRef + mazeSize);
+		}
+
+		dfs(maze, row, col + 1);
+		dfs(maze, row + 1, col);
+		dfs(maze, row, col - 1);
+		dfs(maze, row - 1, col);
 }
 
 // converts row and column to label of node in graph
