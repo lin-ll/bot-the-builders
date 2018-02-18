@@ -5,12 +5,7 @@
 #include <stdio.h>
 #include <graph.h>
 #include <controls.h>
-
-typedef struct Stack_t{
-	int *values;
-	int length;
-	int length_allocated;
-} Stack;
+#include <stack.h>
 
 // typedef struct{
 // 		Graph maze;
@@ -92,6 +87,9 @@ Stack findShortestPath(Graph g) {
 				}
 		}
 		distances[0][0] = 0;
+
+		Stack visited;
+
 }
 
 // Traverse the shortest path.
