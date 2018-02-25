@@ -12,6 +12,10 @@ typedef struct {
     int size;
 } heap_t;
 
+int isEmpty(heap_t *h) {
+    return size == 0;
+}
+
 void push (heap_t *h, int priority, char *data) {
     if (h->len + 1 >= h->size) {
         h->size = h->size ? h->size * 2 : 4;

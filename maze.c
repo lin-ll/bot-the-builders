@@ -87,7 +87,7 @@ int *getCoordFromInt(int nodeRef) {
 
 // Find the shortest path given the graph representaion of the maze. Use
 // Dijkstra's algorithm.
-Stack findShortestPath(Graph g) {
+heap_t findShortestPath(Graph g) {
 		int distances[mazeSize][mazeSize];
 		for (int i = 0; i < mazeSize; i++) {
 				for (int j = 0; j < mazeSize; j++) {
@@ -116,35 +116,44 @@ Stack findShortestPath(Graph g) {
 				push(visited, distances[row][col], insert);
 
 				// left
-				if (col != 0 && graph_has_edge(nodeRef, nodeRef - 1) == 0) {
+				if (col != 0 && graph_has_edge(g, nodeRef, nodeRef - 1) == 0) {
 						if (distances[row][col - 1] > distances[row][col] + 1) {
 								distances[row][col - 1] = distances[row][col] + 1;
 						}
 				}
 				// right
-				if (col != mazeSize - 1 && graph_has_edge(nodeRef, nodeRef - 1) == 0) {
+				if (col != mazeSize - 1 && graph_has_edge(g, nodeRef, nodeRef - 1) == 0) {
 						if (distances[row][col + 1] > distances[row][col] + 1) {
 								distances[row][col + 1] = distances[row][col] + 1;
 						}
 				}
 				// up
-				if (row != 0 && graph_has_edge(nodeRef, nodeRef - mazeSize) == 0) {
+				if (row != 0 && graph_has_edge(g, nodeRef, nodeRef - mazeSize) == 0) {
 						if (distances[row - 1][col] > distances[row][col] + 1) {
 								distances[row - 1][col] = distances[row][col] + 1;
 						}
 				}
 				// down
-				if (row != mazeSize - 1 && graph_has_edge(nodeRef, nodeRef + mazeSize) == 0) {
+				if (row != mazeSize - 1 && graph_has_edge(g, nodeRef, nodeRef + mazeSize) == 0) {
 						if (distances[row + 1][col] > distances[row][col] + 1) {
 								distances[row + 1][col] = distances[row][col] + 1;
 						}
 				}
 		}
+
+		return visited;
 }
 
 // Traverse the shortest path.
-void traverseShortestPath(Stack s) {
-
+void traverseShortestPath(heap_t h) {
+		while (!isEmpty(h)) {
+				char *nextNode = pop(h);
+				int next = (int) (nextNode);
+				int *coords = getCoordFromInt(next);
+				int nextRow = coords[0];
+				int nextCol = coords[1];
+				// moveTo(nextRow, nextCol)
+		}
 }
 
 // Find the maze, solve it for shortest path, and traverse this path.
