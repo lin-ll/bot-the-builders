@@ -18,7 +18,7 @@ double temp[NUM*NUM];
 double Q_diag[NUM] = {1.0, 1.0, 0.0081, 4.0, 4.0, .0289};
 
 // initialize F with identity, other entries will be changed in update
-double F[NUM*NUM] = 
+double F[NUM*NUM] =
 		   {1, 0, 0, 0, 0, 0,
 			0, 1, 0, 0, 0, 0,
 			0, 0, 1, 0, 0, 0,
@@ -124,7 +124,7 @@ void interpret_distance(double *distances, double *x_pos, double *y_pos){
 	} else{
 		y_estimate /= y_count;
 	}
-	
+
 	*x_pos = x_estimate;
 	*y_pos = y_estimate;
 }
@@ -149,15 +149,15 @@ double interpret_encoders(double *encoders, double *vx, double *vy, double *vt){
 void update(double *distances, double *encoders, double *imu, double *control, double *pos){
 	double dt = 0.05; // TODO use an actual timer
 
-	/* First, the predict step. Without sensors, what do we guess the new x is? 
+	/* First, the predict step. Without sensors, what do we guess the new x is?
 	   We write a matrix that will take old x to new x */
 	F[ 3] = dt; // x += vx*dt
 	F[10] = dt; // y += vy*dt
 	F[17] = dt; // t += vt*dt
 	/* if the robot is turned clockwise, then velocity up also moves the robot slightly right.
-	   This can't be captured with a constant in the matrix, so we copy the velocity up into 
+	   This can't be captured with a constant in the matrix, so we copy the velocity up into
 	   the matrix. This means we are ignoring the uncertainty in the velocity in this calculation,
-	   but we expect the % uncertainty in the angle to be much greater and we do take that into 
+	   but we expect the % uncertainty in the angle to be much greater and we do take that into
 	   account. Note we are also linearizing sin around zero, so sin(t) becomes just t.*/
 	F[2] =  dt * x[4]; // x += t*(dt*vy)
 	F[8] = -dt * x[3]; // y -= t*(dt*vx)
@@ -167,8 +167,8 @@ void update(double *distances, double *encoders, double *imu, double *control, d
 	mat_mult(F, P, temp);
 	mat_mult_btrans(temp, F, P_hat); // P_hat = F*P*transpost(F)
 
-	/* TODO: control vector stuff. Basically just set x values to what the controller wants 
-	   them to be, and update P with some variances (this is vague because I don't really 
+	/* TODO: control vector stuff. Basically just set x values to what the controller wants
+	   them to be, and update P with some variances (this is vague because I don't really
 	   know how to do it). */
 
 
@@ -189,5 +189,3 @@ void update(double *distances, double *encoders, double *imu, double *control, d
 
 
 }
-
-

@@ -62,6 +62,14 @@ int Motor_setLeft(double left) {
   return 0;
 }
 
+int Motor_setUp(double up) {
+
+}
+
+int Motor_setDown(double down) {
+    
+}
+
 int Motor_setRight(double right) {
   rightPercent = right;
   if (right >= 0) {
