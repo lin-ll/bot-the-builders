@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <graph.h>
 #include <controls.h>
-#include <stack.h>
+#include <heap.h>
 
 // typedef struct{
 // 		Graph maze;
@@ -77,6 +77,14 @@ int getIntFromCoordinates(int row, int col) {
 		return row * mazeSize + col;
 }
 
+// converts node to row and column
+int *getCoordFromInt(int nodeRef) {
+		int col = nodeRef % mazeSize;
+		int row = nodeRef / mazeSize;
+		int *coords = {row, col};
+		return coords;
+}
+
 // Find the shortest path given the graph representaion of the maze. Use
 // Dijkstra's algorithm.
 Stack findShortestPath(Graph g) {
@@ -88,8 +96,50 @@ Stack findShortestPath(Graph g) {
 		}
 		distances[0][0] = 0;
 
-		Stack visited;
-		
+		heap_t visited;
+		heap_t unvisited;
+
+		for (int i = 0; i < mazeSize; i++) {
+				for (int j = 0; j < mazeSize; j++) {
+						int nodeRef = getIntFromCoordinates(i,j);
+						char *s = nodeRef;
+						push(unvisited, distances[i][j], s);
+				}
+		}
+
+		while (true) {
+				char *insert = pop(unvisited);
+				int nodeRef = (int) (insert);
+				int *coords = getCoordFromInt(nodeRef);
+				int row = coords[0];
+				int col = coords[1];
+				push(visited, distances[row][col], insert);
+
+				// left
+				if (col != 0 && graph_has_edge(nodeRef, nodeRef - 1) == 0) {
+						if (distances[row][col - 1] > distances[row][col] + 1) {
+								distances[row][col - 1] = distances[row][col] + 1;
+						}
+				}
+				// right
+				if (col != mazeSize - 1 && graph_has_edge(nodeRef, nodeRef - 1) == 0) {
+						if (distances[row][col + 1] > distances[row][col] + 1) {
+								distances[row][col + 1] = distances[row][col] + 1;
+						}
+				}
+				// up
+				if (row != 0 && graph_has_edge(nodeRef, nodeRef - mazeSize) == 0) {
+						if (distances[row - 1][col] > distances[row][col] + 1) {
+								distances[row - 1][col] = distances[row][col] + 1;
+						}
+				}
+				// down
+				if (row != mazeSize - 1 && graph_has_edge(nodeRef, nodeRef + mazeSize) == 0) {
+						if (distances[row + 1][col] > distances[row][col] + 1) {
+								distances[row + 1][col] = distances[row][col] + 1;
+						}
+				}
+		}
 }
 
 // Traverse the shortest path.
