@@ -12,7 +12,9 @@
 // 		int **traversed; // 0 for false, 1 for true
 // } mazeSolver;
 
+Graph maze;
 static int mazeSize = 16;
+int traversed[mazeSize][mazeSize] = {{0}};
 int goalSpace = 120;
 int startSpace = 0;
 
@@ -25,12 +27,13 @@ Graph discoverMaze() {
 		graph_add_edge(maze, 119, 135);
 		graph_add_edge(maze, 120, 136);
 		graph_add_edge(maze, 135, 136);
+
 		int traversed[mazeSize][mazeSize];
 		dfs(maze, 0, 0);
 }
 
 // implements depth first search
-void dfs(Graph maze, int row, int col) {
+int dfs(int row, int col, int leftWall, int rightWall, int upWall, int downWall) {
 		if (row < 0 || row >= mazeSize) {
 				return; // invalid row
 		}
@@ -49,28 +52,24 @@ void dfs(Graph maze, int row, int col) {
 		/* assumes there is an isWall function which senses if a wall is present
 		*  between each adjacent node and current node */
 		// left
-		if (col != 0 && isWall(row, col, row, col - 1) == 0) {
+		if (col != 0 && leftWall == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef - 1);
-				moveTo(nodeRef, nodeRef - 1);
-				dfs(maze, row, col - 1);
+				return 2;
 		}
 		// right
-		if (col != mazeSize - 1 && isWall(row, col, row, col + 1) == 0) {
+		if (col != mazeSize - 1 && rightWall == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef + 1);
-				moveTo(nodeRef, nodeRef + 1);
-				dfs(maze, row, col + 1);
+				return 0;
 		}
 		// up
-		if (row != 0 && isWall(row, col, row - 1, col) == 0) {
+		if (row != 0 && upWall == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef - mazeSize);
-				moveTo(nodeRef, nodeRef + mazeSize);
-				dfs(maze, row - 1, col);
+				return 3;
 		}
 		// down
-		if (row != mazeSize - 1 && isWall(row, col, row + 1, col) == 0) {
+		if (row != mazeSize - 1 && downWall == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef + mazeSize);
-				moveTo(nodeRef, nodeRef - mazeSize);
-				dfs(maze, row + 1, col);
+				return 1;
 		}
 }
 
