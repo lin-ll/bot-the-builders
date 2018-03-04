@@ -13,6 +13,8 @@
 // } mazeSolver;
 
 static int mazeSize = 16;
+int goalSpace = 120;
+int startSpace = 0;
 
 // Visualize the maze and parse it into a graph. Descritize each unit of maze
 // into a vertex, and connect them with edges of unit length. Uses DFS.
@@ -87,14 +89,18 @@ int *getCoordFromInt(int nodeRef) {
 
 // Find the shortest path given the graph representaion of the maze. Use
 // Dijkstra's algorithm.
-heap_t findShortestPath(Graph g) {
+heap_t findShortestPath(Graph g, int start, int finish) {
 		int distances[mazeSize][mazeSize];
 		for (int i = 0; i < mazeSize; i++) {
 				for (int j = 0; j < mazeSize; j++) {
 						distances[i][j] = INT_MAX;
 				}
 		}
-		distances[0][0] = 0;
+
+		int *startCoords = getCoordFromInt(startSpace);
+		startRow = startCoords[0];
+		startCol = startCoords[1];
+		distances[startRow][startCol] = 0;
 
 		heap_t visited;
 		heap_t unvisited;
@@ -107,9 +113,11 @@ heap_t findShortestPath(Graph g) {
 				}
 		}
 
-		while (true) {
+		int nodeRef = start;
+
+		while (nodeRef != finish) {
 				char *insert = pop(unvisited);
-				int nodeRef = (int) (insert);
+				nodeRef = (int) (insert);
 				int *coords = getCoordFromInt(nodeRef);
 				int row = coords[0];
 				int col = coords[1];
@@ -154,6 +162,16 @@ void traverseShortestPath(heap_t h) {
 				moveTo(curr, next);
 				curr = next;
 		}
+}
+
+void returnToStart(Graph g, int currNode) {
+		heap_t h = findShortestPath(g, currNode, startSpace);
+		traverseShortestPath(h);
+}
+
+void solveMaze(Graph g) {
+		heap_t h = findShortestPath(g, startSpace, goalSpace);
+		traverseShortestPath(h);
 }
 
 // Find the maze, solve it for shortest path, and traverse this path.
