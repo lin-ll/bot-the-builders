@@ -49,25 +49,25 @@ void dfs(Graph maze, int row, int col) {
 		// left
 		if (col != 0 && isWall(row, col, row, col - 1) == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef - 1);
-				// move Left
+				moveTo(nodeRef, nodeRef - 1);
 				dfs(maze, row, col - 1);
 		}
 		// right
 		if (col != mazeSize - 1 && isWall(row, col, row, col + 1) == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef + 1);
-				// move right
+				moveTo(nodeRef, nodeRef + 1);
 				dfs(maze, row, col + 1);
 		}
 		// up
 		if (row != 0 && isWall(row, col, row - 1, col) == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef - mazeSize);
-				// move up
+				moveTo(nodeRef, nodeRef + mazeSize);
 				dfs(maze, row - 1, col);
 		}
 		// down
 		if (row != mazeSize - 1 && isWall(row, col, row + 1, col) == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef + mazeSize);
-				// move down
+				moveTo(nodeRef, nodeRef - mazeSize);
 				dfs(maze, row + 1, col);
 		}
 }
@@ -146,17 +146,16 @@ heap_t findShortestPath(Graph g) {
 
 // Traverse the shortest path.
 void traverseShortestPath(heap_t h) {
+		char* currNode = pop(h);
+		int curr = (int) (currNode);
 		while (!isEmpty(h)) {
 				char *nextNode = pop(h);
 				int next = (int) (nextNode);
-				int *coords = getCoordFromInt(next);
-				int nextRow = coords[0];
-				int nextCol = coords[1];
-				// moveTo(nextRow, nextCol)
+				moveTo(curr, next);
+				curr = next;
 		}
 }
 
 // Find the maze, solve it for shortest path, and traverse this path.
 int main(int argc, char *argv[]) {
-
 }
