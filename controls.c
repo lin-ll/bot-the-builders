@@ -46,3 +46,15 @@ void moveTo(int oldNode, int newNode, int prevDirection) {
         move(1);
     }
 }
+
+void stop() {
+
+}
+
+void turn(int degrees) {
+
+}
+
+void move(int distance, ) {
+
+}
