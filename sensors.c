@@ -30,7 +30,7 @@ const int LONG_SHUTDOWN_PINS[4] = {-1, 1, 2, 3}; // bogus pin numbers except for
 // The datasheet gives 8.75mdps/digit for default sensitivity
 const double RPS_PER_DIGIT = 0.00875*TWO_PI/360;
 
-enum { // TODO: Check these registers 
+enum { // TODO: Check these registers
   GYRO_REGISTER_OUT_X_L          = 0x28,
   GYRO_REGISTER_OUT_X_H          = 0x29,
   GYRO_REGISTER_OUT_Y_L          = 0x2A,
@@ -123,7 +123,7 @@ int Sensor_init(int pifd) {
 
   adafruit_distance_set_pi_handle(pi);
 
-  // Getting the handles for short and long distance 
+  // Getting the handles for short and long distance
   for(i=0; i<4; i++) {
     short_dist_handles[i] = i2c_open(pi, BUS, SHORT_DIST_ADDRS[i], 0);
     if(short_dist_handles[i] < 0)
@@ -143,25 +143,25 @@ int Sensor_init(int pifd) {
   // Shut all of the short and long distance pins down
   for(i=0; i<3; i++) {
     if(SHORT_SHUTDOWN_PINS[i] != -1) {
-      gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_OFF); 
+      gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_OFF);
       printf("Turn off short distance sensor: %d\n", SHORT_SHUTDOWN_PINS[i]);
     }
   }
 
   for(i=0; i<3; i++) {
     if(LONG_SHUTDOWN_PINS[i] != -1) {
-      gpio_write(pi, LONG_SHUTDOWN_PINS[i], DISTANCE_OFF); 
+      gpio_write(pi, LONG_SHUTDOWN_PINS[i], DISTANCE_OFF);
       printf("Turn off long distance sensor: %d\n", LONG_SHUTDOWN_PINS[i]);
     }
   }
 
   printf("ALL OFF\n");
-  
+
   // One by one, turn on short distance sensors
   for(i=0; i<3; i++) {
     printf("Turning on short distance sensor: %d\n", i);
     if(SHORT_SHUTDOWN_PINS[i] != -1)
-      gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_ON); 
+      gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_ON);
 
     // Library thinks we're talking to the same sensor each time
     adafruit_distance_change_address(short_dist_handles[3], SHORT_DIST_ADDRS[i]);
@@ -178,7 +178,7 @@ int Sensor_init(int pifd) {
   for(i=0; i<3; i++) {
     printf("Turning on long distance sensor: %d\n", i);
     if(LONG_SHUTDOWN_PINS[i] != -1)
-      gpio_write(pi, LONG_SHUTDOWN_PINS[i], DISTANCE_ON); 
+      gpio_write(pi, LONG_SHUTDOWN_PINS[i], DISTANCE_ON);
 
     // Library thinks we're talking to the same sensor each time
     adafruit_distance_change_address(long_dist_handles[3], LONG_DIST_ADDRS[i]);

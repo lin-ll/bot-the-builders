@@ -42,4 +42,8 @@ void adjust(int direction, double mainVelocity, double translate,
 
 void moveTo(int oldNode, int newNode) {
     int direction = findDirection(oldNode, newNode);
+    double mainVelocity = 100.0;
+    double translate = 10.0;
+    double rotate = 5.0;
+    adjust(direction, mainVelocity, translate, rotate);
 }
