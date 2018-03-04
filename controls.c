@@ -1,7 +1,6 @@
-// controls
-
 #include <stdio.h>
 #include <pigpio.h>
+#include <motors.h>
 
 int mazeSize = 16;
 
@@ -12,49 +11,35 @@ int findDirection(int oldNode, int newNode) {
     int newCol = newNode % mazeSize;
 
     if (newRow - oldRow == 1) {
-        return 2; // down
+        return 1; // down
     }
     if (newRow - oldRow == -1) {
-        return 0; // up
+        return 3; // up
     }
     if (newCol - oldCol == 1) {
-        return 3; // right
+        return 0; // right
     }
     if (newCol - oldCol == -1) {
-        return 1; // left
-    }
-}
-
-void moveTo(int oldNode, int newNode, int prevDirection) {
-    int direction = findDirection(oldNode, newNode);
-    if (direction == prevDirection) {
-        // dont't change anything
-    }
-    if ((direction - prevDirection) % 4 == 1) {
-        stop();
-        turn(-90);
-        move(1);
-    }
-    if ((direction - prevDirection) % 4 == 2) {
-        stop();
-        turn(180);
-        move(1);
-    }
-    if ((direction - prevDirection) % 4 == 3) {
-        stop();
-        turn(90);
-        move(1);
+        return 2; // left
     }
 }
 
 void stop() {
-
+    double motors[4] = {0.0};
+    Motor_set(motors);
 }
 
-void turn(int degrees) {
-
+// assuming forward orientation, positive translation defined to the right,
+// and positive rotations defined in clockwise direction
+void adjust(int direction, double mainVelocity, double translate,
+    double rotate) {
+    double motors[4] = {rotate};
+    motors[direction] += mainVelocity - translate;
+    motors[(direction + 1) % 4] += mainVelocity + translate;
+    motors[(direction + 2) % 4] += translate - mainVelocity;
+    motors[(direction + 3) % 4] += - mainVelocity - translate;
 }
 
-void move(int distance, ) {
-
+void moveTo(int oldNode, int newNode) {
+    int direction = findDirection(oldNode, newNode);
 }

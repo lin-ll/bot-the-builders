@@ -131,11 +131,11 @@ int Motor_setLowerRight(double lowerRight) {
 }
 
 /* Utility Function, to input array */
-int Motor_set(int* motors) {
-  int ret = Motor_setUpperLeft(motors[0]);
-  ret |= Motor_setUpperight(motors[1]);
-  ret |= Motor_setLowerLeft(motors[2]);
-  ret |= Motor_setLowerRight(motors[3]);
+int Motor_set(double* motors) {
+  double ret = Motor_setUpperLeft(motors[0]);
+  ret |= Motor_setUpperRight(motors[1]);
+  ret |= Motor_setLowerRight(motors[2]);
+  ret |= Motor_setLowerLeft(motors[3]);
   return ret;
 }
 
