@@ -2,19 +2,19 @@
 #include <stdlib.h>
 #include "inc/heap.h"
 
-typedef struct {
-    int priority;
-    char *data;
-} node_t;
-
-typedef struct {
-    node_t *nodes;
-    int len;
-    int size;
-} heap_t;
+// typedef struct {
+//     int priority;
+//     char *data;
+// } node_t;
+//
+// typedef struct {
+//     node_t *nodes;
+//     int len;
+//     int size;
+// } heap_t;
 
 int isEmpty(heap_t *h) {
-    return size == 0;
+    return h->size == 0;
 }
 
 void push (heap_t *h, int priority, char *data) {
