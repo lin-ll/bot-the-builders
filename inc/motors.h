@@ -25,7 +25,7 @@ int Motor_setLowerLeft(double lowerLeft);
 int Motor_setLowerRight(double lowerRight);
 
 /* Utility Function, to input array */
-int Motor_set(int* motors);
+int Motor_set(double* motors);
 
 /* Any Cleanup */
 void Motor_free();

@@ -62,11 +62,11 @@ double Motor_getUpperRight() {
   return upperRightPercent;
 }
 
-double Motor_getLowerRight() {
+double Motor_getLowerLeft() {
   return lowerLeftPercent;
 }
 
-double Motor_getUpperRight() {
+double Motor_getLowerRight() {
   return lowerRightPercent;
 }
 
@@ -133,9 +133,9 @@ int Motor_setLowerRight(double lowerRight) {
 /* Utility Function, to input array */
 int Motor_set(double* motors) {
   double ret = Motor_setUpperLeft(motors[0]);
-  ret |= Motor_setUpperRight(motors[1]);
-  ret |= Motor_setLowerRight(motors[2]);
-  ret |= Motor_setLowerLeft(motors[3]);
+  ret = ret || Motor_setUpperRight(motors[1]);
+  ret = ret || Motor_setLowerRight(motors[2]);
+  ret = ret || Motor_setLowerLeft(motors[3]);
   return ret;
 }
 

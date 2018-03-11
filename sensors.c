@@ -1,6 +1,6 @@
 #include <math.h>
-#include <sensors.h>
-#include <pigpiod_if2.h>
+#include "inc/sensors.h"
+#include "inc/pigpiod_if2.h"
 #include <adafruit_distance.h>
 #include <stdio.h>
 
