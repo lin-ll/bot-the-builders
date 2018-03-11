@@ -1,4 +1,4 @@
-#include "kalman.h"
+#include "inc/kalman.h"
 #include <math.h> // for using NAN
 
 /* Naming conventions and general info from here:
@@ -192,9 +192,9 @@ void update(double *distances, double *encoders, double *imu, double *control, d
 	/* we're working hard to do all this interpretation beforehand so the matrix that transforms our
 	   sensor readings into the right dimensions (H in the tutorial) is just the identity */
 
-	/* TODO: read the comment above. Create an R matrix for sensor noise covariances, and do the 
-	   actual kalman update step, equations 18 and 19 here 
-	   http://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/(but H=I so it's easy) 
+	/* TODO: read the comment above. Create an R matrix for sensor noise covariances, and do the
+	   actual kalman update step, equations 18 and 19 here
+	   http://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/(but H=I so it's easy)
 
 	   compile with "gcc kalman.c inc/kalman.h"*/
 

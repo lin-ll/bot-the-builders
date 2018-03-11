@@ -1,10 +1,10 @@
 /* motors.c */
 
-#include <motors.h>
+#include "inc/motors.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <pigpiod_if2.h>
+#include "inc/pigpiod_if2.h"
 
 //-------------------
 

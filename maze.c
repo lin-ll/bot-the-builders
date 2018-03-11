@@ -3,9 +3,9 @@
 /* and motor control.                                                         */
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
-#include <graph.h>
-#include <controls.h>
-#include <heap.h>
+#include "inc/graph.h"
+#include "inc/controls.h"
+#include "inc/heap.h"
 
 // typedef struct{
 // 		Graph maze;

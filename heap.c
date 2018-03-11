@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "heap.h"
+#include "inc/heap.h"
 
 typedef struct {
     int priority;
