@@ -17,7 +17,7 @@ int isEmpty(heap_t *h) {
     return h->size == 0;
 }
 
-void push (heap_t *h, int priority, char *data) {
+void push (heap_t *h, int priority, int data) {
     if (h->len + 1 >= h->size) {
         h->size = h->size ? h->size * 2 : 4;
         h->nodes = (node_t *)realloc(h->nodes, h->size * sizeof (node_t));
@@ -34,12 +34,12 @@ void push (heap_t *h, int priority, char *data) {
     h->len++;
 }
 
-char *pop (heap_t *h) {
+int pop (heap_t *h) {
     int i, j, k;
     if (!h->len) {
         return NULL;
     }
-    char *data = h->nodes[1].data;
+    int data = h->nodes[1].data;
 
     h->nodes[1] = h->nodes[h->len];
     int priority = h->nodes[1].priority;

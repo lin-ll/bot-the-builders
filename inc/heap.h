@@ -3,7 +3,7 @@
 
 typedef struct {
     int priority;
-    char *data;
+    int data;
 } node_t;
 
 typedef struct {
@@ -13,7 +13,7 @@ typedef struct {
 } heap_t;
 
 int isEmpty(heap_t *h);
-void push (heap_t *h, int priority, char *data);
-char *pop (heap_t *h);
+void push (heap_t *h, int priority, int data);
+int pop (heap_t *h);
 
 #endif
