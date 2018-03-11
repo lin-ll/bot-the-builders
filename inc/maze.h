@@ -13,6 +13,9 @@ heap_t findShortestPath(Graph g, int start, int finish);
 
 void traverseShortestPath(heap_t h);
 
+// returns true is maze is fully explored
+int isExplored();
+
 void returnToStart(Graph g, int currNode);
 
 void solveMaze(Graph g);

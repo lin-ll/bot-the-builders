@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "inc/pigpio.h"
 #include "inc/motors.h"
+#include "inc/constants.h"
 
 int mazeSize = 16;
 
@@ -11,18 +12,18 @@ int findDirection(int oldNode, int newNode) {
     int newCol = newNode % mazeSize;
 
     if (newRow - oldRow == 1) {
-        return 1; // down
+        return DOWN; // down
     }
     if (newRow - oldRow == -1) {
-        return 3; // up
+        return UP; // up
     }
     if (newCol - oldCol == 1) {
-        return 0; // right
+        return RIGHT; // right
     }
     if (newCol - oldCol == -1) {
-        return 2; // left
+        return LEFT; // left
     }
-    
+
     // not any direction??? TODO: check this
     return -1;
 }

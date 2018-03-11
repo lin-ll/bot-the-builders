@@ -6,16 +6,12 @@
 #include "inc/graph.h"
 #include "inc/heap.h"
 
-// typedef struct{
-// 		Graph maze;
-// 		int **traversed; // 0 for false, 1 for true
-// } mazeSolver;
-
 static int mazeSize = 16;
-static Graph maze;
-static int traversed[16][16] = {0};
-static int goalSpace = 120;
-static int startSpace = 0;
+static Graph maze; // graph recording walls and such
+static int traversed[16][16] = {0}; // record of traversed squares
+static int unexplored = 256; // number of unexplored squares
+static int goalSpace = 120; // target space
+static int startSpace = 0; // starting space
 
 // Visualize the maze and parse it into a graph. Descritize each unit of maze
 // into a vertex, and connect them with edges of unit length. Uses DFS.
@@ -26,8 +22,6 @@ Graph discoverMaze() {
 		graph_add_edge(maze, 119, 135);
 		graph_add_edge(maze, 120, 136);
 		graph_add_edge(maze, 135, 136);
-
-		dfs(maze, 0, 0);
 }
 
 // implements depth first search
@@ -45,6 +39,7 @@ int dfs(int row, int col, int leftWall, int rightWall, int upWall, int downWall)
 		}
 
 		traversed[row][col] = 1;
+		unexplored--;
 		int nodeRef = getIntFromCoordinates(row, col);
 
 		/* assumes there is an isWall function which senses if a wall is present
@@ -52,22 +47,22 @@ int dfs(int row, int col, int leftWall, int rightWall, int upWall, int downWall)
 		// left
 		if (col != 0 && leftWall == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef - 1);
-				return 2;
+				return nodeRef - 1;
 		}
 		// right
 		if (col != mazeSize - 1 && rightWall == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef + 1);
-				return 0;
+				return nodeRef + 1;
 		}
 		// up
 		if (row != 0 && upWall == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef - mazeSize);
-				return 3;
+				return nodeRef - mazeSize;
 		}
 		// down
 		if (row != mazeSize - 1 && downWall == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef + mazeSize);
-				return 1;
+				return nodeRef + mazeSize;
 		}
 }
 
@@ -85,6 +80,11 @@ int getRowFromInt(int nodeRef) {
 int getColFromInt(int nodeRef) {
 		int col = nodeRef % mazeSize;
 		return col;
+}
+
+// returns whether maze has been fully explored
+int isExplored() {
+		return unexplored == 0;
 }
 
 // Find the shortest path given the graph representaion of the maze. Use
