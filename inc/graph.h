@@ -1,8 +1,12 @@
 /*----------------------------------------------------------------------------*/
 /* Taken from Yale CS.                                                        */
 /* http://www.cs.yale.edu/homes/aspnes/pinewiki/C(2f)Graphs.html              */
+/* Improved by Daniel Chae 													  */
 /*----------------------------------------------------------------------------*/
 /* basic directed graph type   */
+
+#ifndef GRAPH_INCLUDED
+#define GRAPH_INCLUDED
 
 typedef struct graph *Graph;
 
@@ -32,3 +36,4 @@ int graph_has_edge(Graph, int source, int sink);
 void graph_foreach(Graph g, int source,
         void (*f)(Graph g, int source, int sink, void *data),
         void *data);
+#endif

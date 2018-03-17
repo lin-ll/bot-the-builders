@@ -30,8 +30,6 @@ double F[NUM*NUM] =
 			0, 0, 0, 0, 0, 1};
 
 
-
-
 void mat_mult(double *A, double *B, double *dest){
 	for (int i = 0; i < NUM; i++) {
 		for (int j = 0; j < NUM; j++) {

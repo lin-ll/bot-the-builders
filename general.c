@@ -1,7 +1,10 @@
 /*----------------------------------------------------------------------------*/
-/* Basic robot motions and senosr reading.                                    */
+/* Basic robot motions and sensor reading.                                    */
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
+#include "inc/general.h"
+#include "inc/sensors.h"
+#include "inc/motors.h"
 
 // moves a given distance c forwards
 void forwards(int c) {
@@ -56,9 +59,12 @@ double sensor(int s) {
 
 
 // checks if there is Wall in moving direction
-bool checkWall() {
+int checkWall() {
 
 }
 
+
+// for unit testing, comment out if need be because we can only 
+// have one main 
 int main(int argc, char *argv[]) {
 }

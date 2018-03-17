@@ -1,7 +1,7 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
-/* Motor Dirver */
+/* Motor Driver */
 
 /**
  * Initialize Sensors

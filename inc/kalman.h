@@ -1,9 +1,14 @@
+/*----------------------------------------------------------------------------*/
+/* kalman.h 																  */
+/* Controls the Kalman filter for position and orientation of the robot       */
+/*----------------------------------------------------------------------------*/
+
 #ifndef KALMAN_H
 #define KALMAN_H
 
 /* Kalman filter for estimating position */
 
-
+// THIS NEEDS SOME MORE POLISHING ~DC
 void init();
 
 /**

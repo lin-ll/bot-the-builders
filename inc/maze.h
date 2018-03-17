@@ -1,4 +1,10 @@
-
+/*----------------------------------------------------------------------------*/
+/* maze.h 																      */
+/* Goes through the maze logic -- Use Dijkstra's algorithm					  */
+/* Contains the main method that will be used for the competition			  */
+/*----------------------------------------------------------------------------*/
+#ifndef MAZE_INCLUDED
+#define MAZE_INCLUDED
 
 Graph discoverMaze();
 
@@ -20,4 +26,4 @@ void returnToStart(Graph g, int currNode);
 
 void solveMaze(Graph g);
 
-int main(int argc, char *argv[]);
+#endif
