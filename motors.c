@@ -31,10 +31,10 @@ static double upperRightPercent = 0;
 static double lowerLeftPercent = 0;
 static double lowerRightPercent = 0;
 
-static PID_T pidUpperLeft = init(10, 10, 1);
-static PID_T pidUpperRight = init(10, 10, 1);
-static PID_T pidLowerLeft = init(10, 10, 1);
-static PID_T pidLowerRight = init(10, 10, 1);
+static PID_T pidUpperLeft = init(10.0, 10.0, 1.0);
+static PID_T pidUpperRight = init(10.0, 10.0, 1.0);
+static PID_T pidLowerLeft = init(10.0, 10.0, 1.0);
+static PID_T pidLowerRight = init(10.0, 10.0, 1.0);
 
 static int pi;
 
@@ -196,33 +196,33 @@ int Motor_adjustLowerRight(double lowerRight) {
   return 0;
 }
 
-int update() {
+void update(double dt) {
   setPoint(pidUpperLeft, upperLeftPercent);
   double upperLeftSpeed = Sensor_getMotorSpeed(UPPER_LEFT_PIN);
-  update(pidUpperLeft, upperLeftSpeed, 0.1); // what is dt defined as?
+  update(pidUpperLeft, upperLeftSpeed, dt); // what is dt defined as?
   double upperLeftAdjust = getVal(pidUpperLeft);
   Motor_adjustUpperLeft(upperLeftAdjust);
 
   setPoint(pidUpperRight, upperRightPercent);
   double upperRightSpeed = Sensor_getMotorSpeed(UPPER_RIGHT_PIN);
-  update(pidUpperRight, upperRightSpeed, 0.1); // what is dt defined as?
+  update(pidUpperRight, upperRightSpeed, dt); // what is dt defined as?
   double upperRightAdjust = getVal(pidUpperRight);
   Motor_adjustUpperRight(upperRightAdjust);
 
   setPoint(pidLowerLeft, lowerLeftPercent);
   double lowerLeftSpeed = Sensor_getMotorSpeed(LOWER_LEFT_PIN);
-  update(pidLowerLeft, lowerLeftSpeed, 0.1); // what is dt defined as?
+  update(pidLowerLeft, lowerLeftSpeed, dt); // what is dt defined as?
   double lowerLeftAdjust = getVal(pidLowerLeft);
   Motor_adjustLowerLeft(lowerLeftAdjust);
 
   setPoint(pidLowerRight, lowerRightPercent);
   double lowerRightSpeed = Sensor_getMotorSpeed(LOWER_RIGHT_PIN);
-  update(pidLowerRight, LowerRightSpeed, 0.1); // what is dt defined as?
+  update(pidLowerRight, lowerRightSpeed, dt); // what is dt defined as?
   double lowerRightAdjust = getVal(pidLowerRight);
   Motor_adjustUpperLeft(lowerRightAdjust);
 }
 
-int resetPID() {
+void resetPID() {
     reset(pidUpperLeft);
     reset(pidUpperRight);
     reset(pidLowerLeft);

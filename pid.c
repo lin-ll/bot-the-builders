@@ -3,12 +3,13 @@ This module creates PID loop objects.
 */
 
 #include "inc/pid.h"
+#include "inc/constants.h"
 
 typedef struct PID *PID_T;
 
 // return a PID loop object
 PID_T init(double kP, double kI, double kD) {
-		struct PID *p;
+		struct PID *p = malloc(sizeof(PID));
 		p->kP = kP;
 		p->kI = kI;
 		p->kD = kD;
@@ -16,7 +17,7 @@ PID_T init(double kP, double kI, double kD) {
 		p->setPoint = 0;
 		p->derivative = 0;
 		p->prevError = 0;
-		p->isFirstUpdate = true;
+		p->isFirstUpdate = TRUE;
 		return p;
 };
 
@@ -38,7 +39,7 @@ void update(PID_T pid, double val, double dt) {
 		pid->integral = pid->integral + error * dt;
 		pid->derivative = (error - pid->prevError) / dt;
 		pid->prevError = error;
-		pid->isFirstUpdate = false;
+		pid->isFirstUpdate = FALSE;
 }
 
 // return PID value

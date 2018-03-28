@@ -6,7 +6,7 @@ struct PID {
 		double setPoint;
 		double derivative;
 		double prevError;
-		bool isFirstUpdate;
+		int isFirstUpdate;
 };
 
 typedef struct PID *PID_T;
