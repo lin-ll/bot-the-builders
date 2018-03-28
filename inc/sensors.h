@@ -18,6 +18,9 @@ double Sensor_getCompass();
 void Sensor_calCompass(int n);
 void Sensor_calGyro(int n);
 
+/* Return speed of motors */
+double Sensor_getMotorSpeed(int motor);
+
 /* Linear Stuff */
 enum Dir_t {
   kFRONT,
@@ -36,6 +39,5 @@ double Sensor_orient(enum Dir_t dir);
 
 /* Any Cleanup */
 void Sensor_free();
-
 
 #endif

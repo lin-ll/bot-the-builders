@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include "inc/pigpiod_if2.h"
+#include "inc/pid.h"
+#include "inc/sensors.h"
 
 //-------------------
 
@@ -28,6 +30,11 @@ static double upperLeftPercent = 0;
 static double upperRightPercent = 0;
 static double lowerLeftPercent = 0;
 static double lowerRightPercent = 0;
+
+static PID_T pidUpperLeft = init(10, 10, 1);
+static PID_T pidUpperRight = init(10, 10, 1);
+static PID_T pidLowerLeft = init(10, 10, 1);
+static PID_T pidLowerRight = init(10, 10, 1);
 
 static int pi;
 
@@ -53,6 +60,9 @@ int Motor_init(int pifd) {
   set_PWM_range(pi, LOWER_RIGHT_PIN, MOTOR_RANGE);
   return 0;
 }
+
+// Assume sensors.c has a method witch returns current speed of motor
+// Call this motor motorSpeed();
 
 double Motor_getUpperLeft() {
   return upperLeftPercent;
@@ -85,8 +95,36 @@ int Motor_setUpperLeft(double upperLeft) {
   return 0;
 }
 
+int Motor_adjustUpperLeft(double upperLeft) {
+  if (upperLeft >= 0) {
+    gpio_write(pi, UPPER_LEFT_BACKWARD, 0);
+    gpio_write(pi, UPPER_LEFT_FORWARD, 1);
+    set_PWM_dutycycle(pi, UPPER_LEFT_PIN, (upperLeft * MOTOR_RANGE / 100.0));
+  }
+  else {
+    gpio_write(pi, UPPER_LEFT_FORWARD, 0);
+    gpio_write(pi, UPPER_LEFT_BACKWARD, 1);
+    set_PWM_dutycycle(pi, UPPER_LEFT_PIN, (upperLeft * MOTOR_RANGE / -100.0));
+  }
+  return 0;
+}
+
 int Motor_setUpperRight(double upperRight) {
   upperRightPercent = upperRight;
+  if (upperRight >= 0) {
+    gpio_write(pi, UPPER_RIGHT_BACKWARD, 0);
+    gpio_write(pi, UPPER_RIGHT_FORWARD, 1);
+    set_PWM_dutycycle(pi, UPPER_RIGHT_PIN, (upperRight * MOTOR_RANGE / 100.0));
+  }
+  else {
+    gpio_write(pi, UPPER_RIGHT_FORWARD, 0);
+    gpio_write(pi, UPPER_RIGHT_BACKWARD, 1);
+    set_PWM_dutycycle(pi, UPPER_RIGHT_PIN, (upperRight * MOTOR_RANGE / -100.0));
+  }
+  return 0;
+}
+
+int Motor_adjustUpperRight(double upperRight) {
   if (upperRight >= 0) {
     gpio_write(pi, UPPER_RIGHT_BACKWARD, 0);
     gpio_write(pi, UPPER_RIGHT_FORWARD, 1);
@@ -115,6 +153,20 @@ int Motor_setLowerLeft(double lowerLeft) {
   return 0;
 }
 
+int Motor_adjustLowerLeft(double lowerLeft) {
+  if (lowerLeft >= 0) {
+    gpio_write(pi, LOWER_LEFT_BACKWARD, 0);
+    gpio_write(pi, LOWER_LEFT_FORWARD, 1);
+    set_PWM_dutycycle(pi, LOWER_LEFT_PIN, (lowerLeft * MOTOR_RANGE / 100.0));
+  }
+  else {
+    gpio_write(pi, LOWER_LEFT_FORWARD, 0);
+    gpio_write(pi, LOWER_LEFT_BACKWARD, 1);
+    set_PWM_dutycycle(pi, LOWER_LEFT_PIN, (lowerLeft * MOTOR_RANGE / -100.0));
+  }
+  return 0;
+}
+
 int Motor_setLowerRight(double lowerRight) {
   lowerRightPercent = lowerRight;
   if (lowerRight >= 0) {
@@ -128,6 +180,53 @@ int Motor_setLowerRight(double lowerRight) {
     set_PWM_dutycycle(pi, LOWER_RIGHT_PIN, (lowerRight * MOTOR_RANGE / -100.0));
   }
   return 0;
+}
+
+int Motor_adjustLowerRight(double lowerRight) {
+  if (lowerRight >= 0) {
+    gpio_write(pi, LOWER_RIGHT_BACKWARD, 0);
+    gpio_write(pi, LOWER_RIGHT_FORWARD, 1);
+    set_PWM_dutycycle(pi, LOWER_RIGHT_PIN, (lowerRight * MOTOR_RANGE / 100.0));
+  }
+  else {
+    gpio_write(pi, LOWER_RIGHT_FORWARD, 0);
+    gpio_write(pi, LOWER_RIGHT_BACKWARD, 1);
+    set_PWM_dutycycle(pi, LOWER_RIGHT_PIN, (lowerRight * MOTOR_RANGE / -100.0));
+  }
+  return 0;
+}
+
+int update() {
+  setPoint(pidUpperLeft, upperLeftPercent);
+  double upperLeftSpeed = Sensor_getMotorSpeed(UPPER_LEFT_PIN);
+  update(pidUpperLeft, upperLeftSpeed, 0.1); // what is dt defined as?
+  double upperLeftAdjust = getVal(pidUpperLeft);
+  Motor_adjustUpperLeft(upperLeftAdjust);
+
+  setPoint(pidUpperRight, upperRightPercent);
+  double upperRightSpeed = Sensor_getMotorSpeed(UPPER_RIGHT_PIN);
+  update(pidUpperRight, upperRightSpeed, 0.1); // what is dt defined as?
+  double upperRightAdjust = getVal(pidUpperRight);
+  Motor_adjustUpperRight(upperRightAdjust);
+
+  setPoint(pidLowerLeft, lowerLeftPercent);
+  double lowerLeftSpeed = Sensor_getMotorSpeed(LOWER_LEFT_PIN);
+  update(pidLowerLeft, lowerLeftSpeed, 0.1); // what is dt defined as?
+  double lowerLeftAdjust = getVal(pidLowerLeft);
+  Motor_adjustLowerLeft(lowerLeftAdjust);
+
+  setPoint(pidLowerRight, lowerRightPercent);
+  double lowerRightSpeed = Sensor_getMotorSpeed(LOWER_RIGHT_PIN);
+  update(pidLowerRight, LowerRightSpeed, 0.1); // what is dt defined as?
+  double lowerRightAdjust = getVal(pidLowerRight);
+  Motor_adjustUpperLeft(lowerRightAdjust);
+}
+
+int resetPID() {
+    reset(pidUpperLeft);
+    reset(pidUpperRight);
+    reset(pidLowerLeft);
+    reset(pidLowerRight);
 }
 
 /* Utility Function, to input array */
