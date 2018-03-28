@@ -31,10 +31,10 @@ static double upperRightPercent = 0;
 static double lowerLeftPercent = 0;
 static double lowerRightPercent = 0;
 
-static PID_T pidUpperLeft = init(10.0, 10.0, 1.0);
-static PID_T pidUpperRight = init(10.0, 10.0, 1.0);
-static PID_T pidLowerLeft = init(10.0, 10.0, 1.0);
-static PID_T pidLowerRight = init(10.0, 10.0, 1.0);
+static PID_T pidUpperLeft;
+static PID_T pidUpperRight;
+static PID_T pidLowerLeft;
+static PID_T pidLowerRight;
 
 static int pi;
 
@@ -44,6 +44,11 @@ int Motor_init(int pifd) {
   upperRightPercent = 0;
   lowerLeftPercent = 0;
   lowerRightPercent = 0;
+
+  pidUpperLeft = init(10.0, 10.0, 1.0);
+  pidUpperRight = init(10.0, 10.0, 1.0);
+  pidLowerLeft = init(10.0, 10.0, 1.0);
+  pidLowerRight = init(10.0, 10.0, 1.0);
 
   gpio_write(pi, UPPER_LEFT_FORWARD, 0);
   gpio_write(pi, UPPER_LEFT_BACKWARD, 0);
@@ -196,7 +201,7 @@ int Motor_adjustLowerRight(double lowerRight) {
   return 0;
 }
 
-void update(double dt) {
+void updateMotors(double dt) {
   setPoint(pidUpperLeft, upperLeftPercent);
   double upperLeftSpeed = Sensor_getMotorSpeed(UPPER_LEFT_PIN);
   update(pidUpperLeft, upperLeftSpeed, dt); // what is dt defined as?

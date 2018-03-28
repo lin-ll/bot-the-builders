@@ -30,7 +30,7 @@ int Motor_adjustLowerLeft(double lowerLeft);
 int Motor_adjustLowerRight(double lowerRight);
 
 // ensures motors are spinning at right speed.
-void update();
+void updateMotors(double dt);
 
 // resets pid controllers.
 void reset();
