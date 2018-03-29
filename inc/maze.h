@@ -15,9 +15,10 @@ int getIntFromCoordinates(int row, int col);
 int getRowFromInt(int nodeRef);
 int getColFromInt(int nodeRef);
 
-heap_t *findShortestPath(Graph g, int start, int finish);
+int **findShortestPath(Graph g, int start, int finish);
+heap_t *getShortestPath(int **d, int finish);
 
-void traverseShortestPath(heap_t *h);
+void traverseShortestPath(heap_t *h, int start);
 
 // returns true is maze is fully explored
 int isExplored();

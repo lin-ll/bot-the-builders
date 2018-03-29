@@ -10,10 +10,6 @@
 
 //-------------------
 
-#define UPPER_LEFT_PIN 1
-#define UPPER_RIGHT_PIN 2
-#define LOWER_LEFT_PIN 3
-#define LOWER_RIGHT_PIN 4
 #define UPPER_LEFT_FORWARD 5
 #define UPPER_RIGHT_FORWARD 6
 #define UPPER_LEFT_BACKWARD 7
@@ -50,19 +46,23 @@ int Motor_init(int pifd) {
   pidLowerLeft = init(10.0, 10.0, 1.0);
   pidLowerRight = init(10.0, 10.0, 1.0);
 
-  gpio_write(pi, UPPER_LEFT_FORWARD, 0);
-  gpio_write(pi, UPPER_LEFT_BACKWARD, 0);
-  gpio_write(pi, UPPER_RIGHT_FORWARD, 0);
-  gpio_write(pi, UPPER_RIGHT_BACKWARD, 0);
-  gpio_write(pi, LOWER_LEFT_FORWARD, 0);
-  gpio_write(pi, LOWER_LEFT_BACKWARD, 0);
-  gpio_write(pi, LOWER_RIGHT_FORWARD, 0);
-  gpio_write(pi, LOWER_RIGHT_BACKWARD, 0);
+  set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, 0.0);
+  set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, 0.0);
+  set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, 0.0);
+  set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, 0.0);
+  set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, 0.0);
+  set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, 0.0);
+  set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, 0.0);
+  set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, 0.0);
 
-  set_PWM_range(pi, UPPER_LEFT_PIN, MOTOR_RANGE);
-  set_PWM_range(pi, UPPER_RIGHT_PIN, MOTOR_RANGE);
-  set_PWM_range(pi, LOWER_LEFT_PIN, MOTOR_RANGE);
-  set_PWM_range(pi, LOWER_RIGHT_PIN, MOTOR_RANGE);
+  set_PWM_range(pi, UPPER_LEFT_FORWARD, MOTOR_RANGE);
+  set_PWM_range(pi, UPPER_LEFT_BACKWARD, MOTOR_RANGE);
+  set_PWM_range(pi, UPPER_RIGHT_FORWARD, MOTOR_RANGE);
+  set_PWM_range(pi, UPPER_RIGHT_BACKWARD, MOTOR_RANGE);
+  set_PWM_range(pi, LOWER_LEFT_FORWARD, MOTOR_RANGE);
+  set_PWM_range(pi, LOWER_LEFT_BACKWARD, MOTOR_RANGE);
+  set_PWM_range(pi, LOWER_RIGHT_FORWARD, MOTOR_RANGE);
+  set_PWM_range(pi, LOWER_RIGHT_BACKWARD, MOTOR_RANGE);
   return 0;
 }
 
@@ -88,28 +88,24 @@ double Motor_getLowerRight() {
 int Motor_setUpperLeft(double upperLeft) {
   upperLeftPercent = upperLeft;
   if (upperLeft >= 0) {
-    gpio_write(pi, UPPER_LEFT_BACKWARD, 0);
-    gpio_write(pi, UPPER_LEFT_FORWARD, 1);
-    set_PWM_dutycycle(pi, UPPER_LEFT_PIN, (upperLeft * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, (upperLeft * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, 0.0);
   }
   else {
-    gpio_write(pi, UPPER_LEFT_FORWARD, 0);
-    gpio_write(pi, UPPER_LEFT_BACKWARD, 1);
-    set_PWM_dutycycle(pi, UPPER_LEFT_PIN, (upperLeft * MOTOR_RANGE / -100.0));
+    set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, 0.0);
+    set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, (upperLeft * MOTOR_RANGE / -100.0));
   }
   return 0;
 }
 
 int Motor_adjustUpperLeft(double upperLeft) {
   if (upperLeft >= 0) {
-    gpio_write(pi, UPPER_LEFT_BACKWARD, 0);
-    gpio_write(pi, UPPER_LEFT_FORWARD, 1);
-    set_PWM_dutycycle(pi, UPPER_LEFT_PIN, (upperLeft * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, (upperLeft * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, 0.0);
   }
   else {
-    gpio_write(pi, UPPER_LEFT_FORWARD, 0);
-    gpio_write(pi, UPPER_LEFT_BACKWARD, 1);
-    set_PWM_dutycycle(pi, UPPER_LEFT_PIN, (upperLeft * MOTOR_RANGE / -100.0));
+    set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, 0.0);
+    set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, (upperLeft * MOTOR_RANGE / -100.0));
   }
   return 0;
 }
@@ -117,28 +113,24 @@ int Motor_adjustUpperLeft(double upperLeft) {
 int Motor_setUpperRight(double upperRight) {
   upperRightPercent = upperRight;
   if (upperRight >= 0) {
-    gpio_write(pi, UPPER_RIGHT_BACKWARD, 0);
-    gpio_write(pi, UPPER_RIGHT_FORWARD, 1);
-    set_PWM_dutycycle(pi, UPPER_RIGHT_PIN, (upperRight * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, (upperRight * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, 0.0);
   }
   else {
-    gpio_write(pi, UPPER_RIGHT_FORWARD, 0);
-    gpio_write(pi, UPPER_RIGHT_BACKWARD, 1);
-    set_PWM_dutycycle(pi, UPPER_RIGHT_PIN, (upperRight * MOTOR_RANGE / -100.0));
+    set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, 0.0);
+    set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, (upperRight * MOTOR_RANGE / -100.0));
   }
   return 0;
 }
 
 int Motor_adjustUpperRight(double upperRight) {
   if (upperRight >= 0) {
-    gpio_write(pi, UPPER_RIGHT_BACKWARD, 0);
-    gpio_write(pi, UPPER_RIGHT_FORWARD, 1);
-    set_PWM_dutycycle(pi, UPPER_RIGHT_PIN, (upperRight * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, (upperRight * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, 0.0);
   }
   else {
-    gpio_write(pi, UPPER_RIGHT_FORWARD, 0);
-    gpio_write(pi, UPPER_RIGHT_BACKWARD, 1);
-    set_PWM_dutycycle(pi, UPPER_RIGHT_PIN, (upperRight * MOTOR_RANGE / -100.0));
+    set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, 0.0);
+    set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, (upperRight * MOTOR_RANGE / -100.0));
   }
   return 0;
 }
@@ -146,28 +138,24 @@ int Motor_adjustUpperRight(double upperRight) {
 int Motor_setLowerLeft(double lowerLeft) {
   lowerLeftPercent = lowerLeft;
   if (lowerLeft >= 0) {
-    gpio_write(pi, LOWER_LEFT_BACKWARD, 0);
-    gpio_write(pi, LOWER_LEFT_FORWARD, 1);
-    set_PWM_dutycycle(pi, LOWER_LEFT_PIN, (lowerLeft * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, (lowerLeft * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, 0.0);
   }
   else {
-    gpio_write(pi, LOWER_LEFT_FORWARD, 0);
-    gpio_write(pi, LOWER_LEFT_BACKWARD, 1);
-    set_PWM_dutycycle(pi, LOWER_LEFT_PIN, (lowerLeft * MOTOR_RANGE / -100.0));
+    set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, 0.0);
+    set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, (lowerLeft * MOTOR_RANGE / -100.0));
   }
   return 0;
 }
 
 int Motor_adjustLowerLeft(double lowerLeft) {
   if (lowerLeft >= 0) {
-    gpio_write(pi, LOWER_LEFT_BACKWARD, 0);
-    gpio_write(pi, LOWER_LEFT_FORWARD, 1);
-    set_PWM_dutycycle(pi, LOWER_LEFT_PIN, (lowerLeft * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, (lowerLeft * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, 0.0);
   }
   else {
-    gpio_write(pi, LOWER_LEFT_FORWARD, 0);
-    gpio_write(pi, LOWER_LEFT_BACKWARD, 1);
-    set_PWM_dutycycle(pi, LOWER_LEFT_PIN, (lowerLeft * MOTOR_RANGE / -100.0));
+    set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, 0.0);
+    set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, (lowerLeft * MOTOR_RANGE / -100.0));
   }
   return 0;
 }
@@ -175,28 +163,24 @@ int Motor_adjustLowerLeft(double lowerLeft) {
 int Motor_setLowerRight(double lowerRight) {
   lowerRightPercent = lowerRight;
   if (lowerRight >= 0) {
-    gpio_write(pi, LOWER_RIGHT_BACKWARD, 0);
-    gpio_write(pi, LOWER_RIGHT_FORWARD, 1);
-    set_PWM_dutycycle(pi, LOWER_RIGHT_PIN, (lowerRight * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, (lowerRight * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, 0.0);
   }
   else {
-    gpio_write(pi, LOWER_RIGHT_FORWARD, 0);
-    gpio_write(pi, LOWER_RIGHT_BACKWARD, 1);
-    set_PWM_dutycycle(pi, LOWER_RIGHT_PIN, (lowerRight * MOTOR_RANGE / -100.0));
+    set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, 0.0);
+    set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, (lowerRight * MOTOR_RANGE / -100.0));
   }
   return 0;
 }
 
 int Motor_adjustLowerRight(double lowerRight) {
   if (lowerRight >= 0) {
-    gpio_write(pi, LOWER_RIGHT_BACKWARD, 0);
-    gpio_write(pi, LOWER_RIGHT_FORWARD, 1);
-    set_PWM_dutycycle(pi, LOWER_RIGHT_PIN, (lowerRight * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, (lowerRight * MOTOR_RANGE / 100.0));
+    set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, 0.0);
   }
   else {
-    gpio_write(pi, LOWER_RIGHT_FORWARD, 0);
-    gpio_write(pi, LOWER_RIGHT_BACKWARD, 1);
-    set_PWM_dutycycle(pi, LOWER_RIGHT_PIN, (lowerRight * MOTOR_RANGE / -100.0));
+    set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, 0.0);
+    set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, (lowerRight * MOTOR_RANGE / -100.0));
   }
   return 0;
 }
