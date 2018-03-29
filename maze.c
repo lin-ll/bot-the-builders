@@ -208,6 +208,7 @@ void traverseShortestPath(heap_t *path, int start) {
 		while (!isEmpty(path)) {
 				int next = pop(path);
 				moveTo(curr, next);
+				curr = next;
 		}
 }
 

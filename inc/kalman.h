@@ -18,6 +18,4 @@ void init();
  **/
 void update(double *distances, double *encoders, double *imu, double *control, double *pos);
 
-
-
 #endif

@@ -15,6 +15,7 @@ double x_hat[NUM];
 double P[NUM*NUM];
 double P_hat[NUM*NUM];
 double temp[NUM*NUM];
+double R[NUM*NUM];
 
 /* In each step, how much uncertainty is there in our prediction? */
 /* I really really am unsure of these values; if it fails miserably try dividing them by 10 ?? */
@@ -152,7 +153,7 @@ void update(double *distances, double *encoders, double *imu, double *control, d
 
 	/* First, the predict step. Without sensors, what do we guess the new x is?
 	   We write a matrix that will take old x to new x */
-	F[ 3] = dt; // x += vx*dt
+	F[3] = dt; // x += vx*dt
 	F[10] = dt; // y += vy*dt
 	F[17] = dt; // t += vt*dt
 	/* if the robot is turned clockwise, then velocity up also moves the robot slightly right.
@@ -162,7 +163,6 @@ void update(double *distances, double *encoders, double *imu, double *control, d
 	   account. Note we are also linearizing sin around zero, so sin(t) becomes just t.*/
 	F[2] =  dt * x[4]; // x += t*(dt*vy)
 	F[8] = -dt * x[3]; // y -= t*(dt*vx)
-
 
 	mat_vec_mult(F, x, x_hat);
 	mat_mult(F, P, temp);
