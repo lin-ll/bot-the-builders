@@ -19,13 +19,13 @@ const int BUS = 1;
 const int GYRO_ADDR = 0x6B; // 7 bit 1101011;
 const int COMPASS_ADDR = 0x1D; // if it's wrong, try 1F
 
-#define ORIG_SHORT_DIST_ADDR 0x2A
+#define ORIG_SHORT_DIST_ADDR 0x29
 #define ORIG_LONG_DIST_ADDR 0x2A
 const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_SHORT_DIST_ADDR}; // bogus addresses
 const int LONG_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_LONG_DIST_ADDR}; // bogus addresses
 
-const int SHORT_SHUTDOWN_PINS[4] = {-1, 2, 3, 4}; // bogus pin numbers except for the -1
-const int LONG_SHUTDOWN_PINS[4] = {-1, 1, 2, 3}; // bogus pin numbers except for the -1
+const int SHORT_SHUTDOWN_PINS[4] = {-1, 11, 13, 15}; // bogus pin numbers except for the -1
+const int LONG_SHUTDOWN_PINS[4] = {-1, 19, 21, 23}; // bogus pin numbers except for the -1
 
 // The datasheet gives 8.75mdps/digit for default sensitivity
 const double RPS_PER_DIGIT = 0.00875*TWO_PI/360;
@@ -162,7 +162,6 @@ int Sensor_init(int pifd) {
   int i, j, success;
   
   adafruit_distance_set_pi_handle(pi);
-  /*
   // Getting the handles for short and long distance
   for(i=0; i<4; i++) {
     short_dist_handles[i] = i2c_open(pi, BUS, SHORT_DIST_ADDRS[i], 0);
@@ -197,6 +196,12 @@ int Sensor_init(int pifd) {
 
   printf("ALL OFF\n");
 
+
+  success = adafruit_distance_begin(short_dist_handles[3]);
+  printf("SUCCESS WAS %d\n", success);
+
+  
+
   // One by one, turn on short distance sensors
   for(i=0; i<3; i++) {
     printf("Turning on short distance sensor: %d\n", i);
@@ -204,7 +209,7 @@ int Sensor_init(int pifd) {
       gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_ON);
 
     // Library thinks we're talking to the same sensor each time
-    adafruit_distance_change_address(short_dist_handles[3], SHORT_DIST_ADDRS[i]);
+    //adafruit_distance_change_address(short_dist_handles[3], SHORT_DIST_ADDRS[i]);
     success = adafruit_distance_begin(short_dist_handles[i]);
     if(!success)
       printf("Short distance sensor error: %d\n", i);
@@ -237,7 +242,7 @@ int Sensor_init(int pifd) {
 
   // TODO: figure out what to do with accelerometer
   //acc_handle = i2c_open(ACC_BUS, ACC_ADDRESS);
-  */
+  
   initGyro();
   initCompass();
   return 0;

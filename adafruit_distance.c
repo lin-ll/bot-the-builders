@@ -41,6 +41,8 @@ int adafruit_distance_read8(int address)
   char dataWrite[2];
   char dataRead[1];
 
+  dataRead[0] = 42;
+
   dataWrite[0] = (address >> 8) & 0xFF;
   dataWrite[1] = address & 0xFF;
   int w = i2c_write_device(pi_handle, current_handle, dataWrite, 2);
@@ -69,6 +71,9 @@ void adafruit_distance_write8(int address, int data)
   data_write[2] = data & 0xFF;
   test = i2c_write_device(pi_handle, current_handle, data_write, 3);
   if (test != 0) printf("write returned %d\n", test);
+
+
+  //printf("In adafruit, wrote %d and read back %d\n", data, adafruit_distance_read8(address));
 }
 
 
@@ -163,9 +168,9 @@ int adafruit_distance_readRange(int sensor_handle) {
   current_handle = sensor_handle;
 
   int readOutput;
-  while (! ((readOutput=adafruit_distance_read8(VL6180X_REG_RESULT_RANGE_STATUS)) & 0x01)) {
-    printf("readOutput = %x", readOutput); fflush(stdout);
-  }
+  //while (! ((readOutput=adafruit_distance_read8(VL6180X_REG_RESULT_RANGE_STATUS)) & 0x01)) {
+  //printf("readOutput = %x\n", readOutput); fflush(stdout);
+  // }
 
   // Start a range measurement
   adafruit_distance_write8(VL6180X_REG_SYSRANGE_START, 0x01);
@@ -175,7 +180,7 @@ int adafruit_distance_readRange(int sensor_handle) {
 
   // read range in mm
   int range = adafruit_distance_read8(VL6180X_REG_RESULT_RANGE_VAL);
-
+  printf("raw range %d\n", range);
   // clear interrupt
   adafruit_distance_write8(VL6180X_REG_SYSTEM_INTERRUPT_CLEAR, 0x07);
 
@@ -192,9 +197,10 @@ int adafruit_distance_begin(int sensor_handle) {
   int count = 0;
   current_handle = sensor_handle;
 
+  printf("Model whatever is %d\n", adafruit_distance_read8(VL6180X_REG_IDENTIFICATION_MODEL_ID));
 
   if (adafruit_distance_read8(VL6180X_REG_IDENTIFICATION_MODEL_ID) != 0xB4) {
-    return 0;
+    //return 0;
   }
 
   //if (adafruit_distance_read8(VL6180X_REG_SYSTEM_FRESH_OUT_OF_RESET) == 0x01) {
@@ -202,6 +208,7 @@ int adafruit_distance_begin(int sensor_handle) {
   //}
 
   adafruit_distance_write8(VL6180X_REG_SYSTEM_FRESH_OUT_OF_RESET, 0x00);
+  printf("success for handle %d!\n", sensor_handle);
 
   return 1;
 }

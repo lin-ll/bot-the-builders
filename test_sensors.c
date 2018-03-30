@@ -13,12 +13,12 @@ int main(){
   //printf(pigpio_error(-83));
 
   Sensor_init(pi);
-
+  printf("DONE SENSOR INIT\n");
   
-  for(int i=0; i<5; i++){
-    double reading = Sensor_getLong(0);
+  for(int i=0; i<1000; i++){
+    double reading = Sensor_getShort(3);
     printf("reading: %f\n", reading);
-    sleep(300);
+    usleep(100000);
   }
   return 0;
 }
