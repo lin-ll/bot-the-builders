@@ -86,19 +86,22 @@ void InputChanged(byte motor)
   counter[motor] = counter[motor] + QEM[state[motor]][state_prev[motor]];   //Increment the count accordingly
   state_prev[motor] = state[motor];                   //Set the store the current state value to the prev. state
  
+    Serial.print(i+1);
+    Serial.print(" : "); 
+    Serial.println(counter[i]);
 }
 
 void loop() 
 {
-  //**** Temp: communicate with serial monitor instead of the PI
+  /* Temp: communicate with serial monitor instead of the PI
   for(i = 0; i <4; i++)
   {
-    //**** Temp: communicate with serial monitor instead of the PI
+    Temp: communicate with serial monitor instead of the PI
     Serial.print("Motor ");
-    Serial.print(i+1);
-    Serial.print(" : "); 
-    Serial.println(counter[i]);
-  }
+  } */
+
+  // Communicate with PI
+  
   
   delay(1000);
 }

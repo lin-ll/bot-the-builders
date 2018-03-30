@@ -2,8 +2,23 @@
 #include "inc/pigpio.h"
 #include "inc/motors.h"
 #include "inc/constants.h"
+#include "inc/pid.h"
+#include "inc/kalman.c"
+#include "inc/sensors.c"
 
-int mazeSize = 16;
+static PID_T pidLeftRight;
+static PID_T pidUpDown;
+static PID_T pidTheta;
+
+int setup() {
+    pidLeftRight = init(1.0, 10.0, 10.0);
+    pidUpDown = init(1.0, 10.0, 10.0);
+    pidTheta = init(1.0, 10.0, 10.0);
+    setPoint(pidUpDown, 0.0);
+    setPoint(pidLeftRight, 0.0);
+    setPoint(pidTheta, 0.0);
+    return 0;
+}
 
 int findDirection(int oldNode, int newNode) {
     int oldRow = oldNode / mazeSize;
@@ -29,8 +44,12 @@ int findDirection(int oldNode, int newNode) {
 }
 
 void stop() {
+    //TODO: Add braking
     double motors[4] = {0.0};
     Motor_set(motors);
+    reset(pidUpDown);
+    reset(pidLeftRight);
+    reset(pidTheta);
 }
 
 // assuming forward orientation, positive translation defined to the right,
@@ -44,10 +63,66 @@ void adjust(int direction, double mainVelocity, double translate,
     motors[(direction + 3) % 4] += - mainVelocity - translate;
 }
 
+double xOffset(int goalSpace) {
+    // target stores ideal x position where furthest wall is 0 in mm.
+    int targetRow = goalSpace / mazeSize;
+    double target = 180.0 * targetRow + 90.0;
+    double currX = kalmanX(); //TODO: calls kalman method to get X position
+    return target - currX;
+}
+
+double yOffset(int goalSpace) {
+    // same as xOffset
+    int targetCol = goalSpace % mazeSize;
+    double target = 180.0 * targetCol + 90.0;
+    double currY = kalmanY(); //TODO: calls kalman method to get Y position
+    return target - currY;
+}
+
+double thetaOffset() {
+    return Sensor_getGyro();
+}
+
+double getStoppingDistance() {
+    return 0.0;
+}
+/* following method simply uses PID to move the robot
+void pidCorrection {
+    double xError = xOffset(newNode);
+    double yError = yOffset(newNode);
+    double thetaError = thetaOffset();
+    double translate = 0;
+    double rotate = 0;
+    while (abs(xError) > 0.1 || abs(yError) > 0.1) {
+    }
+}
+*/
+
 void moveTo(int oldNode, int newNode) {
     int direction = findDirection(oldNode, newNode);
-    double mainVelocity = 100.0;
-    double translate = 10.0;
-    double rotate = 5.0;
-    adjust(direction, mainVelocity, translate, rotate);
+    double xError = xOffset(newNode);
+    double yError = yOffset(newNode);
+    double thetaError = thetaOffset();
+    double translate = 0;
+    double rotate = 0;
+    double stoppingDistance = getStoppingDistance();
+    if (direction  % 2 == 0) {
+        // moving Left-Right, so pidUpDown to stay straight
+        while (xError > stoppingDistance) {
+            update(pidUpDown, yError, 0.1);
+            translate = getVal(pidUpDown);
+            rotate = getVal(pidTheta);
+            double mainVelocity = 50.0;
+            adjust(direction, mainVelocity, translate, rotate);
+        }
+    } else {
+        while (yError > stoppingDistance) {
+          update(pidLeftRight, xError, 0.1);
+          translate = getVal(pidLeftRight);
+          rotate = getVal(pidTheta);
+          double mainVelocity = 50.0;
+          adjust(direction, mainVelocity, translate, rotate);
+        }
+    }
+
 }

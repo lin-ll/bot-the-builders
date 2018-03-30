@@ -19,6 +19,11 @@ void adjust(int direction, double mainVelocity, double translate, double rotate)
 // want to stop the robot
 void stop();
 
+double xOffset();
+double yOffset();
+double thetaOffset();
+double getStoppingDistance();
+
 // move from the old node to the new node
 void moveTo(int oldNode, int newNode);
 
