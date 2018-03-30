@@ -9,3 +9,5 @@
 #define FALSE 0
 
 #define mazeSize 16
+
+#define dt 0.1

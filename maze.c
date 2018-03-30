@@ -203,27 +203,6 @@ heap_t *getShortestPath(int **d, int finish) {
 		return path;
 }
 
-void traverseShortestPath(heap_t *path, int start) {
-		int curr = start;
-		while (!isEmpty(path)) {
-				int next = pop(path);
-				moveTo(curr, next);
-				curr = next;
-		}
-}
-
-void returnToStart(Graph g, int currNode) {
-		int **distances = findShortestPath(g, currNode, startSpace);
-		heap_t *path = getShortestPath(distances, startSpace);
-		traverseShortestPath(path, currNode);
-}
-
-void solveMaze(Graph g) {
-		int **distances = findShortestPath(g, startSpace, goalSpace);
-		heap_t *path = getShortestPath(distances, goalSpace);
-		traverseShortestPath(path, startSpace);
-}
-
 // Find the maze, solve it for shortest path, and traverse this path.
 int main(int argc, char *argv[]) {
 }

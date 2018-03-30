@@ -1,4 +1,4 @@
-/* 
+/*
 * general.h has all the methods for making the command from maze.c
 * to actually making the robot move using motors.c
 */
@@ -32,6 +32,8 @@ double checkDistanceRight();
 void maintainLR();
 
 void maintainFB();
+
+void maintainTheta();
 
 // returns value read from sensor s
 double sensor(int s);
