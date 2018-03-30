@@ -1,7 +1,7 @@
 # Macros
 CC = gcc
 IDIR = ./inc
-CFLAGS = -I$(IDIR) 
+CFLAGS = -I$(IDIR) -Wall -pthread -lpigpiod_if2 -lrt -lm 
 
 # Pattern rule
 %.o: %.c
@@ -16,6 +16,8 @@ clean:
 robot: maze.o graph.o motors.o kalman.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
+test_sensors: test_sensors.o sensors.o adafruit_distance.o
+	$(CC) -o $@ $^ $(CFLAGS)
 
 #motors.o: motors.h
 #sensors.o: sensors.h

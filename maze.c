@@ -3,72 +3,66 @@
 /* and motor control.                                                         */
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
-#include <graph.h>
-#include <controls.h>
-#include <heap.h>
+#include "inc/graph.h"
+#include "inc/heap.h"
+#include "inc/constant.h"
 
-// typedef struct{
-// 		Graph maze;
-// 		int **traversed; // 0 for false, 1 for true
-// } mazeSolver;
-
-static int mazeSize = 16;
+static Graph maze; // graph recording walls and such
+static int traversed[16][16] = {0}; // record of traversed squares
+static int unexplored = 256; // number of unexplored squares
+static int goalSpace = 120; // target space
+static int startSpace = 0; // starting space
 
 // Visualize the maze and parse it into a graph. Descritize each unit of maze
 // into a vertex, and connect them with edges of unit length. Uses DFS.
 Graph discoverMaze() {
-		Graph maze = graph_create(mazeSize * mazeSize);
+		maze = graph_create(mazeSize * mazeSize);
 		// connect center squares
 		graph_add_edge(maze, 119, 120);
 		graph_add_edge(maze, 119, 135);
 		graph_add_edge(maze, 120, 136);
 		graph_add_edge(maze, 135, 136);
-		int traversed[mazeSize][mazeSize];
-		dfs(maze, 0, 0);
 }
 
 // implements depth first search
-void dfs(Graph maze, int row, int col) {
+int dfs(int row, int col, int leftWall, int rightWall, int upWall, int downWall) {
 		if (row < 0 || row >= mazeSize) {
-				return; // invalid row
+				return -1; // invalid row
 		}
 		if (col < 0 || col >= mazeSize) {
-				return; // invalid col
+				return -1; // invalid col
 		}
 
 		// if square has already been travelled to
 		if (traversed[row][col] == 1) {
-				return;
+				return -1;
 		}
 
 		traversed[row][col] = 1;
+		unexplored--;
 		int nodeRef = getIntFromCoordinates(row, col);
 
 		/* assumes there is an isWall function which senses if a wall is present
 		*  between each adjacent node and current node */
 		// left
-		if (col != 0 && isWall(row, col, row, col - 1) == 0) {
+		if (col != 0 && leftWall == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef - 1);
-				// move Left
-				dfs(maze, row, col - 1);
+				return nodeRef - 1;
 		}
 		// right
-		if (col != mazeSize - 1 && isWall(row, col, row, col + 1) == 0) {
+		if (col != mazeSize - 1 && rightWall == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef + 1);
-				// move right
-				dfs(maze, row, col + 1);
+				return nodeRef + 1;
 		}
 		// up
-		if (row != 0 && isWall(row, col, row - 1, col) == 0) {
+		if (row != 0 && upWall == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef - mazeSize);
-				// move up
-				dfs(maze, row - 1, col);
+				return nodeRef - mazeSize;
 		}
 		// down
-		if (row != mazeSize - 1 && isWall(row, col, row + 1, col) == 0) {
+		if (row != mazeSize - 1 && downWall == 0) {
 				graph_add_edge(maze, nodeRef, nodeRef + mazeSize);
-				// move down
-				dfs(maze, row + 1, col);
+				return nodeRef + mazeSize;
 		}
 }
 
@@ -78,85 +72,137 @@ int getIntFromCoordinates(int row, int col) {
 }
 
 // converts node to row and column
-int *getCoordFromInt(int nodeRef) {
-		int col = nodeRef % mazeSize;
+int getRowFromInt(int nodeRef) {
 		int row = nodeRef / mazeSize;
-		int *coords = {row, col};
-		return coords;
+		return row;
+}
+
+int getColFromInt(int nodeRef) {
+		int col = nodeRef % mazeSize;
+		return col;
+}
+
+// returns whether maze has been fully explored
+int isExplored() {
+		return unexplored == 0;
 }
 
 // Find the shortest path given the graph representaion of the maze. Use
 // Dijkstra's algorithm.
-heap_t findShortestPath(Graph g) {
-		int distances[mazeSize][mazeSize];
-		for (int i = 0; i < mazeSize; i++) {
-				for (int j = 0; j < mazeSize; j++) {
-						distances[i][j] = INT_MAX;
-				}
-		}
-		distances[0][0] = 0;
-
-		heap_t visited;
-		heap_t unvisited;
-
-		for (int i = 0; i < mazeSize; i++) {
-				for (int j = 0; j < mazeSize; j++) {
-						int nodeRef = getIntFromCoordinates(i,j);
-						char *s = nodeRef;
-						push(unvisited, distances[i][j], s);
+int **findShortestPath(Graph g, int start, int finish) {
+		int distances[16][16] = {0};
+		int i;
+		int j;
+		for (i = 0; i < mazeSize; i++) {
+				for (j = 0; j < mazeSize; j++) {
+						distances[i][j] = 10000;
 				}
 		}
 
-		while (true) {
-				char *insert = pop(unvisited);
-				int nodeRef = (int) (insert);
-				int *coords = getCoordFromInt(nodeRef);
-				int row = coords[0];
-				int col = coords[1];
-				push(visited, distances[row][col], insert);
+		int startRow = getRowFromInt(startSpace);
+		int startCol = getColFromInt(startSpace);
+		distances[startRow][startCol] = 0;
+
+		heap_t *visited;
+		heap_t *unvisited;
+
+		int nodeRef = start;
+		int row = getRowFromInt(nodeRef);
+		int col = getColFromInt(nodeRef);
+
+		while (nodeRef != finish) {
 
 				// left
 				if (col != 0 && graph_has_edge(g, nodeRef, nodeRef - 1) == 0) {
 						if (distances[row][col - 1] > distances[row][col] + 1) {
 								distances[row][col - 1] = distances[row][col] + 1;
+								push(unvisited, distances[row][col - 1], nodeRef - 1);
 						}
 				}
 				// right
-				if (col != mazeSize - 1 && graph_has_edge(g, nodeRef, nodeRef - 1) == 0) {
+				if (col != mazeSize - 1 && graph_has_edge(g, nodeRef, nodeRef + 1) == 0) {
 						if (distances[row][col + 1] > distances[row][col] + 1) {
 								distances[row][col + 1] = distances[row][col] + 1;
+								push(unvisited, distances[row][col + 1], nodeRef + 1);
 						}
 				}
 				// up
 				if (row != 0 && graph_has_edge(g, nodeRef, nodeRef - mazeSize) == 0) {
 						if (distances[row - 1][col] > distances[row][col] + 1) {
 								distances[row - 1][col] = distances[row][col] + 1;
+								push(unvisited, distances[row - 1][col], nodeRef - mazeSize);
 						}
 				}
 				// down
 				if (row != mazeSize - 1 && graph_has_edge(g, nodeRef, nodeRef + mazeSize) == 0) {
 						if (distances[row + 1][col] > distances[row][col] + 1) {
 								distances[row + 1][col] = distances[row][col] + 1;
+								push(unvisited, distances[row + 1][col], nodeRef + mazeSize);
 						}
 				}
+
+				nodeRef = pop(unvisited);
+				row = getRowFromInt(nodeRef);
+				col = getColFromInt(nodeRef);
 		}
 
-		return visited;
+		return distances;
 }
 
 // Traverse the shortest path.
-void traverseShortestPath(heap_t h) {
-		while (!isEmpty(h)) {
-				char *nextNode = pop(h);
-				int next = (int) (nextNode);
-				int *coords = getCoordFromInt(next);
-				int nextRow = coords[0];
-				int nextCol = coords[1];
-				// moveTo(nextRow, nextCol)
+heap_t *getShortestPath(int **d, int finish) {
+		int nodeRef = finish;
+		int row = getRowFromInt(finish);
+		int col = getRowFromInt(finish);
+		int currDistance = d[row][col];
+		heap_t *path;
+		push(path, currDistance, nodeRef);
+		while (currDistance > 0) {
+			row = getRowFromInt(nodeRef);
+			col = getColFromInt(nodeRef);
+
+			// left
+			if (col != 0 && graph_has_edge(g, nodeRef, nodeRef - 1) == 0) {
+					if (d[row][col - 1] < d[row][col]) {
+							push(path, d[row][col - 1], nodeRef - 1);
+							currDistance = d[row][col - 1];
+							nodeRef = nodeRef - 1;
+							continue;
+					}
+			}
+
+			// right
+			if (col != mazeSize - 1 && graph_has_edge(g, nodeRef, nodeRef + 1) == 0) {
+					if (d[row][col + 1] < d[row][col]) {
+							push(path, d[row][col + 1], nodeRef + 1);
+							currDistance = d[row][col + 1];
+							nodeRef = nodeRef + 1;
+							continue;
+					}
+			}
+			// up
+			if (row != 0 && graph_has_edge(g, nodeRef, nodeRef - mazeSize) == 0) {
+				if (d[row - 1][col] < d[row - 1][col]) {
+						push(path, d[row - 1][col], nodeRef - mazeSize);
+						currDistance = d[row - 1][col];
+						nodeRef = nodeRef - mazeSize;
+						continue;
+				}
+			}
+			// down
+			if (row != mazeSize - 1 && graph_has_edge(g, nodeRef, nodeRef + mazeSize) == 0) {
+				if (d[row + 1][col] < d[row][col]) {
+						push(path, d[row + 1][col], nodeRef + mazeSize);
+						currDistance = d[row + 1][col];
+						nodeRef = nodeRef + mazeSize;
+						continue;
+				}
+			}
 		}
+
+		return path;
 }
 
 // Find the maze, solve it for shortest path, and traverse this path.
 int main(int argc, char *argv[]) {
-
 }

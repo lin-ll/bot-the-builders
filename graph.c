@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "graph.h"
+#include "inc/graph.h"
 
 /* basic directed graph type */
 /* the implementation uses adjacency lists
@@ -27,8 +27,7 @@ struct graph {
 };
 
 /* create a new graph with n vertices labeled 0..n-1 and no edges */
-Graph
-graph_create(int n)
+Graph graph_create(int n)
 {
     Graph g;
     int i;

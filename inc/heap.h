@@ -1,11 +1,18 @@
+/*----------------------------------------------------------------------------*/
+/* heap.h 																      */
+/* Operates like a stack in C												  */
+/*----------------------------------------------------------------------------*/
+
 #ifndef HEAP_H
 #define HEAP_H
 
+// define a node in the stack
 typedef struct {
     int priority;
-    char *data;
+    int data;
 } node_t;
 
+// define the stack itself
 typedef struct {
     node_t *nodes;
     int len;
@@ -13,7 +20,7 @@ typedef struct {
 } heap_t;
 
 int isEmpty(heap_t *h);
-void push (heap_t *h, int priority, char *data);
-char *pop (heap_t *h);
+void push (heap_t *h, int priority, int data);
+int pop (heap_t *h);
 
 #endif

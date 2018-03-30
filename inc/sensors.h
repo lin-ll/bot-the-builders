@@ -1,7 +1,7 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
-/* Motor Dirver */
+/* Motor Driver */
 
 /**
  * Initialize Sensors
@@ -17,6 +17,9 @@ double Sensor_getCompass();
 /* Calibrates Current angle as "0" (averages over n readings)*/
 void Sensor_calCompass(int n);
 void Sensor_calGyro(int n);
+
+/* Return speed of motors */
+double Sensor_getMotorSpeed(int motor);
 
 /* Linear Stuff */
 enum Dir_t {
@@ -36,6 +39,5 @@ double Sensor_orient(enum Dir_t dir);
 
 /* Any Cleanup */
 void Sensor_free();
-
 
 #endif
