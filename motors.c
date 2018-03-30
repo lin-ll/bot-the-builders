@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include "inc/pigpiod_if2.h"
+#include <pigpiod_if2.h>
 #include "inc/pid.h"
 #include "inc/sensors.h"
 
