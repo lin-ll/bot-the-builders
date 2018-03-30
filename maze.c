@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include "inc/graph.h"
 #include "inc/heap.h"
+#include "inc/constant.h"
 
-static int mazeSize = 16;
 static Graph maze; // graph recording walls and such
 static int traversed[16][16] = {0}; // record of traversed squares
 static int unexplored = 256; // number of unexplored squares
@@ -89,7 +89,7 @@ int isExplored() {
 
 // Find the shortest path given the graph representaion of the maze. Use
 // Dijkstra's algorithm.
-heap_t *findShortestPath(Graph g, int start, int finish) {
+int **findShortestPath(Graph g, int start, int finish) {
 		int distances[16][16] = {0};
 		int i;
 		int j;
@@ -107,11 +107,10 @@ heap_t *findShortestPath(Graph g, int start, int finish) {
 		heap_t *unvisited;
 
 		int nodeRef = start;
+		int row = getRowFromInt(nodeRef);
+		int col = getColFromInt(nodeRef);
 
 		while (nodeRef != finish) {
-				int row = getRowFromInt(nodeRef);
-				int col = getColFromInt(nodeRef);
-				push(visited, distances[row][col], nodeRef);
 
 				// left
 				if (col != 0 && graph_has_edge(g, nodeRef, nodeRef - 1) == 0) {
@@ -143,29 +142,65 @@ heap_t *findShortestPath(Graph g, int start, int finish) {
 				}
 
 				nodeRef = pop(unvisited);
+				row = getRowFromInt(nodeRef);
+				col = getColFromInt(nodeRef);
 		}
 
-		return visited;
+		return distances;
 }
 
 // Traverse the shortest path.
-void traverseShortestPath(heap_t *h) {
-		int currNode = pop(h);
-		while (!isEmpty(h)) {
-				int nextNode = pop(h);
-				moveTo(currNode, nextNode);
-				currNode = nextNode;
+heap_t *getShortestPath(int **d, int finish) {
+		int nodeRef = finish;
+		int row = getRowFromInt(finish);
+		int col = getRowFromInt(finish);
+		int currDistance = d[row][col];
+		heap_t *path;
+		push(path, currDistance, nodeRef);
+		while (currDistance > 0) {
+			row = getRowFromInt(nodeRef);
+			col = getColFromInt(nodeRef);
+
+			// left
+			if (col != 0 && graph_has_edge(g, nodeRef, nodeRef - 1) == 0) {
+					if (d[row][col - 1] < d[row][col]) {
+							push(path, d[row][col - 1], nodeRef - 1);
+							currDistance = d[row][col - 1];
+							nodeRef = nodeRef - 1;
+							continue;
+					}
+			}
+
+			// right
+			if (col != mazeSize - 1 && graph_has_edge(g, nodeRef, nodeRef + 1) == 0) {
+					if (d[row][col + 1] < d[row][col]) {
+							push(path, d[row][col + 1], nodeRef + 1);
+							currDistance = d[row][col + 1];
+							nodeRef = nodeRef + 1;
+							continue;
+					}
+			}
+			// up
+			if (row != 0 && graph_has_edge(g, nodeRef, nodeRef - mazeSize) == 0) {
+				if (d[row - 1][col] < d[row - 1][col]) {
+						push(path, d[row - 1][col], nodeRef - mazeSize);
+						currDistance = d[row - 1][col];
+						nodeRef = nodeRef - mazeSize;
+						continue;
+				}
+			}
+			// down
+			if (row != mazeSize - 1 && graph_has_edge(g, nodeRef, nodeRef + mazeSize) == 0) {
+				if (d[row + 1][col] < d[row][col]) {
+						push(path, d[row + 1][col], nodeRef + mazeSize);
+						currDistance = d[row + 1][col];
+						nodeRef = nodeRef + mazeSize;
+						continue;
+				}
+			}
 		}
-}
 
-void returnToStart(Graph g, int currNode) {
-		heap_t *h = findShortestPath(g, currNode, startSpace);
-		traverseShortestPath(h);
-}
-
-void solveMaze(Graph g) {
-		heap_t *h = findShortestPath(g, startSpace, goalSpace);
-		traverseShortestPath(h);
+		return path;
 }
 
 // Find the maze, solve it for shortest path, and traverse this path.

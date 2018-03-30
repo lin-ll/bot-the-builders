@@ -6,14 +6,30 @@
 #include "inc/motors.h"
 #include "inc/sensors.h"
 #include "inc/kalman.h"
+#include "inc/constants.h"
+#include "inc/control.h"
 
 // WRITING UNDER THE ASSUMED FRAMEWORK:
-/* 
+/*
 	1. kalman.c processes information from sensors.h and should pass information
-	2. this file will then process the movement, checking back with kalman.c, 
+	2. this file will then process the movement, checking back with kalman.c,
 		maybe even with sensors.c
 	3. Communicate with motors.c to move the omniwheels
 */
+
+static PID_T pidLeftRight;
+static PID_T pidUpDown;
+static PID_T pidTheta;
+
+int setup() {
+    pidLeftRight = init(1.0, 10.0, 10.0);
+    pidUpDown = init(1.0, 10.0, 10.0);
+    pidTheta = init(1.0, 10.0, 10.0);
+    setPoint(pidUpDown, 0.0);
+    setPoint(pidLeftRight, 0.0);
+    setPoint(pidTheta, 0.0);
+    return 0;
+}
 
 // moves a given distance c forwards
 void forwards(int c) {
@@ -118,12 +134,42 @@ double checkDistanceRight() {
 
 // maintains robot in center of path
 // dynamically adjust the speed of the wheels
-void maintainLR() {
+void maintainLR(int goalSpace) {
     // calls check Distance Front and Back
+		double xError = xOffset(goalSpace);
+		update(pidLeftRight, xError, dt);
+		double correction = getVal(pidLeftRight);
+		if (yError > 0) {
+				left(correction * dt);
+		} else {
+				right(correction * dt);
+		}
 }
 
-void maintainFB() {
+void maintainFB(int goalSpace) {
     // calls check Distance Left and Right
+		double yError = yOffset(goalSpace);
+		update(pidUpDown, yError, dt);
+		double correction = getVal(pidUpDown);
+		if (yError > 0) {
+				back(correction * dt);
+		} else {
+				forwards(correction * dt);
+		}
+}
+
+//TODO: ensure robot stays in same orientation
+void maintainTheta() {
+		double radius = 7.0; // units mm
+		double thetaError = Sensor_getGyro();
+		update(pidTheta, thetaError, dt);
+		double correction = getVal(pidTheta);
+		correction = correction * radius;
+		//TODO: put correction back into motors
+		Motor_setUpperLeft(Motor_getUpperLeft() + correction);
+		Motor_setUpperRight(Motor_getUpperRight() + correction);
+		Motor_setLowerLeft(Motor_getLowerLeft() + correction);
+		Motor_setLowerRight(Motor_getLowerRight() + correction);
 }
 
 // returns value read from sensor s
@@ -132,14 +178,13 @@ void maintainFB() {
     /* We don't really need this?????? Call from sensor.c directly -DC */
 //}
 
-
 // checks if there is Wall in moving direction
 int checkWall() {
 
 }
 
 
-// for unit testing, comment out if need be because we can only 
-// have one main 
+// for unit testing, comment out if need be because we can only
+// have one main
 /*int main(int argc, char *argv[]) {
 }*/
