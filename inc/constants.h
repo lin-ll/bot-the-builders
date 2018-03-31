@@ -66,3 +66,10 @@
 #define LONG_PIN_BACK 5
 #define LONG_PIN_LEFT 13
 #define LONG_PIN_RIGHT 21
+
+//-------------------
+
+#define LED_GRAY 14
+#define LED_BROWN 15
+#define LED_ORANGE 16
+
