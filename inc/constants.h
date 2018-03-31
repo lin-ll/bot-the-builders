@@ -62,7 +62,7 @@
 #define SHORT_PIN_LEFT 17
 #define SHORT_PIN_RIGHT 7
 
-#define LONG_PIN_FRONT 11
+#define LONG_PIN_FRONT 10
 #define LONG_PIN_BACK 5
 #define LONG_PIN_LEFT 13
 #define LONG_PIN_RIGHT 21
