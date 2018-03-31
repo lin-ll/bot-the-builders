@@ -6,11 +6,8 @@
 #ifndef CTRL_INCLUDED
 #define CTRL_INCLUDED
 
-// initialize PIDs
-int setup();
-
-// hold onto the size of the maze
-int mazeSize;
+// initialize values
+int controls_setup();
 
 // find the orientation of our robot
 int findDirection(int oldNode, int newNode);
@@ -36,5 +33,7 @@ double getStoppingDistance();
 
 // move from the old node to the new node
 void moveTo(int oldNode, int newNode);
+
+void move();
 
 #endif
