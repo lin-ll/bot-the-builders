@@ -1,5 +1,6 @@
 // constants
-
+#ifndef CONSTANTS_INC
+#define CONSTANTS_INC
 #define RIGHT 0
 #define DOWN 1
 #define LEFT 2
@@ -48,9 +49,9 @@
 
 //-------------------
 
-#define BUS 1;
-#define GYRO_ADDR 0x6B; // 7 bit 1101011;
-#define COMPASS_ADDR 0x1D; // if it's wrong, try 1F
+#define BUS 1
+#define GYRO_ADDR 0x6B // 7 bit 1101011;
+#define COMPASS_ADDR 0x1D // if it's wrong, try 1F
 
 //-------------------
 
@@ -66,3 +67,5 @@
 #define LONG_PIN_BACK 5
 #define LONG_PIN_LEFT 13
 #define LONG_PIN_RIGHT 21
+
+#endif

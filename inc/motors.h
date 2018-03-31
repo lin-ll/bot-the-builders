@@ -28,7 +28,7 @@ int Motor_setLowerRight(double lowerRight);
 void updateMotors(double dt);
 
 // resets pid controllers.
-void reset();
+void resetPID();
 
 /* Utility Function, to input array */
 int Motor_set(double* motors);

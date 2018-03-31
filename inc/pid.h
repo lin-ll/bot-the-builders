@@ -1,5 +1,6 @@
 //pid.h
-
+#ifndef PID_INC
+#define PID_INC
 struct PID {
 		double kP ,kI, kD;
 		double integral;
@@ -24,3 +25,4 @@ void update(PID_T pid, double val, double dt);
 
 // return PID value
 double getVal(PID_T pid);
+#endif
