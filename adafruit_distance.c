@@ -167,17 +167,17 @@ void adafruit_distance_loadSettings(void) {
 int adafruit_distance_readRange(int sensor_handle) {
   current_handle = sensor_handle;
 
-  int readOutput;
+  //int readOutput;
   //while (! ((readOutput=adafruit_distance_read8(VL6180X_REG_RESULT_RANGE_STATUS)) & 0x01)) {
   //printf("readOutput = %x\n", readOutput); fflush(stdout);
-  // }
-
+   //}
+	printf("A");
   // Start a range measurement
   adafruit_distance_write8(VL6180X_REG_SYSRANGE_START, 0x01);
-
+	printf("B");
   // Poll until bit 2 is set
   while (! (adafruit_distance_read8(VL6180X_REG_RESULT_INTERRUPT_STATUS_GPIO) & 0x04));
-
+	printf("C");
   // read range in mm
   int range = adafruit_distance_read8(VL6180X_REG_RESULT_RANGE_VAL);
   printf("raw range %d\n", range);

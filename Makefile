@@ -22,6 +22,9 @@ test_sensors: test_sensors.o sensors.o adafruit_distance.o
 test_motors: test_motors.o 
 	$(CC) -o $@ $^ $(CFLAGS)
 
+test_distance: test_distance.o adafruit_distance.o 
+	$(CC) -o $@ $^ $(CFLAGS)
+
 #motors.o: motors.h
 #sensors.o: sensors.h
 #graph.o: graph.h

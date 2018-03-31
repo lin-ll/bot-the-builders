@@ -24,8 +24,8 @@ const int COMPASS_ADDR = 0x1D; // if it's wrong, try 1F
 const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_SHORT_DIST_ADDR}; // bogus addresses
 const int LONG_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_LONG_DIST_ADDR}; // bogus addresses
 
-const int SHORT_SHUTDOWN_PINS[4] = {-1, 11, 13, 15}; // bogus pin numbers except for the -1
-const int LONG_SHUTDOWN_PINS[4] = {-1, 19, 21, 23}; // bogus pin numbers except for the -1
+const int SHORT_SHUTDOWN_PINS[4] = {-1, 4, 17, 7}; // bogus pin numbers except for the -1
+const int LONG_SHUTDOWN_PINS[4] = {-1, 5, 13, 21}; // bogus pin numbers except for the -1
 
 // The datasheet gives 8.75mdps/digit for default sensitivity
 const double RPS_PER_DIGIT = 0.00875*TWO_PI/360;
@@ -243,8 +243,8 @@ int Sensor_init(int pifd) {
   // TODO: figure out what to do with accelerometer
   //acc_handle = i2c_open(ACC_BUS, ACC_ADDRESS);
   
-  initGyro();
-  initCompass();
+  //initGyro();
+  //initCompass();
   return 0;
 }
 
