@@ -16,13 +16,13 @@ clean:
 robot: maze.o graph.o motors.o kalman.o constants.h
 	$(CC) -o $@ $^ $(CFLAGS)
 
-test_sensors: test_sensors.o sensors.o adafruit_distance.o constants.h
+test_sensors: test_sensors.o sensors.o adafruit_distance.o 
 	$(CC) -o $@ $^ $(CFLAGS)
 
-test_motors: test_motors.o constants.h
+test_motors: test_motors.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
-test_distance: test_distance.o adafruit_distance.o constants.h
+test_distance: test_distance.o adafruit_distance.o 
 	$(CC) -o $@ $^ $(CFLAGS)
 
 test_led: test_leds.o leds.o
