@@ -18,10 +18,10 @@ void stop();
 // returns if robot is in desired position
 int update();
 
-// move from the old node to the new node
-void moveTo(int oldNode, int newNode);
+// update the direction that we want the robot to move
+void moveTo(int direction);
 
-// moves robot
+// moves robot in pre-set direction
 void move();
 
 #endif
