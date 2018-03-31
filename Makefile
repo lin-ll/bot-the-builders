@@ -19,6 +19,9 @@ robot: maze.o graph.o motors.o kalman.o
 test_sensors: test_sensors.o sensors.o adafruit_distance.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
+test_motors: test_motors.o 
+	$(CC) -o $@ $^ $(CFLAGS)
+
 #motors.o: motors.h
 #sensors.o: sensors.h
 #graph.o: graph.h
