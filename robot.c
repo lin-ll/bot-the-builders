@@ -8,20 +8,20 @@
 #include "inc/heap.h"
 
 int explore() {
-    int explorationVelocity = 10; // speed for exploration
-    int row = 0;
-    int col = 0;
-    int currNode = getIntFromCoordinates(row, col);
-    while (!isExplored()) {
-        // gather information about walls from sensors
-        int leftWall = 0;
-        int rightWall = 0;
-        int upWall = 0;
-        int downWall = 0;
-        int nextNode = dfs(row, col, leftWall, rightWall, upWall, downWall);
-        moveTo(currNode, nextNode);
-        currNode = nextNode;
-    }
+	int explorationVelocity = 10; // speed for exploration
+	int row = 0;
+	int col = 0;
+	int currNode = getIntFromCoordinates(row, col);
+	while (!isExplored()) {
+		// gather information about walls from sensors
+		int leftWall = 0;
+		int rightWall = 0;
+		int upWall = 0;
+		int downWall = 0;
+		int nextNode = dfs(row, col, leftWall, rightWall, upWall, downWall);
+		moveTo(currNode, nextNode);
+		currNode = nextNode;
+	}
 }
 
 void traverseShortestPath(heap_t *path, int start) {
@@ -46,25 +46,22 @@ void solveMaze(Graph g) {
 }
 
 void main() {
-    explore();
-    returnToStart();
-    solveMaze();
+	explore();
+	returnToStart();
+	solveMaze();
 
-    controls_setup();
+  controls_setup();
 
-    // from danstan
-    float destX;
-    float destY;
-
-    int controls_finished = 0;
+	// from danstan
+	float destX;
+	float destY;
 
 
+	int controls_finished = 1;
 
 
-	while(True) {
-	// check buttons
 
-
+<<<<<<< HEAD
 	// do controls thing
 	controls_finished = controls.update();
 	if(controls_finished){
@@ -78,11 +75,34 @@ void main() {
 	}
 
   controls.move();
+=======
+
+	while(1) {
+			// check buttons
+
+		// do controls thing
+		controls_finished = controls.update();
+		if(controls_finished){
+			int *up_wall, *down_wall, *left_wall, *right_wall;
+			contols.find_walls(up_wall, down_wall, left_wall, right_wall);
+			dir = maze.dfs(up_wall, down_wall, left_wall, right_wall);
+			controls.moveTo(dir);
+>>>>>>> 8df0937d4914999ce4eb8d393fbc1db35936b468
+
+			if(dir == -1){
+				// we did it!
+				controls.stop();
+				break;
+			}
+
+			controls.set_new_dest(dir);
+		}
 
 
+		controls_finished = controls.update();
 
-
-	//// do Kalman thing
-	// get all sensor values
-	// call Kalman with sensor values
+		//// do Kalman thing
+		// get all sensor values
+		// call Kalman with sensor values
+	}
 }

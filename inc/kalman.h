@@ -18,4 +18,18 @@ void init();
  **/
 void update(double *distances, double *encoders, double *imu, double *control, double *pos);
 
+// x position/velocity in mm with the corner of the maze 0
+double getx(); 
+double getvx(); 
+
+// y position/velocity in mm with the corner of the maze 0
+double gety();
+double getvy();
+
+// robot's current rotation/velocity (theta) in radians
+double gett();
+double getvt();
+
+
+
 #endif
