@@ -16,12 +16,12 @@ static double destY;
 static double currDir;
 
 int Control_init() {
-	pidLeftRight = init(1.0, 10.0, 10.0);
-	pidUpDown = init(1.0, 10.0, 10.0);
-	pidTheta = init(1.0, 10.0, 10.0);
-	setPoint(pidUpDown, 0.0);
-	setPoint(pidLeftRight, 0.0);
-	setPoint(pidTheta, 0.0);
+	pidLeftRight = Pid_init(1.0, 10.0, 10.0);
+	pidUpDown = Pid_init(1.0, 10.0, 10.0);
+	pidTheta = Pid_init(1.0, 10.0, 10.0);
+	Pid_setPoint(pidUpDown, 0.0);
+	Pid_setPoint(pidLeftRight, 0.0);
+	Pid_setPoint(pidTheta, 0.0);
 	destX = SQUARE_SIZE / 2;
 	destY = SQUARE_SIZE / 2;
 	currDir = 0;
@@ -29,10 +29,10 @@ int Control_init() {
 }
 
 int Control_findDirection(int oldNode, int newNode) {
-	int oldRow = oldNode / mazeSize;
-	int oldCol = oldNode % mazeSize;
-	int newRow = newNode / mazeSize;
-	int newCol = newNode % mazeSize;
+	int oldRow = oldNode / MAZE_SIZE;
+	int oldCol = oldNode % MAZE_SIZE;
+	int newRow = newNode / MAZE_SIZE;
+	int newCol = newNode % MAZE_SIZE;
 
 	if (newRow - oldRow == 1) {
 		return DOWN; // down
@@ -63,9 +63,9 @@ void Control_stop() {
 	Motor_setLowerLeft(0.0);
 	Motor_setLowerRight(0.0);
 	
-	reset(pidUpDown);
-	reset(pidLeftRight);
-	reset(pidTheta);
+	Pid_reset(pidUpDown);
+	Pid_reset(pidLeftRight);
+	Pid_reset(pidTheta);
 }
 
 void Control_moveTo(int direction) {

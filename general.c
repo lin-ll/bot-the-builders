@@ -25,12 +25,12 @@ static PID_T pidTheta;
 static double speed;
 
 int setup() {
-    pidLeftRight = init(1.0, 10.0, 10.0);
-    pidUpDown = init(1.0, 10.0, 10.0);
-    pidTheta = init(1.0, 10.0, 10.0);
-    setPoint(pidUpDown, 0.0);
-    setPoint(pidLeftRight, 0.0);
-    setPoint(pidTheta, 0.0);
+    pidLeftRight = Pid_init(1.0, 10.0, 10.0);
+    pidUpDown = Pid_init(1.0, 10.0, 10.0);
+    pidTheta = Pid_init(1.0, 10.0, 10.0);
+    Pid_setPoint(pidUpDown, 0.0);
+    Pid_setPoint(pidLeftRight, 0.0);
+    Pid_setPoint(pidTheta, 0.0);
     return 0;
 }
 
@@ -42,8 +42,8 @@ void forwards() {
 	// we have to start slowing down at some point before finalDist (finalDist-offset)
 	Motor_setUpperLeft(speed);
 	Motor_setUpperRight(speed);
-  Motor_setLowerLeft(speed);
-  Motor_setLowerRight(speed);
+	Motor_setLowerLeft(speed);
+	Motor_setLowerRight(speed);
 	// start slowing down
   /* Robot seems to stop quite well, deceleration does not seem necessary.
 	if (<insert condition from kalman> < finalDist) {
@@ -56,55 +56,55 @@ void forwards() {
 }
 
 void forwardsAdjust(double adjust) {
-  Motor_setUpperLeft(adjust);
+	Motor_setUpperLeft(adjust);
 	Motor_setUpperRight(adjust);
-  Motor_setLowerLeft(adjust);
-  Motor_setLowerRight(adjust);
+	Motor_setLowerLeft(adjust);
+	Motor_setLowerRight(adjust);
 }
 
 // moves left distance c
 void left() {
-  Motor_setUpperLeft(-speed);
+	Motor_setUpperLeft(-speed);
 	Motor_setUpperRight(speed);
-  Motor_setLowerLeft(speed);
-  Motor_setLowerRight(-speed);
+	Motor_setLowerLeft(speed);
+	Motor_setLowerRight(-speed);
 }
 
 void leftAdjust(double adjust) {
-  Motor_setUpperLeft(-adjust);
+	Motor_setUpperLeft(-adjust);
 	Motor_setUpperRight(adjust);
-  Motor_setLowerLeft(adjust);
-  Motor_setLowerRight(-adjust);
+	Motor_setLowerLeft(adjust);
+	Motor_setLowerRight(-adjust);
 }
 
 // moves right distance c
 void right() {
-  Motor_setUpperLeft(speed);
+	Motor_setUpperLeft(speed);
 	Motor_setUpperRight(-speed);
-  Motor_setLowerLeft(-speed);
-  Motor_setLowerRight(speed);
+	Motor_setLowerLeft(-speed);
+	Motor_setLowerRight(speed);
 }
 
 void rightAdjust(double adjust) {
-  Motor_setUpperLeft(adjust);
+	Motor_setUpperLeft(adjust);
 	Motor_setUpperRight(-adjust);
-  Motor_setLowerLeft(-adjust);
-  Motor_setLowerRight(adjust);
+	Motor_setLowerLeft(-adjust);
+	Motor_setLowerRight(adjust);
 }
 
 // moves backwards distance c
 void back() {
-  Motor_setUpperLeft(-speed);
+	Motor_setUpperLeft(-speed);
 	Motor_setUpperRight(-speed);
-  Motor_setLowerLeft(-speed);
-  Motor_setLowerRight(-speed);
+	Motor_setLowerLeft(-speed);
+	Motor_setLowerRight(-speed);
 }
 
 void backAdjust(double adjust) {
-  Motor_setUpperLeft(-adjust);
+	Motor_setUpperLeft(-adjust);
 	Motor_setUpperRight(-adjust);
-  Motor_setLowerLeft(-adjust);
-  Motor_setLowerRight(-adjust);
+	Motor_setLowerLeft(-adjust);
+	Motor_setLowerRight(-adjust);
 }
 
 // reads distance from long
@@ -133,41 +133,41 @@ double checkDistanceRight() {
 void maintainLR(double targetX) {
     // calls check Distance Front and Back
     double currX = kalman_getX();
-		double xError = currX - targetX;
-		update(pidLeftRight, xError, dt);
-		double correction = getVal(pidLeftRight);
-		if (xError > 0) {
-				leftAdjust(correction);
-		} else {
-				rightAdjust(correction);
-		}
+	double xError = currX - targetX;
+	Pid_update(pidLeftRight, xError, dt);
+	double correction = Pid_getVal(pidLeftRight);
+	if (xError > 0) {
+		leftAdjust(correction);
+	} else {
+		rightAdjust(correction);
+	}
 }
 
 void maintainFB(double targetY) {
     // calls check Distance Left and Right
-		double currY = kalman_getY;
-    double yError = currY - targetY;
-		update(pidUpDown, yError, dt);
-		double correction = getVal(pidUpDown);
-		if (yError > 0) {
-				forwardsAdjust(correction);
-		} else {
-				backAdjust(correction);
-		}
+	double currY = kalman_getY;
+	double yError = currY - targetY;
+	Pid_update(pidUpDown, yError, dt);
+	double correction = Pid_getVal(pidUpDown);
+	if (yError > 0) {
+		forwardsAdjust(correction);
+	} else {
+		backAdjust(correction);
+	}
 }
 
 //TODO: ensure robot stays in same orientation
 void maintainTheta() {
-		double radius = 7.0; // units mm
-		double thetaError = Sensor_getGyro();
-		update(pidTheta, thetaError, dt);
-		double correction = getVal(pidTheta);
-		correction = correction * radius;
-		//TODO: put correction back into motors
-		Motor_setUpperLeft(correction);
-		Motor_setUpperRight(correction);
-		Motor_setLowerLeft(correction);
-		Motor_setLowerRight(correction);
+	double radius = 7.0; // units mm
+	double thetaError = Sensor_getGyro();
+	Pid_update(pidTheta, thetaError, dt);
+	double correction = Pid_getVal(pidTheta);
+	correction = correction * radius;
+	//TODO: put correction back into motors
+	Motor_setUpperLeft(correction);
+	Motor_setUpperRight(correction);
+	Motor_setLowerLeft(correction);
+	Motor_setLowerRight(correction);
 }
 
 // returns value read from sensor s
