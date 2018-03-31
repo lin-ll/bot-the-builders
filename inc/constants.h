@@ -72,7 +72,7 @@
 
 #define LED_GRAY 14
 #define LED_BROWN 15
-#define LED_ORANGE 16
+#define LED_ORANGE 18
 
 #endif
 

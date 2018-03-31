@@ -1,6 +1,7 @@
 #include <pigpiod_if2.h>
 #include "inc/constants.h"
 #include "inc/leds.h"
+#include <unistd.h>
 
 int pi = 0;
 
@@ -25,7 +26,7 @@ int main() {
 	usleep(sleep);
 
 	// blue
-	Led_setColor(0, 0, blue);
+	Led_setColor(0, 0, val);
 	usleep(time);
 	Led_setColor(0, 0, 0);
 	usleep(sleep);
