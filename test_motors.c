@@ -131,7 +131,6 @@ int main(){
 			set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, 0);
 			usleep(1000000);
 		}
-	}
-	*/
+		*/
 	return 0;
 }
