@@ -28,7 +28,7 @@ double checkDistanceLeft();
 // reads distance of sensor on right
 double checkDistanceRight();
 
-// maintains robot in center of path
+// maintains robot in center of path and correct orientation
 void maintainLR();
 
 void maintainFB();

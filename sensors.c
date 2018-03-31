@@ -1,6 +1,6 @@
 #include "inc/sensors.h"
-//#include "inc/pigpiod_if2.h"
 #include <pigpiod_if2.h>
+#include "inc/constants.h"
 #include <adafruit_distance.h>
 #include <stdio.h>
 #include <math.h>
@@ -12,21 +12,11 @@
 0x52 Long distance
 */
 
-#define TWO_PI (2*3.1415926536)
-#define DISTANCE_OFF 0
-#define DISTANCE_ON 1
-
-const int BUS = 1;
-const int GYRO_ADDR = 0x6B; // 7 bit 1101011;
-const int COMPASS_ADDR = 0x1D; // if it's wrong, try 1F
-
-#define ORIG_SHORT_DIST_ADDR 0x29
-#define ORIG_LONG_DIST_ADDR 0x2A
 const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_SHORT_DIST_ADDR}; // bogus addresses
 const int LONG_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_LONG_DIST_ADDR}; // bogus addresses
 
-const int SHORT_SHUTDOWN_PINS[4] = {-1, 4, 17, 7}; // bogus pin numbers except for the -1
-const int LONG_SHUTDOWN_PINS[4] = {11, 5, 13, 21}; // bogus pin numbers except for the -1
+const int SHORT_SHUTDOWN_PINS[4] = {SHORT_PIN_FRONT, SHORT_PIN_BACK, SHORT_PIN_LEFT, SHORT_PIN_RIGHT};
+const int LONG_SHUTDOWN_PINS[4] = {LONG_PIN_FRONT, LONG_PIN_BACK, LONG_PIN_LEFT, LONG_PIN_RIGHT};
 
 // The datasheet gives 8.75mdps/digit for default sensitivity
 const double RPS_PER_DIGIT = 0.00875*TWO_PI/360;
@@ -161,7 +151,7 @@ static void initCompass() {
 int Sensor_init(int pifd) {
   pi = pifd;
   int i, j, success;
-  
+
   adafruit_distance_set_pi_handle(pi);
   // Getting the handles for short and long distance
   for(i=0; i<4; i++) {
@@ -197,6 +187,8 @@ int Sensor_init(int pifd) {
 
   printf("ALL OFF\n");
 
+  success = adafruit_distance_begin(short_dist_handles[3]);
+  printf("SUCCESS WAS %d\n", success);
 
   // One by one, turn on short distance sensors
   for(i=0; i<4; i++) {
@@ -243,7 +235,7 @@ int Sensor_init(int pifd) {
 
   // TODO: figure out what to do with accelerometer
   //acc_handle = i2c_open(ACC_BUS, ACC_ADDRESS);
-  
+
   //initGyro();
   //initCompass();
   return 0;
@@ -257,7 +249,7 @@ double Sensor_getGyro(){
 
   //int16_t a = adafruit_distance_read16(GYRO_REGISTER_OUT_X_L | 80);
   //printf("A is %d\n", a);
-  
+
   i2c_read_i2c_block_data(pi, gyro_handle, GYRO_REGISTER_OUT_X_L | 0x80, buffer, 6);
   raw = ((int16_t)(buffer[3]) << 8) + (int16_t)(buffer[2]);
 
@@ -301,15 +293,32 @@ void Sensor_calGyro(int n) {
   gyroOffset = c / (double)n;
 }
 
-/* Return distance from short distance sensor in cm */
+/* Return distance from short distance sensor in mm */
 double Sensor_getShort(int num) {
-  return adafruit_distance_readRange(short_dist_handles[num]);
+  return 10 * adafruit_distance_readRange(short_dist_handles[num]);
 }
 
 /* TODO: implement this */
-/* Return distance from long distance sensor in cm */
+/* Return distance from long distance sensor in mm */
 double Sensor_getLong(enum Dir_t dir) {
   return 1;
+}
+
+int *Sensor_findWalls() {
+    int *walls = {0, 0, 0, 0};
+    if (Sensor_getShort(UP) > SQUARE_SIZE / 2) {
+        walls[0] = 1;
+    }
+    if (Sensor_getShort(DOWN) > SQUARE_SIZE / 2) {
+        walls[1] = 1;
+    }
+    if (Sensor_getShort(LEFT) > SQUARE_SIZE / 2) {
+        walls[2] = 1;
+    }
+    if (Sensor_getShort(RIGHT) > SQUARE_SIZE / 2) {
+        walls[3] = 1;
+    }
+    return walls;
 }
 
 /* Any cleanup */

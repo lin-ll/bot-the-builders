@@ -1,11 +1,12 @@
-#include "adafruit_distance.h"
+#include "inc/adafruit_distance.h"
 #include <pigpiod_if2.h>
 #include <unistd.h>
 #include <stdio.h>
+#include "inc/constants.h"
 
 int pi = 0;
-const int SHORT_SHUTDOWN_PINS[4] = {-1, 4, 17, 7}; // bogus pin numbers except for the -1
-const int LONG_SHUTDOWN_PINS[4] = {10, 5, 13, 21}; // bogus pin numbers except for the -1
+const int SHORT_SHUTDOWN_PINS[4] = {SHORT_PIN_FRONT, SHORT_PIN_BACK, SHORT_PIN_LEFT, SHORT_PIN_RIGHT};
+const int LONG_SHUTDOWN_PINS[4] = {LONG_PIN_FRONT, LONG_PIN_BACK, LONG_PIN_LEFT, LONG_PIN_RIGHT};
 
 int main(){
   pi = pigpio_start(NULL, NULL);
