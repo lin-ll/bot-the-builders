@@ -1,5 +1,6 @@
 #include "inc/sensors.h"
 #include "inc/pigpiod_if2.h"
+#include "inc/constants.h"
 #include <adafruit_distance.h>
 #include <stdio.h>
 #include <math.h>
@@ -11,21 +12,11 @@
 0x52 Long distance
 */
 
-#define TWO_PI (2*3.1415926536)
-#define DISTANCE_OFF 0
-#define DISTANCE_ON 1
-
-const int BUS = 1;
-const int GYRO_ADDR = 0x6B; // 7 bit 1101011;
-const int COMPASS_ADDR = 0x1D; // if it's wrong, try 1F
-
-#define ORIG_SHORT_DIST_ADDR 0x29
-#define ORIG_LONG_DIST_ADDR 0x2A
 const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_SHORT_DIST_ADDR}; // bogus addresses
 const int LONG_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_LONG_DIST_ADDR}; // bogus addresses
 
-const int SHORT_SHUTDOWN_PINS[4] = {-1, 4, 17, 7}; // bogus pin numbers except for the -1
-const int LONG_SHUTDOWN_PINS[4] = {11, 5, 13, 21}; // bogus pin numbers except for the -1
+const int SHORT_SHUTDOWN_PINS[4] = {SHORT_PIN_FRONT, SHORT_PIN_BACK, SHORT_PIN_LEFT, SHORT_PIN_RIGHT};
+const int LONG_SHUTDOWN_PINS[4] = {LONG_PIN_FRONT, LONG_PIN_BACK, LONG_PIN_LEFT, LONG_PIN_RIGHT};
 
 // The datasheet gives 8.75mdps/digit for default sensitivity
 const double RPS_PER_DIGIT = 0.00875*TWO_PI/360;
