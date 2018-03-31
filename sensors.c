@@ -198,7 +198,7 @@ int Sensor_init(int pifd) {
 
     // Library thinks we're talking to the same sensor each time
 
-    printf("Changing address from %x to %x\n", short_dist_handles[3],SHORT_DIST_ADDRS[i])
+    printf("Changing address from %x to %x\n", short_dist_handles[3],SHORT_DIST_ADDRS[i]);
     adafruit_distance_change_address(short_dist_handles[3], SHORT_DIST_ADDRS[i]);
     success = adafruit_distance_begin(short_dist_handles[i]);
 
@@ -304,8 +304,7 @@ double Sensor_getLong(enum Dir_t dir) {
   return 1;
 }
 
-int *Sensor_findWalls() {
-    int *walls = {0, 0, 0, 0};
+void Sensor_findWalls(walls) {
     if (Sensor_getShort(UP) > SQUARE_SIZE / 2) {
         walls[0] = 1;
     }
