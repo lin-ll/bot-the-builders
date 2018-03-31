@@ -8,7 +8,7 @@ This module creates PID loop objects.
 typedef struct PID *PID_T;
 
 // return a PID loop object
-PID_T init(double kP, double kI, double kD) {
+PID_T Pid_init(double kP, double kI, double kD) {
 		struct PID *p = malloc(sizeof(PID));
 		p->kP = kP;
 		p->kI = kI;
@@ -21,12 +21,12 @@ PID_T init(double kP, double kI, double kD) {
 		return p;
 };
 
-void setPoint(PID_T pid, double setpoint_value) {
+void Pid_setPoint(PID_T pid, double setpoint_value) {
 		pid->setPoint = setpoint_value;// TODO
 }
 
 // reset prevMeasure, setPoint,integral, prevError, derivative
-void reset(PID_T pid) {
+void Pid_reset(PID_T pid) {
 		pid->integral = 0;// TODO
 		pid->setPoint = 0;
 		pid->derivative = 0;
@@ -34,7 +34,7 @@ void reset(PID_T pid) {
 }
 
 // update PID_T
-void update(PID_T pid, double val, double dt) {
+void Pid_update(PID_T pid, double val, double dt) {
 		double error = pid->setPoint - val;
 		pid->integral = pid->integral + error * dt;
 		pid->derivative = (error - pid->prevError) / dt;
@@ -43,6 +43,6 @@ void update(PID_T pid, double val, double dt) {
 }
 
 // return PID value
-double getVal(PID_T pid) {
+double Pid_getVal(PID_T pid) {
 		return (pid->kP * pid->prevError) + (pid->kI * pid->integral) + (pid->derivative * pid->kD);
 }

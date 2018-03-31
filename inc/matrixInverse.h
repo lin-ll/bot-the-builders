@@ -1,0 +1,1 @@
+double *inverse(double* matrix);

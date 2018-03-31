@@ -30,10 +30,10 @@ int Motor_init(int pifd) {
   lowerLeftPercent = 0;
   lowerRightPercent = 0;
 
-  pidUpperLeft = init(10.0, 10.0, 1.0);
-  pidUpperRight = init(10.0, 10.0, 1.0);
-  pidLowerLeft = init(10.0, 10.0, 1.0);
-  pidLowerRight = init(10.0, 10.0, 1.0);
+  pidUpperLeft = Pid_init(10.0, 10.0, 1.0);
+  pidUpperRight = Pid_init(10.0, 10.0, 1.0);
+  pidLowerLeft = Pid_init(10.0, 10.0, 1.0);
+  pidLowerRight = Pid_init(10.0, 10.0, 1.0);
 
   set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, 0.0);
   set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, 0.0);
@@ -175,36 +175,36 @@ int Motor_adjustLowerRight(double lowerRight) {
 }
 
 void Motor_updateMotors(double dt) {
-  setPoint(pidUpperLeft, upperLeftPercent);
+  Pid_setPoint(pidUpperLeft, upperLeftPercent);
   double upperLeftSpeed = Sensor_getMotorSpeed(UPPER_LEFT_PIN);
-  update(pidUpperLeft, upperLeftSpeed, dt); // what is dt defined as?
-  double upperLeftAdjust = getVal(pidUpperLeft);
+  Pid_update(pidUpperLeft, upperLeftSpeed, dt); // what is dt defined as?
+  double upperLeftAdjust = Pid_getVal(pidUpperLeft);
   Motor_adjustUpperLeft(upperLeftAdjust);
 
-  setPoint(pidUpperRight, upperRightPercent);
+  Pid_setPoint(pidUpperRight, upperRightPercent);
   double upperRightSpeed = Sensor_getMotorSpeed(UPPER_RIGHT_PIN);
-  update(pidUpperRight, upperRightSpeed, dt); // what is dt defined as?
-  double upperRightAdjust = getVal(pidUpperRight);
+  Pid_update(pidUpperRight, upperRightSpeed, dt); // what is dt defined as?
+  double upperRightAdjust = Pid_getVal(pidUpperRight);
   Motor_adjustUpperRight(upperRightAdjust);
 
-  setPoint(pidLowerLeft, lowerLeftPercent);
+  Pid_setPoint(pidLowerLeft, lowerLeftPercent);
   double lowerLeftSpeed = Sensor_getMotorSpeed(LOWER_LEFT_PIN);
-  update(pidLowerLeft, lowerLeftSpeed, dt); // what is dt defined as?
-  double lowerLeftAdjust = getVal(pidLowerLeft);
+  Pid_update(pidLowerLeft, lowerLeftSpeed, dt); // what is dt defined as?
+  double lowerLeftAdjust = Pid_getVal(pidLowerLeft);
   Motor_adjustLowerLeft(lowerLeftAdjust);
 
-  setPoint(pidLowerRight, lowerRightPercent);
+  Pid_setPoint(pidLowerRight, lowerRightPercent);
   double lowerRightSpeed = Sensor_getMotorSpeed(LOWER_RIGHT_PIN);
-  update(pidLowerRight, lowerRightSpeed, dt); // what is dt defined as?
-  double lowerRightAdjust = getVal(pidLowerRight);
+  Pid_update(pidLowerRight, lowerRightSpeed, dt); // what is dt defined as?
+  double lowerRightAdjust = Pid_getVal(pidLowerRight);
   Motor_adjustUpperLeft(lowerRightAdjust);
 }
 
 void Motor_resetPID() {
-    reset(pidUpperLeft);
-    reset(pidUpperRight);
-    reset(pidLowerLeft);
-    reset(pidLowerRight);
+    Pid_reset(pidUpperLeft);
+    Pid_reset(pidUpperRight);
+    Pid_reset(pidLowerLeft);
+    Pid_reset(pidLowerRight);
 }
 
 /* Utility Function, to input array */

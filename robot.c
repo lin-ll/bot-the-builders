@@ -14,70 +14,70 @@ int explore() {
 	int explorationVelocity = 10; // speed for exploration
 	int row = 0;
 	int col = 0;
-	int currNode = getIntFromCoordinates(row, col);
-	while (!isExplored()) {
+	int currNode = Maze_getIntFromCoordinates(row, col);
+	while (!Maze_isExplored()) {
 		// gather information about walls from sensors
 		int leftWall = 0;
 		int rightWall = 0;
 		int upWall = 0;
 		int downWall = 0;
-		int nextNode = dfs(row, col, leftWall, rightWall, upWall, downWall);
+		int nextNode = Maze_dfs(row, col, leftWall, rightWall, upWall, downWall);
 		moveTo(currNode, nextNode); // TODO: what is moveTo???????
 		currNode = nextNode;
 	}
 }
 
 void returnToStart() {
-		maze.assignPath(START_SPACE);
-		while (1) {
-				// check buttons
+	Maze_assignPath(START_SPACE);
+	while (1) {
+		// check buttons
 
-				// do controls thing
-				controls_finished = Control_update();
+		// do controls thing
+		controls_finished = Control_update();
 
-				if(controls_finished){
-						dir = maze.followPath();
-						if (dir == -1) {
-								Control_stop();
-								return;
-						}
-						Control_moveTo(dir);
-				}
-
-
-				Control_move();
-
-				// do Kalman thing
-				// get all sensor values
-				// call Kalman with sensor values
+		if(controls_finished){
+			dir = Maze_followPath();
+			if (dir == -1) {
+				Control_stop();
+				return;
+			}
+			Control_moveTo(dir);
 		}
+
+
+		Control_move();
+
+		// do Kalman thing
+		// get all sensor values
+		// call Kalman with sensor values
+	}
 
 }
 
 void solveMaze() {
-		maze.assignPath(GOAL_SPACE);
-		while (1) {
-				// check buttons
+	Maze_assignPath(GOAL_SPACE);
+	while (1) {
+		// check buttons
 
-				// do controls thing
-				controls_finished = Control_update();
+		// do controls thing
+		controls_finished = Control_update();
 
-				if(controls_finished){
-						dir = maze.followPath();
-						if (dir == -1) {
-								Control_stop();
-								return;
-						}
-						Control_moveTo(dir);
-				}
-
-
-				Control_move();
-
-				// do Kalman thing
-				// get all sensor values
-				// call Kalman with sensor values
+		if(controls_finished){
+			dir = Maze_followPath();
+			if (dir == -1) {
+				Control_stop();
+				return;
+			}
+			Control_moveTo(dir);
 		}
+
+
+		Control_move();
+
+		// do Kalman thing
+		// get all sensor values
+		// call Kalman with sensor values
+	}
 }
 
 void main() {
@@ -94,7 +94,7 @@ void main() {
 
 	int controls_finished = 1;
 
-	while(!maze.isExplored()) {
+	while (!Maze_isExplored()) {
 		// check buttons
 		int button_pressed = Button_update();
 		if (button_pressed == BUTTON_RED) {
@@ -112,7 +112,7 @@ void main() {
 			int left_wall = walls[2];
 			int right_wall = walls[3];
 			do {
-				dir = maze.dfs(up_wall, down_wall, left_wall, right_wall);
+				dir = Maze_dfs(up_wall, down_wall, left_wall, right_wall);
 			} while (dir == -1);
 
 			Control_moveTo(dir);
