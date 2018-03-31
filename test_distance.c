@@ -5,14 +5,16 @@
 
 int pi = 0;
 const int SHORT_SHUTDOWN_PINS[4] = {-1, 4, 17, 7}; // bogus pin numbers except for the -1
-const int LONG_SHUTDOWN_PINS[4] = {-1, 5, 13, 21}; // bogus pin numbers except for the -1
+const int LONG_SHUTDOWN_PINS[4] = {10, 5, 13, 21}; // bogus pin numbers except for the -1
 
 int main(){
   pi = pigpio_start(NULL, NULL);
   for(int i=0; i<4; i++){
-    if(i==0) break;
-    gpio_write(pi, SHORT_SHUTDOWN_PINS[i], 0);
-    gpio_write(pi, LONG_SHUTDOWN_PINS[i], 0);
+    int short_pin = SHORT_SHUTDOWN_PINS[i];
+    int long_pin = LONG_SHUTDOWN_PINS[i];
+    printf("doing write to %d and %d\n", short_pin, long_pin);
+    if(short_pin != -1) gpio_write(pi, short_pin, 0);
+    if(long_pin != -1) gpio_write(pi, long_pin, 0);
   }
 
   printf("error code is <%s>\n", pigpio_error(-25));
