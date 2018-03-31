@@ -1,4 +1,4 @@
-#include "inc/kalman.h"
+#include "kalman.h"
 #include <math.h> // for using NAN
 
 /* Naming conventions and general info from here:

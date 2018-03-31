@@ -3,9 +3,9 @@
 /* and motor control.                                                         */
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
-#include "inc/graph.h"
-#include "inc/heap.h"
-#include "inc/constant.h"
+#include "graph.h"
+#include "heap.h"
+#include "constant.h"
 
 static Graph maze; // graph recording walls and such
 static int traversed[16][16] = {0}; // record of traversed squares

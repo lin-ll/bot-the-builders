@@ -2,8 +2,8 @@
 This module creates PID loop objects.
 */
 
-#include "inc/pid.h"
-#include "inc/constants.h"
+#include "pid.h"
+#include "constants.h"
 
 typedef struct PID *PID_T;
 

@@ -1,6 +1,6 @@
-#include "inc/buttons.h"
-#include "inc/constants.h"
-#include "inc/leds.h"
+#include "buttons.h"
+#include "constants.h"
+#include "leds.h"
 #include <pigpiod_if2.h>
 #include <unistd.h>
 

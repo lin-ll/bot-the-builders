@@ -1,6 +1,6 @@
 #include <pigpiod_if2.h>
-#include "inc/leds.h"
-#include "inc/constants.h"
+#include "leds.h"
+#include "constants.h"
 #include <unistd.h>
 
 int pi = 0;

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "inc/graph.h"
+#include "graph.h"
 
 /* basic directed graph type */
 /* the implementation uses adjacency lists

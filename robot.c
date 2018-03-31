@@ -2,13 +2,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "inc/maze.h"
-#include "inc/controls.h"
-#include "inc/kalman.h"
-#include "inc/heap.h"
-#include "inc/buttons.h"
-#include "inc/constants.h"
-#include "inc/sensors.h"
+#include "maze.h"
+#include "controls.h"
+#include "kalman.h"
+#include "heap.h"
+#include "buttons.h"
+#include "constants.h"
+#include "sensors.h"
 
 int explore() {
 	int explorationVelocity = 10; // speed for exploration
