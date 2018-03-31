@@ -19,16 +19,16 @@ void init();
 void update(double *distances, double *encoders, double *imu, double *control, double *pos);
 
 // x position/velocity in mm with the corner of the maze 0
-double getx(); 
-double getvx(); 
+double kalman_getX();
+double kalman_getVx();
 
 // y position/velocity in mm with the corner of the maze 0
-double gety();
-double getvy();
+double kalman_getY();
+double kalman_getVy();
 
 // robot's current rotation/velocity (theta) in radians
-double gett();
-double getvt();
+double kalman_getT();
+double kalman_getVt();
 
 
 
