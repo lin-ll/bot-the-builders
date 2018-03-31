@@ -4,6 +4,7 @@
 #include <adafruit_distance.h>
 #include <stdio.h>
 #include <math.h>
+#include <unistd.h>
 
 /* Some quick bus info
 0x6B gyro
@@ -171,14 +172,14 @@ int Sensor_init(int pifd) {
   printf("GOT ALL HANDLES\n");
 
   // Shut all of the short and long distance pins down
-  for(i=0; i<3; i++) {
+  for(i=0; i<4; i++) {
     if(SHORT_SHUTDOWN_PINS[i] != -1) {
       gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_OFF);
       printf("Turn off short distance sensor: %d\n", SHORT_SHUTDOWN_PINS[i]);
     }
   }
 
-  for(i=0; i<3; i++) {
+  for(i=0; i<4; i++) {
     if(LONG_SHUTDOWN_PINS[i] != -1) {
       gpio_write(pi, LONG_SHUTDOWN_PINS[i], DISTANCE_OFF);
       printf("Turn off long distance sensor: %d\n", LONG_SHUTDOWN_PINS[i]);
@@ -196,6 +197,7 @@ int Sensor_init(int pifd) {
     if(SHORT_SHUTDOWN_PINS[i] != -1)
       gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_ON);
 
+    sleep(1);
     // Library thinks we're talking to the same sensor each time
 
     printf("Changing address from %x to %x\n", short_dist_handles[3],SHORT_DIST_ADDRS[i]);
