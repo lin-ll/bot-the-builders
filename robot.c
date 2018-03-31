@@ -34,7 +34,7 @@ void returnToStart() {
 
 }
 
-void solveMaze(Graph g) {
+void solveMaze() {
 		maze.assignPath(GOAL_SPACE);
 		while (1) {
 				// check buttons
@@ -81,10 +81,12 @@ void main() {
 
 		// do controls thing
 		controls_finished = controls.update();
-		if(controls_finished){
-			int *up_wall, *down_wall, *left_wall, *right_wall;
-			contols.find_walls(up_wall, down_wall, left_wall, right_wall);
-
+		if (controls_finished) {
+			int *walls = Sensor_findWalls();
+			int up_wall = walls[0];
+			int down_wall = walls[1];
+			int left_wall = walls[2];
+			int right_wall = walls[3];
 			do {
 					dir = maze.dfs(up_wall, down_wall, left_wall, right_wall);
 			} while (dir == -1);

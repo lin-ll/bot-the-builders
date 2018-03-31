@@ -65,42 +65,6 @@ void stop() {
     reset(pidTheta);
 }
 
-/* following method simply uses PID to move the robot
-void pidCorrection {
-    double xError = xOffset(newNode);
-    double yError = yOffset(newNode);
-    double thetaError = thetaOffset();
-    double translate = 0;
-    double rotate = 0;
-    while (abs(xError) > 0.1 || abs(yError) > 0.1) {
-    }
-}
-*/
-
-double xOffset(int goalSpace) {
-    // target stores ideal x position where furthest wall is 0 in mm.
-    int targetRow = goalSpace / mazeSize;
-    double target = 180.0 * targetRow + 90.0;
-    double currX = kalman_getX(); //TODO: calls kalman method to get X position
-    return target - currX;
-}
-
-double yOffset(int goalSpace) {
-    // same as xOffset
-    int targetCol = goalSpace % mazeSize;
-    double target = 180.0 * targetCol + 90.0;
-    double currY = kalman_getY(); //TODO: calls kalman method to get Y position
-    return target - currY;
-}
-
-double thetaOffset() {
-    return Sensor_getGyro();
-}
-
-double getStoppingDistance() {
-    return 0.0;
-}
-
 void moveTo(int direction) {
     if (direction == UP) {
         destY -= SQUARE_SIZE;
@@ -116,23 +80,22 @@ void moveTo(int direction) {
         currDir = DOWN;
     }
 }
-
 void move() {
     if (currDir == UP) {
         forward();
-        maintainLR();
+        maintainLR(destX);
         maintainTheta();
     } else if (currDir == LEFT) {
         left();
-        maintainFB();
+        maintainFB(destY);
         maintainTheta();
     } else if (currDir == RIGHT) {
         right();
-        maintainFB();
+        maintainFB(destY);
         maintainTheta();
     } else if (currDir == DOWN) {
         back();
-        maintainLR();
+        maintainLR(destX);
         maintainTheta();
     }
 }

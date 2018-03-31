@@ -15,18 +15,6 @@ int findDirection(int oldNode, int newNode);
 // want to stop the robot
 void stop();
 
-// checks error of X
-double xOffset();
-
-// checks error of Y
-double yOffset();
-
-// checks error of theta
-double thetaOffset();
-
-// gets distance to stop at
-double getStoppingDistance();
-
 // returns if robot is in desired position
 int update();
 
