@@ -58,8 +58,11 @@ int update() {
 }
 
 void stop() {
-    double motors[4] = {0.0};
-    Motor_set(motors);
+    Motor_setUpperLeft(0.0);
+    Motor_setUpperRight(0.0);
+    Motor_setLowerLeft(0.0);
+    Motor_setLowerRight(0.0);
+    
     reset(pidUpDown);
     reset(pidLeftRight);
     reset(pidTheta);

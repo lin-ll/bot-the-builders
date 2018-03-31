@@ -5,16 +5,16 @@
 #ifndef GEN_INCLUDED
 #define GEN_INCLUDED
 // moves a given distance c forwards
-void forwards(int c);
+void forwards();
 
 // moves left distance c
-void left(int c);
+void left();
 
 // moves right distance c
-void right(int c);
+void right();
 
 // moves backwards distance c
-void back(int c);
+void back();
 
 // reads distance from long
 double checkDistanceFront();
@@ -29,17 +29,13 @@ double checkDistanceLeft();
 double checkDistanceRight();
 
 // maintains robot in center of path and correct orientation
-void maintainLR();
+void maintainLR(double targetX);
 
-void maintainFB();
+void maintainFB(double targetY);
 
 void maintainTheta();
 
 // returns value read from sensor s
 double sensor(int s);
-
-
-// checks if there is Wall in moving direction
-int checkWall();
 
 #endif
