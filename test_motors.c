@@ -2,14 +2,14 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#define UPPER_LEFT_FORWARD 16
-#define UPPER_LEFT_BACKWARD 15
-#define UPPER_RIGHT_FORWARD 22
-#define UPPER_RIGHT_BACKWARD 21
-#define LOWER_LEFT_FORWARD 32
-#define LOWER_LEFT_BACKWARD 31
-#define LOWER_RIGHT_FORWARD 23
-#define LOWER_RIGHT_BACKWARD 24
+#define UPPER_LEFT_FORWARD 23
+#define UPPER_LEFT_BACKWARD 22
+#define UPPER_RIGHT_FORWARD 25
+#define UPPER_RIGHT_BACKWARD 9
+#define LOWER_LEFT_FORWARD 12
+#define LOWER_LEFT_BACKWARD 6
+#define LOWER_RIGHT_FORWARD 11
+#define LOWER_RIGHT_BACKWARD 8
 
 int forward[4] = {UPPER_LEFT_FORWARD, UPPER_RIGHT_FORWARD, LOWER_LEFT_FORWARD, LOWER_RIGHT_FORWARD};
 int backward[4] = {UPPER_LEFT_BACKWARD, UPPER_RIGHT_BACKWARD, LOWER_LEFT_BACKWARD, LOWER_RIGHT_BACKWARD};
@@ -75,26 +75,28 @@ void set_off() {
 
 int main(){
 	pi = pigpio_start(NULL, NULL);
-
-	set_forward(127);
-	usleep(1000000);
+	int speed = 255;
+	int time = 2000000;
+	
+	set_forward(speed);
+	usleep(time);
 	set_off();
-	usleep(1000000);
+	usleep(500000);
 
-	set_right(127);
-	usleep(1000000);
+	set_right(speed);
+	usleep(time);
 	set_off();
-	usleep(1000000);
+	usleep(500000);
 
-	set_backward(127);
-	usleep(1000000);
+	set_backward(speed);
+	usleep(time);
 	set_off();
-	usleep(1000000);
+	usleep(500000);
 
-	set_left(127);
-	usleep(1000000);
+	set_left(speed);
+	usleep(time);
 	set_off();
-	usleep(1000000);
+	usleep(500000);
 
 
 
