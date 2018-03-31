@@ -6,6 +6,8 @@
 #include "inc/controls.h"
 #include "inc/kalman.h"
 #include "inc/heap.h"
+#include "inc/buttons.h"
+#include "inc/constants.h"
 
 int explore() {
 	int explorationVelocity = 10; // speed for exploration
@@ -50,6 +52,7 @@ void main() {
 	returnToStart();
 	solveMaze();
 
+	Button_init(/*TODO*/);
     controls_setup();
 
 	// from danstan
@@ -63,7 +66,11 @@ void main() {
 
 
 	while(1) {
-			// check buttons
+		// check buttons
+		int button_pressed = Button_update();
+		if (button_pressed == BUTTON_RED) {
+			// TODO: action for red button
+		}
 
 		// do controls thing
 		controls_finished = controls.update();
