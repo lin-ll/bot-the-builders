@@ -41,6 +41,6 @@ double Sensor_orient(enum Dir_t dir);
 void Sensor_free();
 
 // finds all walls in square;
-int *Sensor_findWalls();
+void Sensor_findWalls(int *walls);
 
 #endif

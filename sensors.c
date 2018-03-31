@@ -304,7 +304,7 @@ double Sensor_getLong(enum Dir_t dir) {
   return 1;
 }
 
-void Sensor_findWalls(walls) {
+void Sensor_findWalls(int *walls) {
     if (Sensor_getShort(UP) > SQUARE_SIZE / 2) {
         walls[0] = 1;
     }
@@ -317,7 +317,6 @@ void Sensor_findWalls(walls) {
     if (Sensor_getShort(RIGHT) > SQUARE_SIZE / 2) {
         walls[3] = 1;
     }
-    return walls;
 }
 
 /* Any cleanup */
