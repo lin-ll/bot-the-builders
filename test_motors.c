@@ -19,7 +19,7 @@ int pi = 0;
 
 int main(){
 	pi = pigpio_start(NULL, NULL);
-
+	
 	
 	for(int i=0; i<1000; i++){
 		for(int j=0; j<3; j++){
