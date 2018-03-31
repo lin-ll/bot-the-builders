@@ -13,6 +13,8 @@ static int unexplored = 256; // number of unexplored squares
 static int goalSpace = 120; // target space
 static int startSpace = 0; // starting space
 
+heap_t *currentPath; // path currently being traversed
+
 // Visualize the maze and parse it into a graph. Descritize each unit of maze
 // into a vertex, and connect them with edges of unit length. Uses DFS.
 Graph discoverMaze() {

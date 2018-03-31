@@ -6,8 +6,6 @@
 
 #define NUM 6
 
-const double SQUARE_SIZE = 168 + 12; // (square + wall)mm
-
 // x, y, t, vx, vy, vt
 // units are mm, mm/s, rad clockwise with 0 at +y, rad/s
 double x[NUM];

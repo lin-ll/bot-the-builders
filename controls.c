@@ -11,13 +11,20 @@ static PID_T pidLeftRight;
 static PID_T pidUpDown;
 static PID_T pidTheta;
 
-int setup() {
+static double destX;
+static double destY;
+static double currDir;
+
+int controls_setup() {
     pidLeftRight = init(1.0, 10.0, 10.0);
     pidUpDown = init(1.0, 10.0, 10.0);
     pidTheta = init(1.0, 10.0, 10.0);
     setPoint(pidUpDown, 0.0);
     setPoint(pidLeftRight, 0.0);
     setPoint(pidTheta, 0.0);
+    destX = SQUARE_SIZE / 2;
+    destY = SQUARE_SIZE / 2;
+    currDir = 0;
     return 0;
 }
 
@@ -100,60 +107,38 @@ double getStoppingDistance() {
     return 0.0;
 }
 
-void moveTo(int oldNode, int newNode) {
-    int direction = findDirection(oldNode, newNode);
-    double togo == 180.0;
+void moveTo(int direction) {
     if (direction == UP) {
-        togo = yOffset(newNode);
-        while (togo < 0.0) {
-            forward(2.0);
-            maintainLR(newNode);
-            maintainTheta();
-        }
+        destY += SQUARE_SIZE;
+        currDir = UP;
     } else if (direction == LEFT) {
-        togo = xOffset(newNode);
-        while (togo > 0.0) {
-            left(2.0);
-            maintainFB(newNode);
-            maintainTheta();
-        }
+        destX -= SQUARE_SIZE;
+        currDir = LEFT;
     } else if (direction == RIGHT) {
-        togo = xOffset(newNode);
-        while (togo < 0.0) {
-            right(2.0);
-            maintainFB(newNode);
-            maintainTheta();
-        }
+        destX += SQUARE_SIZE;
+        currDir = RIGHT;
     } else {
-        togo = yOffset(newNode);
-        while (togo > 0.0) {
-            back(2.0);
-            maintainLR(newNode);
-            maintainTheta();
-        }
+        destY -= SQUARE_SIZE;
+        currDir = DOWN;
     }
-    // double xError = xOffset(newNode);
-    // double yError = yOffset(newNode);
-    // double thetaError = thetaOffset();
-    // double translate = 0;
-    // double rotate = 0;
-    // double stoppingDistance = getStoppingDistance();
-    // if (direction  % 2 == 0) {
-    //     // moving Left-Right, so pidUpDown to stay straight
-    //     while (xError > stoppingDistance) {
-    //         update(pidUpDown, yError, 0.1);
-    //         translate = getVal(pidUpDown);
-    //         rotate = getVal(pidTheta);
-    //         double mainVelocity = 50.0;
-    //         adjust(direction, mainVelocity, translate, rotate);
-    //     }
-    // } else {
-    //     while (yError > stoppingDistance) {
-    //       update(pidLeftRight, xError, 0.1);
-    //       translate = getVal(pidLeftRight);
-    //       rotate = getVal(pidTheta);
-    //       double mainVelocity = 50.0;
-    //       adjust(direction, mainVelocity, translate, rotate);
-    //     }
-    // }
+}
+
+void move() {
+    if (currDir == UP) {
+        forward();
+        maintainLR();
+        maintainTheta();
+    } else if (currDir == LEFT) {
+        left();
+        maintainFB();
+        maintainTheta();
+    } else if (currDir == RIGHT) {
+        right();
+        maintainFB();
+        maintainTheta();
+    } else {
+        back();
+        maintainLR();
+        maintainTheta();
+    }
 }

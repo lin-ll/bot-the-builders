@@ -9,5 +9,6 @@
 #define FALSE 0
 
 #define mazeSize 16
+#define SQUARE_SIZE 180 // 168 + 12
 
 #define dt 0.1

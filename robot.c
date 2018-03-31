@@ -50,7 +50,7 @@ void main() {
 	returnToStart();
 	solveMaze();
 
-
+    controls_setup();
 
 	// from danstan
 	float destX;
@@ -63,14 +63,15 @@ void main() {
 
 
 	while(1) {
-		// check buttons
-
+			// check buttons
 
 		// do controls thing
+		controls_finished = controls.update();
 		if(controls_finished){
 			int *up_wall, *down_wall, *left_wall, *right_wall;
 			contols.find_walls(up_wall, down_wall, left_wall, right_wall);
 			dir = maze.dfs(up_wall, down_wall, left_wall, right_wall);
+			controls.moveTo(dir);
 
 			if(dir == -1){
 				// we did it!
@@ -80,7 +81,7 @@ void main() {
 
 			controls.set_new_dest(dir);
 		}
-		
+			
 
 		controls_finished = controls.update();
 
@@ -89,4 +90,3 @@ void main() {
 		// call Kalman with sensor values
 	}
 }
-
