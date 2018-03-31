@@ -2,6 +2,7 @@
 #include "inc/constants.h"
 #include "inc/leds.h"
 #include <pigpiod_if2.h>
+#include <unistd.h>
 
 //-------------------
 
@@ -39,6 +40,7 @@ int action(int which_button) {
 		Led_setColor(MAX_COLOR, MAX_COLOR, 0);
 		// TODO: action
 	}
+	usleep(2000000);
 	Led_off();
 	return which_button;
 }
