@@ -71,10 +71,13 @@ void main() {
 		int *up_wall, *down_wall, *left_wall, *right_wall;
 		contols.find_walls(up_wall, down_wall, left_wall, right_wall);
 		dir = maze.dfs(up_wall, down_wall, left_wall, right_wall);
+    while (dir == -1) {
+        dir = maze.dfs(up_wall, down_wall, left_wall, right_wall);
+    }
 		controls.moveTo(dir);
 	}
 
-
+  controls.move();
 
 
 
