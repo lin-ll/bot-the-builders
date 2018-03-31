@@ -7,18 +7,7 @@
 #include <pigpiod_if2.h>
 #include "inc/pid.h"
 #include "inc/sensors.h"
-
-//-------------------
-
-#define UPPER_LEFT_FORWARD 21
-#define UPPER_RIGHT_FORWARD 22
-#define UPPER_LEFT_BACKWARD 23
-#define UPPER_RIGHT_BACKWARD 24
-#define LOWER_LEFT_FORWARD 27
-#define LOWER_RIGHT_FORWARD 28
-#define LOWER_LEFT_BACKWARD 31
-#define LOWER_RIGHT_BACKWARD 32
-#define MOTOR_RANGE 255
+#include "inc/constants.h"
 
 //-------------------
 
