@@ -10,12 +10,14 @@
 // x, y, t, vx, vy, vt
 // units are mm, mm/s, rad clockwise with 0 at +y, rad/s
 double x[NUM];
+double z[NUM];
 double x_hat[NUM];
 double P[NUM*NUM];
 double P_hat[NUM*NUM];
 double temp[NUM*NUM];
 double R[NUM*NUM];
 double K[NUM*NUM];
+double tempVec[NUM];
 
 /* In each step, how much uncertainty is there in our prediction? */
 /* I really really am unsure of these values; if it fails miserably try dividing them by 10 ?? */
@@ -233,25 +235,34 @@ void update(double *distances, double *encoders, double *imu, double *control, d
 	/* we're working hard to do all this interpretation beforehand so the matrix that transforms our
 	   sensor readings into the right dimensions (H in the tutorial) is just the identity */
 
-	// equation 19
-	mat_add(P_hat, R, temp);
-	temp = matrixInverse(temp);
-	mat_mult(P_hat, temp, K);
+	z[0] = dist_x;
+	z[1] = dist_y;
+	z[2] = 0;
+	z[3] = encoder_vx;
+	z[4] = encoder_vy;
+	z[5] = encoder_vt;
 
-	// equation 18
-	mat_mult(K, P_hat, temp);
-	mat_subtract(P_hat, temp, P);
 
-	// TODO: update x? or other equation in (18)
 
-	double K_hat[NUM*NUM]
 	/* TODO: read the comment above. Create an R matrix for sensor noise covariances, and do the
 	   actual kalman update step, equations 18 and 19 here
 	   http://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/(but H=I so it's easy)
 
 	   compile with "gcc kalman.c inc/kalman.h"*/
-}
 
-void estimate() {
+		 // equation 19
+	 	mat_add(P_hat, R, temp);
+	 	temp = matrixInverse(temp);
+	 	mat_mult(P_hat, temp, K);
 
+	 	// equation 18
+	 	mat_mult(K, P_hat, temp);
+	 	mat_subtract(P_hat, temp, P);
+	 	for (int i = 0; i < SIZE; i++) {
+	 			z[i] = z[i] - x_hat[i];
+	 	}
+	 	mat_vec_mult(K, z, tempVec);
+	 	for (int i = 0; i < SIZE; i++) {
+	 			x[i] = x_hat[i] + tempVec[i];
+	 	}
 }
