@@ -174,7 +174,7 @@ int Motor_adjustLowerRight(double lowerRight) {
   return 0;
 }
 
-void updateMotors(double dt) {
+void Motor_updateMotors(double dt) {
   setPoint(pidUpperLeft, upperLeftPercent);
   double upperLeftSpeed = Sensor_getMotorSpeed(UPPER_LEFT_PIN);
   update(pidUpperLeft, upperLeftSpeed, dt); // what is dt defined as?
@@ -200,7 +200,7 @@ void updateMotors(double dt) {
   Motor_adjustUpperLeft(lowerRightAdjust);
 }
 
-void resetPID() {
+void Motor_resetPID() {
     reset(pidUpperLeft);
     reset(pidUpperRight);
     reset(pidLowerLeft);

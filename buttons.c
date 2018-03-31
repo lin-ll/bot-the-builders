@@ -1,5 +1,6 @@
 #include "inc/buttons.h"
 #include "inc/constants.h"
+#include "inc/leds.h"
 #include <pigpiod_if2.h>
 
 //-------------------
@@ -29,12 +30,16 @@ int Button_update() {
 
 int action(int which_button) {
 	if (which_button == BUTTON_BLUE) {
+		Led_setColor(0, 0, MAX_COLOR);
 		// TODO: action
 	} else if (which_button == BUTTON_GREEN) {
+		Led_setColor(0, MAX_COLOR, 0);
 		// TODO: action
 	} else if (which_button == BUTTON_YELLOW) {
+		Led_setColor(MAX_COLOR, MAX_COLOR, 0);
 		// TODO: action
 	}
+	Led_off();
 	return which_button;
 }
 

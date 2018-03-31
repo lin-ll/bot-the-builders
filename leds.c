@@ -20,3 +20,7 @@ void Led_setColor(int red, int green, int blue) {
 	set_PWM_dutycycle(pi, LED_GREEN, 255-green);
 	set_PWM_dutycycle(pi, LED_BLUE, 255-blue);
 }
+
+void Led_off() {
+	Led_setColor(0, 0, 0);
+}

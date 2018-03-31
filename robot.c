@@ -22,7 +22,7 @@ int explore() {
 		int upWall = 0;
 		int downWall = 0;
 		int nextNode = dfs(row, col, leftWall, rightWall, upWall, downWall);
-		moveTo(currNode, nextNode);
+		moveTo(currNode, nextNode); // TODO: what is moveTo???????
 		currNode = nextNode;
 	}
 }
@@ -33,19 +33,19 @@ void returnToStart() {
 				// check buttons
 
 				// do controls thing
-				controls_finished = controls.update();
+				controls_finished = Control_update();
 
 				if(controls_finished){
 						dir = maze.followPath();
 						if (dir == -1) {
-								controls.stop();
+								Control_stop();
 								return;
 						}
-						controls.moveTo(dir);
+						Control_moveTo(dir);
 				}
 
 
-				controls.move();
+				Control_move();
 
 				// do Kalman thing
 				// get all sensor values
@@ -60,19 +60,19 @@ void solveMaze() {
 				// check buttons
 
 				// do controls thing
-				controls_finished = controls.update();
+				controls_finished = Control_update();
 
 				if(controls_finished){
 						dir = maze.followPath();
 						if (dir == -1) {
-								controls.stop();
+								Control_stop();
 								return;
 						}
-						controls.moveTo(dir);
+						Control_moveTo(dir);
 				}
 
 
-				controls.move();
+				Control_move();
 
 				// do Kalman thing
 				// get all sensor values
@@ -86,7 +86,7 @@ void main() {
 	solveMaze();
 
 	Button_init(/*TODO*/);
-	controls_setup();
+	Control_init();
 
 	// from danstan
 	float destX;
@@ -98,11 +98,13 @@ void main() {
 		// check buttons
 		int button_pressed = Button_update();
 		if (button_pressed == BUTTON_RED) {
+			Led_setColor(MAX_COLOR, 0, 0);
 			// TODO: action for red button
+			Led_off();
 		}
 
 		// do controls thing
-		controls_finished = controls.update();
+		controls_finished = Control_update();
 		if (controls_finished) {
 			int *walls = Sensor_findWalls(walls);
 			int up_wall = walls[0];
@@ -110,17 +112,17 @@ void main() {
 			int left_wall = walls[2];
 			int right_wall = walls[3];
 			do {
-					dir = maze.dfs(up_wall, down_wall, left_wall, right_wall);
+				dir = maze.dfs(up_wall, down_wall, left_wall, right_wall);
 			} while (dir == -1);
 
-			controls.moveTo(dir);
+			Control_moveTo(dir);
 		}
 
-		controls.move();
+		Control_move();
 
 		//// do Kalman thing
 		// get all sensor values
 		// call Kalman with sensor values
 	}
-	controls.stop();
+	Control_stop();
 }

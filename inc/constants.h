@@ -1,6 +1,9 @@
 // constants
-#ifndef CONSTANTS_INC
-#define CONSTANTS_INC
+#ifndef CONSTANT_H
+#define CONSTANT_H
+
+//-------------------
+
 #define RIGHT 0
 #define DOWN 1
 #define LEFT 2
@@ -20,6 +23,8 @@
 
 #define START_SPACE 0
 #define GOAL_SPACE 0
+
+#define MAX_COLOR 255
 
 //-------------------
 
@@ -73,6 +78,8 @@
 #define LED_BLUE 14
 #define LED_RED 15
 #define LED_GREEN 18
+
+//-------------------
 
 #endif
 

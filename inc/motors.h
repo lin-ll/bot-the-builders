@@ -25,10 +25,10 @@ int Motor_setLowerLeft(double lowerLeft);
 int Motor_setLowerRight(double lowerRight);
 
 // ensures motors are spinning at right speed.
-void updateMotors(double dt);
+void Motor_updateMotors(double dt);
 
 // resets pid controllers.
-void resetPID();
+void Motor_resetPID();
 
 /* Utility Function, to input array */
 int Motor_set(double* motors);
