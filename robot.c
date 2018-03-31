@@ -5,6 +5,28 @@
 #include "inc/maze.h"
 #include "inc/controls.h"
 #include "inc/kalman.h"
+<<<<<<< HEAD
+#include "inc/heap.h"
+#include "inc/buttons.h"
+#include "inc/constants.h"
+
+int explore() {
+	int explorationVelocity = 10; // speed for exploration
+	int row = 0;
+	int col = 0;
+	int currNode = getIntFromCoordinates(row, col);
+	while (!isExplored()) {
+		// gather information about walls from sensors
+		int leftWall = 0;
+		int rightWall = 0;
+		int upWall = 0;
+		int downWall = 0;
+		int nextNode = dfs(row, col, leftWall, rightWall, upWall, downWall);
+		moveTo(currNode, nextNode);
+		currNode = nextNode;
+	}
+}
+=======
 #include "inc/sensors.h"
 
 void returnToStart() {
@@ -23,6 +45,7 @@ void returnToStart() {
 						}
 						controls.moveTo(dir);
 				}
+>>>>>>> c632af1f11795d691e582fb689da7e623133ac89
 
 
 				controls.move();
@@ -65,7 +88,8 @@ void main() {
 	returnToStart();
 	solveMaze();
 
-  controls_setup();
+	Button_init(/*TODO*/);
+	controls_setup();
 
 	// from danstan
 	float destX;
@@ -73,11 +97,12 @@ void main() {
 
 	int controls_finished = 1;
 
-
-
-
 	while(!maze.isExplored()) {
 		// check buttons
+		int button_pressed = Button_update();
+		if (button_pressed == BUTTON_RED) {
+			// TODO: action for red button
+		}
 
 		// do controls thing
 		controls_finished = controls.update();
