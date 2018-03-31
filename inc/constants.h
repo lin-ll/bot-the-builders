@@ -48,9 +48,9 @@
 
 //-------------------
 
-#define BUS 1;
-#define GYRO_ADDR 0x6B; // 7 bit 1101011;
-#define COMPASS_ADDR 0x1D; // if it's wrong, try 1F
+#define BUS 1
+#define GYRO_ADDR 0x6B // 7 bit 1101011;
+#define COMPASS_ADDR 0x1D // if it's wrong, try 1F
 
 //-------------------
 
