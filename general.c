@@ -32,7 +32,7 @@ int setup() {
 }
 
 // moves a given distance c forwards
-void forwards(int c) {
+void forwards() {
 	double currLeft, currRight, finalDist;
 
 	finalDist = <insert current location method>;
@@ -52,7 +52,7 @@ void forwards(int c) {
 }
 
 // moves left distance c
-void left(int c) {
+void left() {
 	double currLeftT, currLeftB, finalDist;
 
 	finalDist = <insert current location method>;
@@ -72,7 +72,7 @@ void left(int c) {
 }
 
 // moves right distance c
-void right(int c) {
+void right() {
 	double currRightT, currRightB, finalDist;
 
 	finalDist = <insert current location method>;
@@ -92,7 +92,7 @@ void right(int c) {
 }
 
 // moves backwards distance c
-void back(int c) {
+void back() {
 	double currLeft, currRight, finalDist;
 
 	finalDist = <insert current location method>;
@@ -134,9 +134,10 @@ double checkDistanceRight() {
 
 // maintains robot in center of path
 // dynamically adjust the speed of the wheels
-void maintainLR(int goalSpace) {
+void maintainLR(double targetX) {
     // calls check Distance Front and Back
-		double xError = xOffset(goalSpace);
+    double currX = kalman_getX();
+		double xError = currX - targetX;
 		update(pidLeftRight, xError, dt);
 		double correction = getVal(pidLeftRight);
 		if (yError > 0) {
@@ -146,9 +147,10 @@ void maintainLR(int goalSpace) {
 		}
 }
 
-void maintainFB(int goalSpace) {
+void maintainFB(double targetY) {
     // calls check Distance Left and Right
-		double yError = yOffset(goalSpace);
+		double currY = kalman_getY;
+    double yError = currY - targetY;
 		update(pidUpDown, yError, dt);
 		double correction = getVal(pidUpDown);
 		if (yError > 0) {

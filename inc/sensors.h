@@ -33,11 +33,14 @@ enum Orient_t {kNORTH, kEAST, kSOUTH, kWEST};
 
 /* Return distance in cm */
 
-double Sensor_getShort();//Dir_t dir);
+double Sensor_getShort(int num);//Dir_t dir);
 double Sensor_getLong(enum Dir_t dir);
 double Sensor_orient(enum Dir_t dir);
 
 /* Any Cleanup */
 void Sensor_free();
+
+// finds all walls in square;
+int *Sensor_findWalls();
 
 #endif

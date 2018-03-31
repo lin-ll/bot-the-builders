@@ -1,5 +1,5 @@
 #include "inc/sensors.h"
-#include "inc/pigpiod_if2.h"
+#include <pigpiod_if2.h>
 #include "inc/constants.h"
 #include <adafruit_distance.h>
 #include <stdio.h>
@@ -151,7 +151,7 @@ static void initCompass() {
 int Sensor_init(int pifd) {
   pi = pifd;
   int i, j, success;
-  
+
   adafruit_distance_set_pi_handle(pi);
   // Getting the handles for short and long distance
   for(i=0; i<4; i++) {
@@ -187,11 +187,8 @@ int Sensor_init(int pifd) {
 
   printf("ALL OFF\n");
 
-
   success = adafruit_distance_begin(short_dist_handles[3]);
   printf("SUCCESS WAS %d\n", success);
-
-  
 
   // One by one, turn on short distance sensors
   for(i=0; i<4; i++) {
@@ -200,8 +197,11 @@ int Sensor_init(int pifd) {
       gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_ON);
 
     // Library thinks we're talking to the same sensor each time
+
+    printf("Changing address from %x to %x\n", short_dist_handles[3],SHORT_DIST_ADDRS[i])
     adafruit_distance_change_address(short_dist_handles[3], SHORT_DIST_ADDRS[i]);
     success = adafruit_distance_begin(short_dist_handles[i]);
+
     if(!success)
       printf("Short distance sensor error: %d\n", i);
 
@@ -235,7 +235,7 @@ int Sensor_init(int pifd) {
 
   // TODO: figure out what to do with accelerometer
   //acc_handle = i2c_open(ACC_BUS, ACC_ADDRESS);
-  
+
   //initGyro();
   //initCompass();
   return 0;
@@ -249,7 +249,7 @@ double Sensor_getGyro(){
 
   //int16_t a = adafruit_distance_read16(GYRO_REGISTER_OUT_X_L | 80);
   //printf("A is %d\n", a);
-  
+
   i2c_read_i2c_block_data(pi, gyro_handle, GYRO_REGISTER_OUT_X_L | 0x80, buffer, 6);
   raw = ((int16_t)(buffer[3]) << 8) + (int16_t)(buffer[2]);
 
@@ -293,15 +293,32 @@ void Sensor_calGyro(int n) {
   gyroOffset = c / (double)n;
 }
 
-/* Return distance from short distance sensor in cm */
+/* Return distance from short distance sensor in mm */
 double Sensor_getShort(int num) {
-  return adafruit_distance_readRange(short_dist_handles[num]);
+  return 10 * adafruit_distance_readRange(short_dist_handles[num]);
 }
 
 /* TODO: implement this */
-/* Return distance from long distance sensor in cm */
+/* Return distance from long distance sensor in mm */
 double Sensor_getLong(enum Dir_t dir) {
   return 1;
+}
+
+int *Sensor_findWalls() {
+    int *walls = {0, 0, 0, 0};
+    if (Sensor_getShort(UP) > SQUARE_SIZE / 2) {
+        walls[0] = 1;
+    }
+    if (Sensor_getShort(DOWN) > SQUARE_SIZE / 2) {
+        walls[1] = 1;
+    }
+    if (Sensor_getShort(LEFT) > SQUARE_SIZE / 2) {
+        walls[2] = 1;
+    }
+    if (Sensor_getShort(RIGHT) > SQUARE_SIZE / 2) {
+        walls[3] = 1;
+    }
+    return walls;
 }
 
 /* Any cleanup */

@@ -17,6 +17,9 @@
 #define DISTANCE_OFF 0
 #define DISTANCE_ON 1
 
+#define START_SPACE 0
+#define GOAL_SPACE 0
+
 //-------------------
 
 #define BUTTON_RED 16
