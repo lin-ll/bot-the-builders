@@ -1,5 +1,5 @@
-#include "inc/leds.h"
-#include "inc/constants.h"
+#include "leds.h"
+#include "constants.h"
 #include <pigpiod_if2.h>
 
 const int LED_PINS[3] = {LED_BLUE, LED_RED, LED_GREEN};

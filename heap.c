@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "inc/heap.h"
+#include "heap.h"
 
 int isEmpty(heap_t *h) {
     return h->size == 0;

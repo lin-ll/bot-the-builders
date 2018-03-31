@@ -1,11 +1,11 @@
 #include <stdio.h>
-#include "inc/pigpio.h"
-#include "inc/motors.h"
-#include "inc/constants.h"
-#include "inc/pid.h"
-#include "inc/kalman.h"
-#include "inc/sensors.h"
-#include "inc/general.h"
+#include "pigpio.h"
+#include "motors.h"
+#include "constants.h"
+#include "pid.h"
+#include "kalman.h"
+#include "sensors.h"
+#include "general.h"
 
 static PID_T pidLeftRight;
 static PID_T pidUpDown;

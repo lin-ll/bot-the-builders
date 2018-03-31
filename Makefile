@@ -13,19 +13,22 @@ clean:
 	rm -f *.o
 
 # Dependency rules for file targets
-robot: maze.o graph.o motors.o kalman.o constants.h
+robot: maze.o graph.o motors.o kalman.o constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
-test_sensors: test_sensors.o sensors.o adafruit_distance.o 
+test_sensors: test_sensors.o sensors.o adafruit_distance.o constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
-test_motors: test_motors.o
+test_motors: test_motors.o constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
-test_distance: test_distance.o adafruit_distance.o 
+test_distance: test_distance.o adafruit_distance.o constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
-test_led: test_leds.o leds.o
+test_leds: test_leds.o leds.o constants.o
+	$(CC) -o $@ $^ $(CFLAGS)
+
+test_buttons: test_buttons.o buttons.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 #motors.o: motors.h

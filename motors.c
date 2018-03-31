@@ -1,13 +1,13 @@
 /* motors.c */
 
-#include "inc/motors.h"
+#include "motors.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <pigpiod_if2.h>
-#include "inc/pid.h"
-#include "inc/sensors.h"
-#include "inc/constants.h"
+#include "pid.h"
+#include "sensors.h"
+#include "constants.h"
 
 //-------------------
 

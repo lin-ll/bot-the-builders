@@ -1,8 +1,8 @@
-#include "inc/adafruit_distance.h"
+#include "adafruit_distance.h"
 #include <pigpiod_if2.h>
 #include <unistd.h>
 #include <stdio.h>
-#include "inc/constants.h"
+#include "constants.h"
 
 int pi = 0;
 const int SHORT_SHUTDOWN_PINS[4] = {SHORT_PIN_FRONT, SHORT_PIN_BACK, SHORT_PIN_LEFT, SHORT_PIN_RIGHT};

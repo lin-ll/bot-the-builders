@@ -1,7 +1,7 @@
 #include <pigpiod_if2.h>
 #include <unistd.h>
 #include <stdio.h>
-#include "inc/constants.h"
+#include "constants.h"
 
 int forward[4] = {UPPER_LEFT_FORWARD, UPPER_RIGHT_FORWARD, LOWER_LEFT_FORWARD, LOWER_RIGHT_FORWARD};
 int backward[4] = {UPPER_LEFT_BACKWARD, UPPER_RIGHT_BACKWARD, LOWER_LEFT_BACKWARD, LOWER_RIGHT_BACKWARD};

@@ -2,13 +2,13 @@
 /* Basic robot motions and sensor reading.                                    */
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
-#include "inc/general.h"
-#include "inc/motors.h"
-#include "inc/sensors.h"
-#include "inc/kalman.h"
-#include "inc/constants.h"
-#include "inc/control.h"
-#include "inc/pid.h"
+#include "general.h"
+#include "motors.h"
+#include "sensors.h"
+#include "kalman.h"
+#include "constants.h"
+#include "control.h"
+#include "pid.h"
 
 // WRITING UNDER THE ASSUMED FRAMEWORK:
 /*
