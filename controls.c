@@ -51,24 +51,18 @@ int findDirection(int oldNode, int newNode) {
     return -1;
 }
 
+int update() {
+    double currX = kalman_getX();
+    double currY = kalman_getY();
+    return abs(destX - currX) < 0.1 && abs(destY - currY) < 0.1;
+}
+
 void stop() {
-    //TODO: Add braking
     double motors[4] = {0.0};
     Motor_set(motors);
     reset(pidUpDown);
     reset(pidLeftRight);
     reset(pidTheta);
-}
-
-// assuming forward orientation, positive translation defined to the right,
-// and positive rotations defined in clockwise direction
-void adjust(int direction, double mainVelocity, double translate,
-    double rotate) {
-    double motors[4] = {rotate};
-    motors[direction] += mainVelocity - translate;
-    motors[(direction + 1) % 4] += mainVelocity + translate;
-    motors[(direction + 2) % 4] += translate - mainVelocity;
-    motors[(direction + 3) % 4] += - mainVelocity - translate;
 }
 
 /* following method simply uses PID to move the robot
@@ -87,7 +81,7 @@ double xOffset(int goalSpace) {
     // target stores ideal x position where furthest wall is 0 in mm.
     int targetRow = goalSpace / mazeSize;
     double target = 180.0 * targetRow + 90.0;
-    double currX = kalmanX(); //TODO: calls kalman method to get X position
+    double currX = kalman_getX(); //TODO: calls kalman method to get X position
     return target - currX;
 }
 
@@ -95,7 +89,7 @@ double yOffset(int goalSpace) {
     // same as xOffset
     int targetCol = goalSpace % mazeSize;
     double target = 180.0 * targetCol + 90.0;
-    double currY = kalmanY(); //TODO: calls kalman method to get Y position
+    double currY = kalman_getY(); //TODO: calls kalman method to get Y position
     return target - currY;
 }
 
@@ -109,7 +103,7 @@ double getStoppingDistance() {
 
 void moveTo(int direction) {
     if (direction == UP) {
-        destY += SQUARE_SIZE;
+        destY -= SQUARE_SIZE;
         currDir = UP;
     } else if (direction == LEFT) {
         destX -= SQUARE_SIZE;
@@ -117,8 +111,8 @@ void moveTo(int direction) {
     } else if (direction == RIGHT) {
         destX += SQUARE_SIZE;
         currDir = RIGHT;
-    } else {
-        destY -= SQUARE_SIZE;
+    } else  if (direction == DOWN) {
+        destY += SQUARE_SIZE;
         currDir = DOWN;
     }
 }
@@ -136,7 +130,7 @@ void move() {
         right();
         maintainFB();
         maintainTheta();
-    } else {
+    } else if (currDir == DOWN) {
         back();
         maintainLR();
         maintainTheta();

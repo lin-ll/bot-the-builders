@@ -10,8 +10,7 @@
 static Graph maze; // graph recording walls and such
 static int traversed[16][16] = {0}; // record of traversed squares
 static int unexplored = 256; // number of unexplored squares
-static int goalSpace = 120; // target space
-static int startSpace = 0; // starting space
+
 static int currRow = 0; // current row
 static int currCol = 0; // current col
 
@@ -90,7 +89,7 @@ int dfs(int upWall, int downWall, int leftWall, int rightWall) {
 		add_edges(upWall, downWall, leftWall, rightWall, nodeRef);
 
 		if (isExplored()) {
-				return -1;
+				return -2;
 		}
 
 		// left
@@ -255,6 +254,10 @@ void assignPath(int finish) {
 
 // Follow current path, returns direction of next node
 int followPath() {
+		if (isEmpty(currentPath)) {
+				return -1;
+		}
+
 		int nextNode = pop(currentPath);
 		int currNode = getIntFromCoordinates(currRow, currCol);
 
