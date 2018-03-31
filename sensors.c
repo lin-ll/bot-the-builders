@@ -14,13 +14,15 @@
 */
 
 const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_SHORT_DIST_ADDR}; // bogus addresses
-const int LONG_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_LONG_DIST_ADDR}; // bogus addresses
+const int LONG_DIST_ADDRS[4] = {0x31, 0x30, 0x2F, 0x2E}; // bogus addresses
 
 
 // known short: SHORT_PIN_FRONT (-1), SHORT_PIN_BACK
-// known long : SHORT_PIN_LEFT
-const int SHORT_SHUTDOWN_PINS[4] = {SHORT_PIN_FRONT, SHORT_PIN_BACK, LONG_PIN_FRONT, SHORT_PIN_RIGHT};
-const int LONG_SHUTDOWN_PINS[4] = {SHORT_PIN_LEFT, LONG_PIN_BACK, LONG_PIN_LEFT, LONG_PIN_RIGHT};
+// known long : SHORT_PIN_LEFT, LONG_PIN_FRONT
+
+// known short: SHORT_PIN_RIGHT
+const int SHORT_SHUTDOWN_PINS[4] = {SHORT_PIN_FRONT, SHORT_PIN_BACK, LONG_PIN_BACK, SHORT_PIN_RIGHT};
+const int LONG_SHUTDOWN_PINS[4] = {SHORT_PIN_LEFT, LONG_PIN_FRONT, LONG_PIN_LEFT, LONG_PIN_RIGHT};
 
 // The datasheet gives 8.75mdps/digit for default sensitivity
 const double RPS_PER_DIGIT = 0.00875*TWO_PI/360;
