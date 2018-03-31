@@ -5,10 +5,10 @@
 #include "inc/maze.h"
 #include "inc/controls.h"
 #include "inc/kalman.h"
-<<<<<<< HEAD
 #include "inc/heap.h"
 #include "inc/buttons.h"
 #include "inc/constants.h"
+#include "inc/sensors.h"
 
 int explore() {
 	int explorationVelocity = 10; // speed for exploration
@@ -26,8 +26,6 @@ int explore() {
 		currNode = nextNode;
 	}
 }
-=======
-#include "inc/sensors.h"
 
 void returnToStart() {
 		maze.assignPath(START_SPACE);
@@ -45,7 +43,6 @@ void returnToStart() {
 						}
 						controls.moveTo(dir);
 				}
->>>>>>> c632af1f11795d691e582fb689da7e623133ac89
 
 
 				controls.move();

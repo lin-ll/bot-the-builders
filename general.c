@@ -8,6 +8,7 @@
 #include "inc/kalman.h"
 #include "inc/constants.h"
 #include "inc/control.h"
+#include "inc/pid.h"
 
 // WRITING UNDER THE ASSUMED FRAMEWORK:
 /*
@@ -38,12 +39,12 @@ void forwards() {
 	finalDist = <insert current location method>;
 	// one thing to note is deceleration, so we can't really stop at finalDist
 	// we have to start slowing down at some point before finalDist (finalDist-offset)
-	while (<insert condition from kalman> < finalDist - offset) {
+	if (<insert condition from kalman> < finalDist - offset) {
 		Motor_setUpperLeft(someVal);
 		Motor_setUpperRight(someVal);
 	}
 	// start slowing down
-	while (<insert condition from kalman> < finalDist) {
+	if (<insert condition from kalman> < finalDist) {
 		currLeft = Motor_getUpperLeft();
 		currRight = Motor_getUpperRight();
 		Motor_setUpperLeft(currLeft - amount);
@@ -58,12 +59,12 @@ void left() {
 	finalDist = <insert current location method>;
 	// one thing to note is deceleration, so we can't really stop at finalDist
 	// we have to start slowing down at some point before finalDist (finalDist-offset)
-	while (<insert condition from kalman> < finalDist - offset) {
+	if (<insert condition from kalman> < finalDist - offset) {
 		Motor_setUpperLeft(someVal);
 		Motor_setBottomLeft(someVal);
 	}
 	// start slowing down
-	while (<insert condition from kalman> < finalDist) {
+	if (<insert condition from kalman> < finalDist) {
 		currLeftT = Motor_getUpperLeft();
 		currLeftB = Motor_getBottomLeft();
 		Motor_setUpperLeft(currLeftT - amount);
@@ -78,12 +79,12 @@ void right() {
 	finalDist = <insert current location method>;
 	// one thing to note is deceleration, so we can't really stop at finalDist
 	// we have to start slowing down at some point before finalDist (finalDist-offset)
-	while (<insert condition from kalman> < finalDist - offset) {
+	if (<insert condition from kalman> < finalDist - offset) {
 		Motor_setUpperRight(someVal);
 		Motor_setLowerRight(someVal);
 	}
 	// start slowing down
-	while (<insert condition from kalman> < finalDist) {
+	if (<insert condition from kalman> < finalDist) {
 		currRightT = Motor_getUpperRight();
 		currRightB = Motor_getLowerRight();
 		Motor_setUpperRight(currRightT - amount);
@@ -98,12 +99,12 @@ void back() {
 	finalDist = <insert current location method>;
 	// one thing to note is deceleration, so we can't really stop at finalDist
 	// we have to start slowing down at some point before finalDist (finalDist-offset)
-	while (<insert condition from kalman> < finalDist - offset) {
+	if (<insert condition from kalman> < finalDist - offset) {
 		Motor_setLowerLeft(someVal);
 		Motor_setLowerRight(someVal);
 	}
 	// start slowing down
-	while (<insert condition from kalman> < finalDist) {
+	if (<insert condition from kalman> < finalDist) {
 		currLeft = Motor_getLowerLeft();
 		currRight = Motor_getLowerRight();
 		Motor_setLowerLeft(currLeft - amount);

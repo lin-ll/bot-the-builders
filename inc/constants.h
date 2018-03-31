@@ -1,5 +1,6 @@
 // constants
-
+#ifndef CONSTANTS_INC
+#define CONSTANTS_INC
 #define RIGHT 0
 #define DOWN 1
 #define LEFT 2
@@ -72,4 +73,7 @@
 #define LED_GRAY 14
 #define LED_BROWN 15
 #define LED_ORANGE 16
+
+#endif
+
 
