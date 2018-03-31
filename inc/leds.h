@@ -11,4 +11,7 @@ int Led_init(int pifd);
 /* Set LED pins to these RGB values */
 void Led_setColor(int red, int green, int blue);
 
+/* Turns all LED pins off */
+void Led_off();
+
 #endif

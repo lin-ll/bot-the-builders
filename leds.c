@@ -2,7 +2,7 @@
 #include "inc/constants.h"
 #include <pigpiod_if2.h>
 
-const int LED_PINS[3] = {LED_GRAY, LED_BROWN, LED_ORANGE};
+const int LED_PINS[3] = {LED_BLUE, LED_RED, LED_GREEN};
 static int pi;
 
 int Led_init(int pifd) {
@@ -15,11 +15,12 @@ int Led_init(int pifd) {
 	return 0;
 }
 
-// orange = green
-// gray = blue
-// brown = red
 void Led_setColor(int red, int green, int blue) {
-	set_PWM_dutycycle(pi, LED_BROWN, 255-red);
-	set_PWM_dutycycle(pi, LED_ORANGE, 255-green);
-	set_PWM_dutycycle(pi, LED_GRAY, 255-blue);
+	set_PWM_dutycycle(pi, LED_RED, 255-red);
+	set_PWM_dutycycle(pi, LED_GREEN, 255-green);
+	set_PWM_dutycycle(pi, LED_BLUE, 255-blue);
+}
+
+void Led_off() {
+	Led_setColor(0, 0, 0);
 }

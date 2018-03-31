@@ -3,25 +3,25 @@
 /* Control the high-level desired movement of the robot 					  */
 /*----------------------------------------------------------------------------*/
 
-#ifndef CTRL_INCLUDED
-#define CTRL_INCLUDED
+#ifndef CTRL_H
+#define CTRL_H
 
 // initialize values
-int controls_setup();
+int Control_init();
 
 // find the orientation of our robot
-int findDirection(int oldNode, int newNode);
+int Control_findDirection(int oldNode, int newNode);
 
 // want to stop the robot
-void stop();
+void Control_stop();
 
 // returns if robot is in desired position
-int update();
+int Control_update();
 
 // update the direction that we want the robot to move
-void moveTo(int direction);
+void Control_moveTo(int direction);
 
 // moves robot in pre-set direction
-void move();
+void Control_move();
 
 #endif
