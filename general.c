@@ -22,6 +22,8 @@ static PID_T pidLeftRight;
 static PID_T pidUpDown;
 static PID_T pidTheta;
 
+static double speed;
+
 int setup() {
     pidLeftRight = init(1.0, 10.0, 10.0);
     pidUpDown = init(1.0, 10.0, 10.0);
@@ -34,82 +36,75 @@ int setup() {
 
 // moves a given distance c forwards
 void forwards() {
-	double currLeft, currRight, finalDist;
+	// double currLeft, currRight, finalDist;
 
-	finalDist = <insert current location method>;
 	// one thing to note is deceleration, so we can't really stop at finalDist
 	// we have to start slowing down at some point before finalDist (finalDist-offset)
-	if (<insert condition from kalman> < finalDist - offset) {
-		Motor_setUpperLeft(someVal);
-		Motor_setUpperRight(someVal);
-	}
+	Motor_setUpperLeft(speed);
+	Motor_setUpperRight(speed);
+  Motor_setLowerLeft(speed);
+  Motor_setLowerRight(speed);
 	// start slowing down
+  /* Robot seems to stop quite well, deceleration does not seem necessary.
 	if (<insert condition from kalman> < finalDist) {
 		currLeft = Motor_getUpperLeft();
 		currRight = Motor_getUpperRight();
 		Motor_setUpperLeft(currLeft - amount);
 		Motor_setUpperRight(currRight - amount);
 	}
+  */
+}
+
+void forwardsAdjust(double adjust) {
+  Motor_setUpperLeft(adjust);
+	Motor_setUpperRight(adjust);
+  Motor_setLowerLeft(adjust);
+  Motor_setLowerRight(adjust);
 }
 
 // moves left distance c
 void left() {
-	double currLeftT, currLeftB, finalDist;
+  Motor_setUpperLeft(-speed);
+	Motor_setUpperRight(speed);
+  Motor_setLowerLeft(speed);
+  Motor_setLowerRight(-speed);
+}
 
-	finalDist = <insert current location method>;
-	// one thing to note is deceleration, so we can't really stop at finalDist
-	// we have to start slowing down at some point before finalDist (finalDist-offset)
-	if (<insert condition from kalman> < finalDist - offset) {
-		Motor_setUpperLeft(someVal);
-		Motor_setBottomLeft(someVal);
-	}
-	// start slowing down
-	if (<insert condition from kalman> < finalDist) {
-		currLeftT = Motor_getUpperLeft();
-		currLeftB = Motor_getBottomLeft();
-		Motor_setUpperLeft(currLeftT - amount);
-		Motor_setBottomLeft(currLeftB - amount);
-	}
+void leftAdjust(double adjust) {
+  Motor_setUpperLeft(-adjust);
+	Motor_setUpperRight(adjust);
+  Motor_setLowerLeft(adjust);
+  Motor_setLowerRight(-adjust);
 }
 
 // moves right distance c
 void right() {
-	double currRightT, currRightB, finalDist;
+  Motor_setUpperLeft(speed);
+	Motor_setUpperRight(-speed);
+  Motor_setLowerLeft(-speed);
+  Motor_setLowerRight(speed);
+}
 
-	finalDist = <insert current location method>;
-	// one thing to note is deceleration, so we can't really stop at finalDist
-	// we have to start slowing down at some point before finalDist (finalDist-offset)
-	if (<insert condition from kalman> < finalDist - offset) {
-		Motor_setUpperRight(someVal);
-		Motor_setLowerRight(someVal);
-	}
-	// start slowing down
-	if (<insert condition from kalman> < finalDist) {
-		currRightT = Motor_getUpperRight();
-		currRightB = Motor_getLowerRight();
-		Motor_setUpperRight(currRightT - amount);
-		Motor_setLowerRight(currRightB - amount);
-	}
+void rightAdjust(double adjust) {
+  Motor_setUpperLeft(adjust);
+	Motor_setUpperRight(-adjust);
+  Motor_setLowerLeft(-adjust);
+  Motor_setLowerRight(adjust);
 }
 
 // moves backwards distance c
 void back() {
-	double currLeft, currRight, finalDist;
+  Motor_setUpperLeft(-speed);
+	Motor_setUpperRight(-speed);
+  Motor_setLowerLeft(-speed);
+  Motor_setLowerRight(-speed);
+}
 
-	finalDist = <insert current location method>;
-	// one thing to note is deceleration, so we can't really stop at finalDist
-	// we have to start slowing down at some point before finalDist (finalDist-offset)
-	if (<insert condition from kalman> < finalDist - offset) {
-		Motor_setLowerLeft(someVal);
-		Motor_setLowerRight(someVal);
-	}
-	// start slowing down
-	if (<insert condition from kalman> < finalDist) {
-		currLeft = Motor_getLowerLeft();
-		currRight = Motor_getLowerRight();
-		Motor_setLowerLeft(currLeft - amount);
-		Motor_setLowerRight(currRight - amount);
-	}
+void backAdjust(double adjust) {
+  Motor_setUpperLeft(-adjust);
+	Motor_setUpperRight(-adjust);
+  Motor_setLowerLeft(-adjust);
+  Motor_setLowerRight(-adjust);
 }
 
 // reads distance from long
@@ -141,10 +136,10 @@ void maintainLR(double targetX) {
 		double xError = currX - targetX;
 		update(pidLeftRight, xError, dt);
 		double correction = getVal(pidLeftRight);
-		if (yError > 0) {
-				left(correction * dt);
+		if (xError > 0) {
+				leftAdjust(correction);
 		} else {
-				right(correction * dt);
+				rightAdjust(correction);
 		}
 }
 
@@ -155,9 +150,9 @@ void maintainFB(double targetY) {
 		update(pidUpDown, yError, dt);
 		double correction = getVal(pidUpDown);
 		if (yError > 0) {
-				back(correction * dt);
+				forwardsAdjust(correction);
 		} else {
-				forwards(correction * dt);
+				backAdjust(correction);
 		}
 }
 
@@ -169,10 +164,10 @@ void maintainTheta() {
 		double correction = getVal(pidTheta);
 		correction = correction * radius;
 		//TODO: put correction back into motors
-		Motor_setUpperLeft(Motor_getUpperLeft() + correction);
-		Motor_setUpperRight(Motor_getUpperRight() + correction);
-		Motor_setLowerLeft(Motor_getLowerLeft() + correction);
-		Motor_setLowerRight(Motor_getLowerRight() + correction);
+		Motor_setUpperLeft(correction);
+		Motor_setUpperRight(correction);
+		Motor_setLowerLeft(correction);
+		Motor_setLowerRight(correction);
 }
 
 // returns value read from sensor s
@@ -180,12 +175,6 @@ void maintainTheta() {
     // something to distinguish short and long sensors?
     /* We don't really need this?????? Call from sensor.c directly -DC */
 //}
-
-// checks if there is Wall in moving direction
-int checkWall() {
-
-}
-
 
 // for unit testing, comment out if need be because we can only
 // have one main
