@@ -8,6 +8,9 @@
 #ifndef GRAPH_INCLUDED
 #define GRAPH_INCLUDED
 
+/* when we are willing to call bsearch */
+#define BSEARCH_THRESHOLD (10)
+
 typedef struct graph *Graph;
 
 /* create a new graph with n vertices labeled 0..n-1 and no edges */

@@ -17,8 +17,10 @@
 */
 /**************************************************************************/
 
-//#define I2C_DEBUG
+#ifndef ADAFRUIT_INC
+#define ADAFRUIT_INC
 
+//#define I2C_DEBUG
 #define VL6180X_REG_IDENTIFICATION_MODEL_ID    0x000
 #define VL6180X_REG_SYSTEM_INTERRUPT_CONFIG    0x014
 #define VL6180X_REG_SYSTEM_INTERRUPT_CLEAR     0x015
@@ -55,10 +57,41 @@
 #define VL6180X_ERROR_RANGEUFLOW   14
 #define VL6180X_ERROR_RANGEOFLOW   15
 
-int adafruit_distance_begin(int sensor_handle);
-int adafruit_distance_readRange(int sensor_handle);
-float   adafruit_distance_readLux(int sensor_handle, int gain);
-int adafruit_distance_readRangeStatus(int sensor_handle);
+/************************************************************************/
+/*  Reading from VL6180X                                                */
+/************************************************************************/
+// Read 1 byte from the VL6180X at 'address'
+int adafruit_distance_read8(int address);
+// Read 2 byte from the VL6180X at 'address'
+int adafruit_distance_read16(int address);
+
+/************************************************************************/
+/*  Writing to VL6180X                                                  */
+/************************************************************************/
+// write 1 byte
+void adafruit_distance_write8(int address, int data);
+// write 2 bytes
+void adafruit_distance_write16(int address, int data);
+
+/************************************************************************/
+/*  Updating handle                                                     */
+/************************************************************************/
+// set the pi handle based on pi_handle_1 input
+void adafruit_distance_set_pi_handle(int pi_handle_1);
+// Make current handle be old and write to
+// VL6180X_REG_I2C_SLAVE_DEVICE_ADDR the new handle
 void adafruit_distance_change_address(int old, int new);
-void adafruit_distance_set_pi_handle(int handle);
-void adafruit_distance_write8(int address, int handle);
+
+/************************************************************************/
+/*  Reading range and lux                                               */
+/************************************************************************/
+// Calls loadSettings to initialize
+int adafruit_distance_begin(int sensor_handle);
+// read the range measurement
+int adafruit_distance_readRange(int sensor_handle);
+// read the lux
+float   adafruit_distance_readLux(int sensor_handle, int gain);
+// read the range status (error message)
+int adafruit_distance_readRangeStatus(int sensor_handle);
+
+#endif

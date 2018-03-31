@@ -11,7 +11,9 @@ int Button_init(int pifd) {
 	pi = pifd;
 
 	for (int i = 0; i < 4; i++) {
-		set_mode(pi, BUTTON_PINS[i], PI_INPUT);
+		// set the mode and if it fails, return 1
+		if(set_mode(pi, BUTTON_PINS[i], PI_INPUT))
+			return 1;
 	}
 
 	return 0;

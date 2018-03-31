@@ -51,8 +51,7 @@ Graph graph_create(int n)
 }
 
 /* free all space used by graph */
-void
-graph_destroy(Graph g)
+void graph_destroy(Graph g)
 {
     int i;
 
@@ -61,8 +60,7 @@ graph_destroy(Graph g)
 }
 
 /* add an edge to an existing graph */
-void
-graph_add_edge(Graph g, int u, int v)
+void graph_add_edge(Graph g, int u, int v)
 {
     assert(u >= 0);
     assert(u < g->n);
@@ -86,22 +84,19 @@ graph_add_edge(Graph g, int u, int v)
 }
 
 /* return the number of vertices in the graph */
-int
-graph_vertex_count(Graph g)
+int graph_vertex_count(Graph g)
 {
     return g->n;
 }
 
 /* return the number of edges in the graph */
-int
-graph_edge_count(Graph g)
+int graph_edge_count(Graph g)
 {
     return g->m;
 }
 
 /* return the out-degree of a vertex */
-int
-graph_out_degree(Graph g, int source)
+int graph_out_degree(Graph g, int source)
 {
     assert(source >= 0);
     assert(source < g->n);
@@ -109,18 +104,14 @@ graph_out_degree(Graph g, int source)
     return g->alist[source]->d;
 }
 
-/* when we are willing to call bsearch */
-#define BSEARCH_THRESHOLD (10)
 
-static int
-intcmp(const void *a, const void *b)
+static int intcmp(const void *a, const void *b)
 {
     return *((const int *) a) - *((const int *) b);
 }
 
 /* return 1 if edge (source, sink) exists), 0 otherwise */
-int
-graph_has_edge(Graph g, int source, int sink)
+int graph_has_edge(Graph g, int source, int sink)
 {
     int i;
 
@@ -159,8 +150,7 @@ graph_has_edge(Graph g, int source, int sink)
 
 /* invoke f on all edges (u,v) with source u */
 /* supplying data as final parameter to f */
-void
-graph_foreach(Graph g, int source,
+void graph_foreach(Graph g, int source,
     void (*f)(Graph g, int source, int sink, void *data),
     void *data)
 {
