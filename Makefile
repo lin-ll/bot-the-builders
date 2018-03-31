@@ -28,7 +28,7 @@ test_distance: test_distance.o adafruit_distance.o constants.o
 test_leds: test_leds.o leds.o constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
-test_buttons: test_buttons.o buttons.o
+test_buttons: test_buttons.o buttons.o leds.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 #motors.o: motors.h

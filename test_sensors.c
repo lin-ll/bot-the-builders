@@ -16,9 +16,17 @@ int main(){
   printf("DONE SENSOR INIT\n");
   
   for(int i=0; i<1000; i++){
-    double reading = Sensor_getShort(3);
-    printf("reading: %f\n", reading);
-    usleep(100000);
+    double reading0 = Sensor_getShort(0);
+
+    double reading1 = Sensor_getShort(1);
+
+    double reading2 = Sensor_getShort(2);
+
+    double reading3 = Sensor_getShort(3);
+
+    printf("%f\t%f\t%f\t%f\n", reading0, reading1, reading2, reading3);
+
+    //usleep(100000);
   }
   return 0;
 }
