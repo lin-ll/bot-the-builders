@@ -52,8 +52,6 @@ int main(){
 			usleep(1000000);
 		}
 
-		double reading = Sensor_getShort(3);
-		printf("reading: %f\n", reading);
 		usleep(100000);
 	}
 	return 0;
