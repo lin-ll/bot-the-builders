@@ -1,5 +1,6 @@
 #include "inc/sensors.h"
-#include "inc/pigpiod_if2.h"
+//#include "inc/pigpiod_if2.h"
+#include <pigpiod_if2.h>
 #include <adafruit_distance.h>
 #include <stdio.h>
 #include <math.h>
@@ -197,11 +198,6 @@ int Sensor_init(int pifd) {
   printf("ALL OFF\n");
 
 
-  success = adafruit_distance_begin(short_dist_handles[3]);
-  printf("SUCCESS WAS %d\n", success);
-
-  
-
   // One by one, turn on short distance sensors
   for(i=0; i<4; i++) {
     printf("Turning on short distance sensor: %d\n", i);
@@ -209,8 +205,11 @@ int Sensor_init(int pifd) {
       gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_ON);
 
     // Library thinks we're talking to the same sensor each time
+
+    printf("Changing address from %x to %x\n", short_dist_handles[3],SHORT_DIST_ADDRS[i])
     adafruit_distance_change_address(short_dist_handles[3], SHORT_DIST_ADDRS[i]);
     success = adafruit_distance_begin(short_dist_handles[i]);
+
     if(!success)
       printf("Short distance sensor error: %d\n", i);
 
