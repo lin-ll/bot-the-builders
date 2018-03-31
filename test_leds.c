@@ -1,5 +1,4 @@
 #include <pigpiod_if2.h>
-#include "inc/constants.h"
 #include "inc/leds.h"
 #include <unistd.h>
 
