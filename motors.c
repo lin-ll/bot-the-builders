@@ -11,209 +11,96 @@
 
 //-------------------
 
-static double upperLeftPercent = 0;
-static double upperRightPercent = 0;
-static double lowerLeftPercent = 0;
-static double lowerRightPercent = 0;
+const int UPPER_LEFT_IDX = 0;
+const int UPPER_RIGHT_IDX = 1;
+const int LOWER_LEFT_IDX = 2;
+const int LOWER_RIGHT_IDX = 3;
+const int FORWARD[4] = {UPPER_LEFT_FORWARD, UPPER_RIGHT_FORWARD, LOWER_LEFT_FORWARD, LOWER_RIGHT_FORWARD};
+const int BACKWARD[4] = {UPPER_LEFT_BACKWARD, UPPER_RIGHT_BACKWARD, LOWER_LEFT_BACKWARD, LOWER_RIGHT_BACKWARD};
 
-static PID_T pidUpperLeft;
-static PID_T pidUpperRight;
-static PID_T pidLowerLeft;
-static PID_T pidLowerRight;
+static int desiredSpeeds[4] = {0, 0, 0, 0};
+static PID_T pids[4];
 
 static int pi;
 
 int Motor_init(int pifd) {
   pi = pifd;
-  upperLeftPercent = 0;
-  upperRightPercent = 0;
-  lowerLeftPercent = 0;
-  lowerRightPercent = 0;
+  desiredSpeeds[4] = {0, 0, 0, 0};
 
-  pidUpperLeft = Pid_init(10.0, 10.0, 1.0);
-  pidUpperRight = Pid_init(10.0, 10.0, 1.0);
-  pidLowerLeft = Pid_init(10.0, 10.0, 1.0);
-  pidLowerRight = Pid_init(10.0, 10.0, 1.0);
-
-  set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, 0.0);
-  set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, 0.0);
-  set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, 0.0);
-  set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, 0.0);
-  set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, 0.0);
-  set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, 0.0);
-  set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, 0.0);
-  set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, 0.0);
-
-  set_PWM_range(pi, UPPER_LEFT_FORWARD, MOTOR_RANGE);
-  set_PWM_range(pi, UPPER_LEFT_BACKWARD, MOTOR_RANGE);
-  set_PWM_range(pi, UPPER_RIGHT_FORWARD, MOTOR_RANGE);
-  set_PWM_range(pi, UPPER_RIGHT_BACKWARD, MOTOR_RANGE);
-  set_PWM_range(pi, LOWER_LEFT_FORWARD, MOTOR_RANGE);
-  set_PWM_range(pi, LOWER_LEFT_BACKWARD, MOTOR_RANGE);
-  set_PWM_range(pi, LOWER_RIGHT_FORWARD, MOTOR_RANGE);
-  set_PWM_range(pi, LOWER_RIGHT_BACKWARD, MOTOR_RANGE);
+  for (int i = 0; i < 4; i++) {
+    pids[i] = Pid_init(10.0, 10.0, 1.0);
+    set_PWM_dutycycle(pi, FORWARD[i], 0);
+    set_PWM_dutycycle(pi, BACKWARD[i], 0);
+    set_PWM_range(pi, FORWARD[i], MOTOR_RANGE);
+    set_PWM_range(pi, BACKWARD[i], MOTOR_RANGE);
+  }
   return 0;
 }
 
 // Assume sensors.c has a method witch returns current speed of motor
 // Call this motor motorSpeed();
 
-double Motor_getUpperLeft() {
-  return upperLeftPercent;
-}
-
-double Motor_getUpperRight() {
-  return upperRightPercent;
-}
-
-double Motor_getLowerLeft() {
-  return lowerLeftPercent;
-}
-
-double Motor_getLowerRight() {
-  return lowerRightPercent;
-}
-
-int Motor_setUpperLeft(double upperLeft) {
-  upperLeftPercent = upperLeft;
-  if (upperLeft >= 0) {
-    set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, (upperLeft * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, 0.0);
+int Motor_get(int motorPin) {
+  switch (motorPin) {
+    case UPPER_LEFT_FORWARD:
+    case UPPER_LEFT_BACKWARD:
+      return desiredSpeeds[UPPER_LEFT_IDX];
+    case UPPER_RIGHT_FORWARD:
+    case UPPER_RIGHT_BACKWARD:
+      return desiredSpeeds[UPPER_RIGHT_IDX];
+    case LOWER_LEFT_FORWARD:
+    case LOWER_LEFT_BACKWARD:
+      return desiredSpeeds[LOWER_LEFT_IDX];
+    case LOWER_RIGHT_FORWARD:
+    case LOWER_RIGHT_BACKWARD:
+      return desiredSpeeds[LOWER_RIGHT_IDX];
   }
-  else {
-    set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, (upperLeft * MOTOR_RANGE / -100.0));
-  }
-  return 0;
-}
-
-int Motor_adjustUpperLeft(double upperLeft) {
-  if (upperLeft >= 0) {
-    set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, (upperLeft * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, 0.0);
-  }
-  else {
-    set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, (upperLeft * MOTOR_RANGE / -100.0));
-  }
-  return 0;
-}
-
-int Motor_setUpperRight(double upperRight) {
-  upperRightPercent = upperRight;
-  if (upperRight >= 0) {
-    set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, (upperRight * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, 0.0);
-  }
-  else {
-    set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, (upperRight * MOTOR_RANGE / -100.0));
-  }
-  return 0;
-}
-
-int Motor_adjustUpperRight(double upperRight) {
-  if (upperRight >= 0) {
-    set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, (upperRight * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, 0.0);
-  }
-  else {
-    set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, (upperRight * MOTOR_RANGE / -100.0));
-  }
-  return 0;
-}
-
-int Motor_setLowerLeft(double lowerLeft) {
-  lowerLeftPercent = lowerLeft;
-  if (lowerLeft >= 0) {
-    set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, (lowerLeft * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, 0.0);
-  }
-  else {
-    set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, (lowerLeft * MOTOR_RANGE / -100.0));
-  }
-  return 0;
-}
-
-int Motor_adjustLowerLeft(double lowerLeft) {
-  if (lowerLeft >= 0) {
-    set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, (lowerLeft * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, 0.0);
-  }
-  else {
-    set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, (lowerLeft * MOTOR_RANGE / -100.0));
-  }
-  return 0;
-}
-
-int Motor_setLowerRight(double lowerRight) {
-  lowerRightPercent = lowerRight;
-  if (lowerRight >= 0) {
-    set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, (lowerRight * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, 0.0);
-  }
-  else {
-    set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, (lowerRight * MOTOR_RANGE / -100.0));
-  }
-  return 0;
-}
-
-int Motor_adjustLowerRight(double lowerRight) {
-  if (lowerRight >= 0) {
-    set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, (lowerRight * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, 0.0);
-  }
-  else {
-    set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, (lowerRight * MOTOR_RANGE / -100.0));
-  }
-  return 0;
+  return -1;
 }
 
 void Motor_updateMotors(double dt) {
-  Pid_setPoint(pidUpperLeft, upperLeftPercent);
-  double upperLeftSpeed = Sensor_getMotorSpeed(UPPER_LEFT_PIN);
-  Pid_update(pidUpperLeft, upperLeftSpeed, dt); // what is dt defined as?
-  double upperLeftAdjust = Pid_getVal(pidUpperLeft);
-  Motor_adjustUpperLeft(upperLeftAdjust);
-
-  Pid_setPoint(pidUpperRight, upperRightPercent);
-  double upperRightSpeed = Sensor_getMotorSpeed(UPPER_RIGHT_PIN);
-  Pid_update(pidUpperRight, upperRightSpeed, dt); // what is dt defined as?
-  double upperRightAdjust = Pid_getVal(pidUpperRight);
-  Motor_adjustUpperRight(upperRightAdjust);
-
-  Pid_setPoint(pidLowerLeft, lowerLeftPercent);
-  double lowerLeftSpeed = Sensor_getMotorSpeed(LOWER_LEFT_PIN);
-  Pid_update(pidLowerLeft, lowerLeftSpeed, dt); // what is dt defined as?
-  double lowerLeftAdjust = Pid_getVal(pidLowerLeft);
-  Motor_adjustLowerLeft(lowerLeftAdjust);
-
-  Pid_setPoint(pidLowerRight, lowerRightPercent);
-  double lowerRightSpeed = Sensor_getMotorSpeed(LOWER_RIGHT_PIN);
-  Pid_update(pidLowerRight, lowerRightSpeed, dt); // what is dt defined as?
-  double lowerRightAdjust = Pid_getVal(pidLowerRight);
-  Motor_adjustUpperLeft(lowerRightAdjust);
+  // TODO: Sensor_getMotorSpeed, what is this
+  for (int i = 0; i < 4; i++) {
+    PID_T currPid = pids[i];
+    int forwardMotor = FORWARD[i];
+    int backwardMotor = BACKWARD[i];
+    Pid_setPoint(currPid, desiredSpeeds[i]);
+    double encoderSpeed = Sensor_getMotorSpeed(forwardMotor);
+    Pid_update(currPid, encoderSpeed, dt);
+    double adjustSpeedDouble = Pid_getVal(currPid);
+    int adjustSpeed = (int) (adjustSpeedDouble * MOTOR_RANGE / 100.0); // TODO: unsure if this is correct
+    Motor_adjust(forwardMotor, backwardMotor, adjustSpeed);
+  }
 }
 
 void Motor_resetPID() {
-    Pid_reset(pidUpperLeft);
-    Pid_reset(pidUpperRight);
-    Pid_reset(pidLowerLeft);
-    Pid_reset(pidLowerRight);
+  for (int i = 0; i < 4; i++) {
+    Pid_reset(pids[i]);
+  }
+}
+
+
+void Motor_adjust(int forwardMotor, int backwardMotor, int speed) {
+  if (speed >= 0) {
+    set_PWM_dutycycle(pi, forwardMotor, speed);
+    set_PWM_dutycycle(pi, backwardMotor, 0);
+  } else {
+    set_PWM_dutycycle(pi, forwardMotor, 0);
+    set_PWM_dutycycle(pi, backwardMotor, speed);
+  }
 }
 
 /* Utility Function, to input array */
-int Motor_set(double* motors) {
-  double ret = Motor_setUpperLeft(motors[0]);
-  ret = ret || Motor_setUpperRight(motors[1]);
-  ret = ret || Motor_setLowerRight(motors[2]);
-  ret = ret || Motor_setLowerLeft(motors[3]);
-  return ret;
+void Motor_set(int* speeds) {
+  for (int i = 0; i < 4; i++) {
+    desiredSpeeds[i] = speeds[i];
+  }
+}
+
+void Motor_off() {
+  for (int i = 0; i < 4; i++) {
+    Motor_adjust(FORWARD[i], BACKWARD[i], 0);
+  }
 }
 
 void Motor_free() {
