@@ -10,7 +10,7 @@ CFLAGS = -I$(IDIR) -Wall -pthread -lpigpiod_if2 -lrt -lm
 # Dependency rules for non-file targets
 all: robot
 clean:
-	rm -f *.o
+	rm -f *.o test_leds test_buttons test_distance test_sensors robot 
 
 # Dependency rules for file targets
 robot: maze.o graph.o motors.o kalman.o constants.o
