@@ -1,5 +1,6 @@
 #include <pigpiod_if2.h>
 #include "buttons.h"
+#include <stdio.h>
 
 int pi = 0;
 

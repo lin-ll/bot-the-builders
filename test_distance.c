@@ -32,7 +32,7 @@ int main(){
   for(int i=0; i<600; i++){
     double reading = adafruit_distance_readRange(3);
     printf("reading: %f\n", reading);
-    usleep(100000);
+    //usleep(100000);
   }
   return 0;
 }

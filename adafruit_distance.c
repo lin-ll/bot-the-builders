@@ -170,10 +170,11 @@ int adafruit_distance_readRange(int sensor_handle) {
   int readOutput;
   int count = 0;
   while (! ((readOutput=adafruit_distance_read8(VL6180X_REG_RESULT_RANGE_STATUS)) & 0x01)) {
-    printf("readOutput = %x\n", readOutput); fflush(stdout);
-    count++;
+    //printf("readOutput = %x\n", readOutput); fflush(stdout);
+    //count++;
   }
-  printf("Count is %d\n", count);
+  //printf("Count is %d\n", count);
+  // I determined that count is usually 0, but sometimes up to like 4
   // Start a range measurement
   adafruit_distance_write8(VL6180X_REG_SYSRANGE_START, 0x01);
   // Poll until bit 2 is set
@@ -207,7 +208,7 @@ int adafruit_distance_begin(int sensor_handle) {
   //}
 
   adafruit_distance_write8(VL6180X_REG_SYSTEM_FRESH_OUT_OF_RESET, 0x00);
-  printf("success for handle %d!\n", sensor_handle);
+  printf("Finishing init for handle %d\n", sensor_handle);
 
   return 1;
 }

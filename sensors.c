@@ -20,9 +20,12 @@ const int LONG_DIST_ADDRS[4] = {0x31, 0x30, 0x2F, 0x2E}; // bogus addresses
 // known short: SHORT_PIN_FRONT (-1), SHORT_PIN_BACK
 // known long : SHORT_PIN_LEFT, LONG_PIN_FRONT
 
-// known short: SHORT_PIN_RIGHT
-const int SHORT_SHUTDOWN_PINS[4] = {SHORT_PIN_FRONT, SHORT_PIN_BACK, LONG_PIN_BACK, SHORT_PIN_RIGHT};
-const int LONG_SHUTDOWN_PINS[4] = {SHORT_PIN_LEFT, LONG_PIN_FRONT, LONG_PIN_LEFT, LONG_PIN_RIGHT};
+// known short: SHORT_PIN_FRONT (-1)
+// known long : SHORT_PIN_BACK
+
+// NOTE: short_back must go first because it deson't have a shutdown pin
+const int SHORT_SHUTDOWN_PINS[4] = {SHORT_PIN_BACK, SHORT_PIN_FRONT, SHORT_PIN_LEFT, SHORT_PIN_RIGHT};
+const int LONG_SHUTDOWN_PINS[4] = {LONG_PIN_FRONT, LONG_PIN_BACK, LONG_PIN_LEFT, LONG_PIN_RIGHT};
 
 // The datasheet gives 8.75mdps/digit for default sensitivity
 const double RPS_PER_DIGIT = 0.00875*TWO_PI/360;
@@ -193,8 +196,8 @@ int Sensor_init(int pifd) {
 
   printf("ALL OFF\n");
 
-  success = adafruit_distance_begin(short_dist_handles[3]);
-  printf("SUCCESS WAS %d\n", success);
+  //success = adafruit_distance_begin(short_dist_handles[3]);
+  //printf("SUCCESS WAS %d\n", success);
 
   // One by one, turn on short distance sensors
   for(i=0; i<4; i++) {
@@ -205,7 +208,7 @@ int Sensor_init(int pifd) {
     sleep(1);
     // Library thinks we're talking to the same sensor each time
 
-    printf("Changing address from %x to %x\n", short_dist_handles[3],SHORT_DIST_ADDRS[i]);
+    printf("Changing address for handle %x to addr %x\n", short_dist_handles[3],SHORT_DIST_ADDRS[i]);
     adafruit_distance_change_address(short_dist_handles[3], SHORT_DIST_ADDRS[i]);
     success = adafruit_distance_begin(short_dist_handles[i]);
 
@@ -302,7 +305,7 @@ void Sensor_calGyro(int n) {
 
 /* Return distance from short distance sensor in mm */
 double Sensor_getShort(int num) {
-  return 10 * adafruit_distance_readRange(short_dist_handles[num]);
+  return (double)adafruit_distance_readRange(short_dist_handles[num]);
 }
 
 /* TODO: implement this */
