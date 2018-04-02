@@ -7,6 +7,8 @@
 #include "heap.h"
 #include "constants.h"
 
+//TODO: create heap_destroy method?
+
 const int MAZE_AREA = MAZE_SIZE * MAZE_SIZE;
 
 static Graph maze; // graph recording walls and such
@@ -41,6 +43,10 @@ Graph Maze_init() {
 	graph_add_edge(maze, 119, 135);
 	graph_add_edge(maze, 120, 136);
 	graph_add_edge(maze, 135, 136);
+	currRow = 0;
+	currCol = 0;
+	unexplored = MAZE_AREA;
+	push(stepTrace, START_SPACE);
 }
 
 void Maze_reset() {
