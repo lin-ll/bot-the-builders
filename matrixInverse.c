@@ -1,33 +1,32 @@
-#include<stdio.h>
-#include<math.h>
+#include <stdio.h>
+#include <math.h>
+#include "matrixInverse.h"
 
-# define SIZE 6
+double determinant(double [][NUM], double);
+void cofactor(double [][NUM], double);
+void transpose(double [][NUM], double [][NUM], double);
 
-double determinant(double [][SIZE], double);
-void cofactor(double [][SIZE], double);
-void transpose(double [][SIZE], double [][SIZE], double);
+//static double matrixInverse[NUM*NUM] = {0};
+static double inverse[NUM][NUM] = {0};
 
-static double matrixInverse[SIZE*SIZE] = {0};
-static double inverse[SIZE][SIZE] = {0};
+int main_inv(double *matrix);
 
-double *inverse(double *matrix) {
-    main(matrix, SIZE);
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            int index = i * SIZE + j;
-            matrixInverse[index] = inverse[i][j];
+void invert(double *matrix) {
+    main_inv(matrix);
+    for (int i = 0; i < NUM; i++) {
+        for (int j = 0; j < NUM; j++) {
+            int index = i * NUM + j;
+            matrix[index] = inverse[i][j];
         }
     }
-
-    return matrixInverse;
 }
 
-int main(matrix, SIZE)
+int main_inv(double *matrix)
 {
-  double a[SIZE][SIZE], k, d;
+  double a[NUM][NUM], k, d;
   int i, j;
 
-  k = SIZE;
+  k = NUM;
 
   for (i = 0; i < k; i++) {
       for (j = 0; j < k; j++) {
@@ -37,16 +36,20 @@ int main(matrix, SIZE)
   }
   
   d = determinant(a, k);
-  if (d == 0)
+  if (d == 0){
+    printf("Matrix not invertible!");
    return -1;
-  else
+  }
+  else{
    cofactor(a, k);
+   return 0;
+  }
 }
 
 /*For calculating Determinant of the Matrix */
-double determinant(double a[SIZE][SIZE], double k)
+double determinant(double a[NUM][NUM], double k)
 {
-  double s = 1, det = 0, b[SIZE][SIZE];
+  double s = 1, det = 0, b[NUM][NUM];
   int i, j, m, n, c;
   if (k == 1)
     {
@@ -85,9 +88,9 @@ double determinant(double a[SIZE][SIZE], double k)
     return (det);
 }
 
-void cofactor(double num[SIZE][SIZE], double f)
+void cofactor(double num[NUM][NUM], double f)
 {
- double b[SIZE][SIZE], fac[SIZE][SIZE];
+ double b[NUM][NUM], fac[NUM][NUM];
  int p, q, m, n, i, j;
  for (q = 0;q < f; q++)
  {
@@ -118,10 +121,10 @@ void cofactor(double num[SIZE][SIZE], double f)
   transpose(num, fac, f);
 }
 /*Finding transpose of matrix*/
-void transpose(double num[SIZE][SIZE], double fac[SIZE][SIZE], double r)
+void transpose(double num[NUM][NUM], double fac[NUM][NUM], double r)
 {
   int i, j;
-  double b[SIZE][SIZE], d;
+  double b[NUM][NUM], d;
 
   for (i = 0;i < r; i++)
     {
