@@ -68,7 +68,7 @@ void Motor_updateMotors(double dt) {
     double encoderSpeed = Sensor_getMotorSpeed(forwardMotor);
     Pid_update(currPid, encoderSpeed, dt);
     double adjustSpeedDouble = Pid_getVal(currPid);
-    int adjustSpeed = (int) (adjustSpeedDouble * MOTOR_RANGE / 100.0); // TODO: unsure if this is correct
+    int adjustSpeed = (int) (adjustSpeedDouble * MOTOR_RANGE / MOTOR_MAX_SPEED); // TODO: unsure if this is correct
     Motor_adjust(forwardMotor, backwardMotor, adjustSpeed);
   }
 }
@@ -101,6 +101,15 @@ void Motor_off() {
   for (int i = 0; i < 4; i++) {
     Motor_adjust(FORWARD[i], BACKWARD[i], 0);
   }
+}
+
+// bring all motors to a complete stop
+// also resets PID, no reason the old integral should carry over
+void Motor_completeStop(){
+  Motor_resetPID();
+  int speeds[4] = {0,0,0,0};
+  Motor_set(speeds);
+  Motor_off();
 }
 
 void Motor_free() {

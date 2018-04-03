@@ -9,6 +9,11 @@
 #define LEFT 2
 #define UP 3
 
+#define NORTH 0
+#define SOUTH 1
+#define EAST 2
+#define WEST 3
+
 #define TRUE 1
 #define FALSE 0
 

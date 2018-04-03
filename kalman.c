@@ -238,10 +238,10 @@ void update(double *distances, double *encoders, double *imu, double *control, d
 
 	z[0] = dist_x;
 	z[1] = dist_y;
-	z[2] = 0;
+	z[2] = 0; // TODO compass
 	z[3] = encoder_vx;
 	z[4] = encoder_vy;
-	z[5] = encoder_vt;
+	z[5] = encoder_vt; // TODO gyro
 
 
 

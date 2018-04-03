@@ -3,6 +3,8 @@
 
 /* Motor Driver */
 
+#define MOTOR_MAX_SPEED 100.0
+
 /**
  * Initialize Motors, clears motor drivers.
  * Return 0 on Success.

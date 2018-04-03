@@ -81,19 +81,25 @@ void solveMaze() {
 }
 
 void main() {
-	explore();
-	returnToStart();
-	solveMaze();
+	//explore();
+	//returnToStart();
+	//solveMaze();
 
-	Button_init(/*TODO*/);
-	Control_init();
+	Led_setColor(255, 200, 0); //orange
+
+	pi = pigpio_start(NULL, NULL);
+
+	Button_init(pi);
+	Sensor_init(pi);
+	Controls2_init();
 
 	// from danstan
 	float destX;
 	float destY;
 
-	int controls_finished = 1;
+	Led_setColor(0, 255, 0); //green
 
+	int controls_finished = 1;
 	while (!Maze_isExplored()) {
 		// check buttons
 		int button_pressed = Button_update();
@@ -104,7 +110,7 @@ void main() {
 		}
 
 		// do controls thing
-		controls_finished = Control_update();
+		controls_finished = Controls2_update();
 		if (controls_finished) {
 			int *walls = Sensor_findWalls(walls);
 			int up_wall = walls[0];
@@ -115,7 +121,7 @@ void main() {
 				dir = Maze_dfs(up_wall, down_wall, left_wall, right_wall);
 			} while (dir == -1);
 
-			Control_moveTo(dir);
+			Controls2_setDir(dir);
 		}
 
 		Control_move();
