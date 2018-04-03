@@ -7,6 +7,8 @@
 #include "heap.h"
 #include "constants.h"
 
+//TODO: create heap_destroy method?
+
 const int MAZE_AREA = MAZE_SIZE * MAZE_SIZE;
 
 static Graph maze; // graph recording walls and such
@@ -15,6 +17,8 @@ static int unexplored = MAZE_AREA; // number of unexplored squares
 
 static int currRow = 0; // current row
 static int currCol = 0; // current col
+
+heap_t *stepTrace;
 
 heap_t *currentPath; // path currently being traversed
 static int distances[MAZE_SIZE][MAZE_SIZE] = {0}; // distances used in findShortestPath
@@ -39,6 +43,10 @@ Graph Maze_init() {
 	graph_add_edge(maze, 119, 135);
 	graph_add_edge(maze, 120, 136);
 	graph_add_edge(maze, 135, 136);
+	currRow = 0;
+	currCol = 0;
+	unexplored = MAZE_AREA;
+	push(stepTrace, START_SPACE);
 }
 
 void Maze_reset() {
@@ -80,6 +88,10 @@ void add_edges (int upWall, int downWall, int leftWall, int rightWall, int nodeR
 	}
 }
 
+int neighbors_traversed() {
+
+}
+
 // implements depth first search
 int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 	if (currRow < 0 || currRow >= MAZE_SIZE) {
@@ -88,14 +100,6 @@ int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 	if (currCol < 0 || currCol >= MAZE_SIZE) {
 		return -1; // invalid col
 	}
-
-	// if square has already been travelled to
-	if (traversed[currRow][currCol] == 1) {
-		return -1;
-	}
-
-	traversed[currRow][currCol] = 1;
-	unexplored--;
 
 	int nodeRef = Maze_getIntFromCoordinates(currRow, currCol);
 
@@ -106,25 +110,56 @@ int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 	}
 
 	// left
-	if (col != 0 && leftWall == 0) {
-		currCol--;
-		return LEFT;
+	if (graph_has_edge(maze, nodeRef, nodeRef - 1)) {
+		if (traversed[currRow][currCol - 1] == 0) {
+			currCol--;
+			push(stepTrace, nodeRef - 1);
+			return LEFT;
+		}
 	}
 	// right
-	if (col != MAZE_SIZE - 1 && rightWall == 0) {
-		currCol++;
-		return RIGHT;
+	if (graph_has_edge(maze, nodeRef, nodeRef + 1)) {
+		if (traversed[currRow][currCol + 1] == 0) {
+			currCol++;
+			push(stepTrace, nodeRef + 1);
+			return RIGHT;
+		}
 	}
 	// up
-	if (row != 0 && upWall == 0) {
-		currRow++;
-		return UP;
+	if (graph_has_edge(maze, nodeRef, nodeRef - MAZE_SIZE)) {
+		if (traversed[currRow - 1][currCol] == 0) {
+			currRow--;
+			push(stepTrace, nodeRef - MAZE_SIZE);
+			return UP;
+		}
 	}
 	// down
-	if (row != MAZE_SIZE - 1 && downWall == 0) {
-		currRow--;
-		return DOWN;
+	if (graph_has_edge(maze, nodeRef, nodeRef + MAZE_SIZE)) {
+		if (traversed[currRow + 1][currCol] == 0) {
+			currRow++;
+			push(stepTrace, nodeRef + MAZE_SIZE);
+			return DOWN;
+		}
 	}
+
+	int nextNode = pop(stepTrace);
+
+	if (nextNode == currNode - MAZE_SIZE) {
+		currRow--;
+		return UP;
+	} else if (nextNode == currNode + MAZE_SIZE) {
+		currRow++;
+		return DOWN;
+	} else if (nextNode == currNode + 1) {
+		currCol++;
+		return RIGHT;
+	} else if (nextNode == currNode - 1) {
+		currCol--;
+		return LEFT;
+	} else {
+		return -1;
+	}
+
 }
 
 // converts row and column to label of node in graph
@@ -195,7 +230,6 @@ void findShortestPath(Graph g, int start, int finish) {
 }
 
 // Traverse the shortest path.
-// TODO: what is return type???????
 void getShortestPath(int **d, int finish) {
 	int nodeRef = finish;
 	int row = getRowFromInt(finish);
@@ -267,12 +301,16 @@ int Maze_followPath() {
 	int currNode = Maze_getIntFromCoordinates(currRow, currCol);
 
 	if (nextNode == currNode - MAZE_SIZE) {
+		currRow--;
 		return UP;
 	} else if (nextNode == currNode + MAZE_SIZE) {
+		currRow++;
 		return DOWN;
 	} else if (nextNode == currNode + 1) {
+		currCol++;
 		return RIGHT;
 	} else if (nextNode == currNode - 1) {
+		currCol--;
 		return LEFT;
 	}
 }
