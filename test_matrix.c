@@ -9,6 +9,7 @@ double a[36] = {
 	3,4.5,5,6,7,8,
 	9,8,7,6,5,4,
 	3,2,1,2,3,4.5};
+//invert [[1,2,3,4,5,6,],[7,8,9,8,7,6,],[5,4,3,2,1,2,],[3,4,5,6,7,8,],[9,8,7,6,5,4,],[3,2,1,2,3,4.02]]
 
 double a_inverse[36];
 double b[36];
@@ -27,14 +28,9 @@ void mat_mult(double *A, double *B, double *dest){
 }
 
 int main(){
+
 	for(int i=0; i<36; i++){
 		a_inverse[i] = a[i];
-	}
-	for(int i=0; i<6; i++){
-		for(int j=0; j<6; j++){
-			printf("%f\t", a_inverse[i*6+j]);
-		}
-		printf("\n");
 	}
 
 	invert(a_inverse);
