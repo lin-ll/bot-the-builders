@@ -1,9 +1,4 @@
-/* motors.c */
-
 #include "motors.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
 #include <pigpiod_if2.h>
 #include "pid.h"
 #include "sensors.h"
@@ -11,16 +6,11 @@
 
 //-------------------
 
-const int UPPER_LEFT_IDX = 0;
-const int UPPER_RIGHT_IDX = 1;
-const int LOWER_LEFT_IDX = 2;
-const int LOWER_RIGHT_IDX = 3;
 const int FORWARD[4] = {UPPER_LEFT_FORWARD, UPPER_RIGHT_FORWARD, LOWER_LEFT_FORWARD, LOWER_RIGHT_FORWARD};
 const int BACKWARD[4] = {UPPER_LEFT_BACKWARD, UPPER_RIGHT_BACKWARD, LOWER_LEFT_BACKWARD, LOWER_RIGHT_BACKWARD};
 
-static int desiredSpeeds[4] = {0, 0, 0, 0};
+static int desiredSpeeds[4];
 static PID_T pids[4];
-
 static int pi;
 
 int Motor_init(int pifd) {
@@ -37,25 +27,12 @@ int Motor_init(int pifd) {
   return 0;
 }
 
-// Assume sensors.c has a method witch returns current speed of motor
-// Call this motor motorSpeed();
-
 int Motor_get(int motorPin) {
-  switch (motorPin) {
-    case UPPER_LEFT_FORWARD:
-    case UPPER_LEFT_BACKWARD:
-      return desiredSpeeds[UPPER_LEFT_IDX];
-    case UPPER_RIGHT_FORWARD:
-    case UPPER_RIGHT_BACKWARD:
-      return desiredSpeeds[UPPER_RIGHT_IDX];
-    case LOWER_LEFT_FORWARD:
-    case LOWER_LEFT_BACKWARD:
-      return desiredSpeeds[LOWER_LEFT_IDX];
-    case LOWER_RIGHT_FORWARD:
-    case LOWER_RIGHT_BACKWARD:
-      return desiredSpeeds[LOWER_RIGHT_IDX];
+  int idx = 0;
+  while (FORWARD[idx] != motorPin && BACKWARD[idx] != motorPin) {
+    idx++;
   }
-  return -1;
+  return desiredSpeeds[idx];
 }
 
 void Motor_updateMotors(double dt) {
@@ -78,7 +55,6 @@ void Motor_resetPID() {
     Pid_reset(pids[i]);
   }
 }
-
 
 void Motor_adjust(int forwardMotor, int backwardMotor, int speed) {
   if (speed >= 0) {

@@ -2,38 +2,39 @@
 #include "constants.h"
 #include "leds.h"
 #include <pigpiod_if2.h>
-#include <unistd.h>
+#include <unistd.h> // TODO: remove
 
 //-------------------
 
 const int BUTTON_PINS[4] = {BUTTON_RED, BUTTON_GREEN, BUTTON_BLUE, BUTTON_YELLOW};
 static int pi;
 
-
 int action(int which_button) {
-	if (which_button == BUTTON_BLUE) {
-		Led_setColor(0, 0, MAX_COLOR);
-		// TODO: action
-	} else if (which_button == BUTTON_GREEN) {
-		Led_setColor(0, MAX_COLOR, 0);
-		// TODO: action
-	} else if (which_button == BUTTON_YELLOW) {
-		Led_setColor(MAX_COLOR, MAX_COLOR, 0);
-		// TODO: action
+	switch (which_button) {
+		case BUTTON_BLUE:
+			Led_setColor(0, 0, MAX_COLOR);
+			// TODO: action
+			break;
+		case BUTTON_GREEN:
+			Led_setColor(0, MAX_COLOR, 0);
+			// TODO: action
+			break;
+		case BUTTON_YELLOW:
+			Led_setColor(MAX_COLOR, MAX_COLOR, 0);
+			// TODO: action
+			break;
 	}
-	usleep(2000000);
+	usleep(2000000); // TODO: remove 
 	Led_off();
 	return which_button;
 }
 
 int Button_init(int pifd) {
 	pi = pifd;
-
 	for (int i = 0; i < 4; i++) {
 		// set the mode and if it fails, return 1
 		set_mode(pi, BUTTON_PINS[i], PI_INPUT);
 	}
-
 	return 0;
 }
 
