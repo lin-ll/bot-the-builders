@@ -57,15 +57,15 @@ void setup()
   }
 
   //**** Check for interrupt values for ATTiny
-  /*attachInterrupt(digitalPinToInterrupt(motor_pins[0]), Motor0_InPhase_Changed, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(motor_pins[1]), Motor0_Quad_Changed,    CHANGE);
-  attachInterrupt(digitalPinToInterrupt(motor_pins[2]), Motor1_InPhase_Changed, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(motor_pins[3]), Motor1_Quad_Changed,    CHANGE);
-  attachInterrupt(digitalPinToInterrupt(motor_pins[4]), Motor2_InPhase_Changed, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(motor_pins[5]), Motor2_Quad_Changed,    CHANGE);
-  attachInterrupt(digitalPinToInterrupt(motor_pins[6]), Motor3_InPhase_Changed, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(motor_pins[7]), Motor3_Quad_Changed,    CHANGE);
-  */
+  attachInterrupt(PinToInterrupt(motor_pins[0]), Motor0_InPhase_Changed, CHANGE);
+  attachInterrupt(PinToInterrupt(motor_pins[1]), Motor0_Quad_Changed,    CHANGE);
+  attachInterrupt(PinToInterrupt(motor_pins[2]), Motor1_InPhase_Changed, CHANGE);
+  attachInterrupt(PinToInterrupt(motor_pins[3]), Motor1_Quad_Changed,    CHANGE);
+  attachInterrupt(PinToInterrupt(motor_pins[4]), Motor2_InPhase_Changed, CHANGE);
+  attachInterrupt(PinToInterrupt(motor_pins[5]), Motor2_Quad_Changed,    CHANGE);
+  attachInterrupt(PinToInterrupt(motor_pins[6]), Motor3_InPhase_Changed, CHANGE);
+  attachInterrupt(PinToInterrupt(motor_pins[7]), Motor3_Quad_Changed,    CHANGE);
+  
 
   //-----------------------
   // SETUP FOR THE i2c
@@ -76,6 +76,25 @@ void setup()
   TinyWireS.begin(I2C_SLAVE_ADDRESS);
   TinyWireS.onRequest(requestEvent);
 }
+
+int PinToInterrupt(int pin)
+{
+  switch(pin){
+    case 0: return 8;
+    case 1: return 9;
+    case 2: return 10;
+    case 3: return 7;
+    case 4: return 6;
+    case 5: return 5;
+    case 6: return 4;
+    case 7: return 3;
+    case 8: return 2;
+    case 9: return 1;
+    case 10: return 0;
+    default: return 0;
+  }
+}
+
 
 //Get state of a motor given the 2 encoder inputs
 byte getState(boolean In_Phase, boolean Quadrature) 
