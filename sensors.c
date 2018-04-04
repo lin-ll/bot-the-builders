@@ -184,9 +184,9 @@ int Sensor_init(int pifd) {
     printf("Changing address for handle %x to addr %x\n", orig_handle, LONG_DIST_ADDRS[i]);
     adafruit_distance_change_address(orig_handle, LONG_DIST_ADDRS[i]);
     
-    int success = adafruit_distance_begin(long_dist_handles[i]);
-    if(!success)
-      printf("Long distance sensor error: %d\n", i);
+    // int success = adafruit_distance_begin(long_dist_handles[i]);
+    // if(!success)
+    //   printf("Long distance sensor error: %d\n", i);
   }
 
   printf("ALL ON\n--------------------\n");
