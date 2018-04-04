@@ -13,7 +13,7 @@
 0x52 Long distance
 */
 
-const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_SHORT_DIST_ADDR}; // bogus addresses
+const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, 0x2A}; // bogus addresses
 const int LONG_DIST_ADDRS[4] = {0x31, 0x30, 0x2F, 0x2E}; // bogus addresses
 
 int tinyHandle;
