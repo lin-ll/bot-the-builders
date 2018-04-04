@@ -30,6 +30,10 @@ void Motor_resetPID();
 // sets all motors to 0
 void Motor_off();
 
+// bring all motors to a complete stop
+// also resets PID, no reason the old integral should carry over
+void Motor_completeStop();
+
 /* Any Cleanup */
 void Motor_free();
 
