@@ -36,7 +36,7 @@ int getColFromInt(int nodeRef) {
 
 // Visualize the maze and parse it into a graph. Descritize each unit of maze
 // into a vertex, and connect them with edges of unit length. Uses DFS.
-Graph Maze_init() {
+void Maze_init() {
 	maze = graph_create(MAZE_AREA);
 	// connect center squares
 	graph_add_edge(maze, 119, 120);
@@ -46,7 +46,6 @@ Graph Maze_init() {
 	currRow = 0;
 	currCol = 0;
 	unexplored = MAZE_AREA;
-	push(stepTrace, START_SPACE);
 }
 
 void Maze_reset() {
@@ -101,11 +100,16 @@ int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 		return -1; // invalid col
 	}
 
+	if (traversed[currRow][currCol] == 0) {
+			unexplored--;
+			traversed[currRow][currCol] = 1;
+	}
+
 	int nodeRef = Maze_getIntFromCoordinates(currRow, currCol);
 
 	add_edges(upWall, downWall, leftWall, rightWall, nodeRef);
 
-	if (Maze_isExplored()) {
+	if (Maze_isExplored() && currRow == 0 && currCol == 0) {
 		return -2;
 	}
 
@@ -113,7 +117,7 @@ int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 	if (graph_has_edge(maze, nodeRef, nodeRef - 1)) {
 		if (traversed[currRow][currCol - 1] == 0) {
 			currCol--;
-			push(stepTrace, nodeRef - 1);
+			push(stepTrace, nodeRef);
 			return LEFT;
 		}
 	}
@@ -121,7 +125,7 @@ int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 	if (graph_has_edge(maze, nodeRef, nodeRef + 1)) {
 		if (traversed[currRow][currCol + 1] == 0) {
 			currCol++;
-			push(stepTrace, nodeRef + 1);
+			push(stepTrace, nodeRef);
 			return RIGHT;
 		}
 	}
@@ -129,7 +133,7 @@ int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 	if (graph_has_edge(maze, nodeRef, nodeRef - MAZE_SIZE)) {
 		if (traversed[currRow - 1][currCol] == 0) {
 			currRow--;
-			push(stepTrace, nodeRef - MAZE_SIZE);
+			push(stepTrace, nodeRef);
 			return UP;
 		}
 	}
@@ -137,7 +141,7 @@ int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 	if (graph_has_edge(maze, nodeRef, nodeRef + MAZE_SIZE)) {
 		if (traversed[currRow + 1][currCol] == 0) {
 			currRow++;
-			push(stepTrace, nodeRef + MAZE_SIZE);
+			push(stepTrace, nodeRef);
 			return DOWN;
 		}
 	}
