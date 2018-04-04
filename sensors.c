@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <unistd.h>
+#include "vl53l0x_python.h"
 
 // new addresses
 const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, 0x2A};
@@ -183,7 +184,8 @@ int Sensor_init(int pifd) {
 
     // Library thinks we're talking to the same sensor each time
     printf("Changing address for handle %x to addr %x\n", orig_handle, LONG_DIST_ADDRS[i]);
-    tofInit(1, pi, long_dist_handles[i]);
+    // tofInit(1, pi, long_dist_handles[i]);
+    startRanging(long_dist_handles[i], 0, LONG_DIST_ADDRS[i], 255, 0);
     // adafruit_distance_change_address(orig_handle, LONG_DIST_ADDRS[i]);
   }
 
@@ -259,7 +261,8 @@ double Sensor_getShort(int num) {
 /* Return distance from long distance sensor in mm */
 // TODO: fix this
 double Sensor_getLong(int num) {
-  return (double)tofReadDistance(long_dist_handles[num]);
+  return (double)getDistance(long_dist_handles[num]);
+  //return (double)tofReadDistance(long_dist_handles[num]);
   //return (double)adafruit_distance_readRange(long_dist_handles[num]);
 }
 
