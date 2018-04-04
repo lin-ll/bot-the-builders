@@ -35,6 +35,7 @@
 #define BUTTON_BLUE 20
 #define BUTTON_GREEN 19
 #define BUTTON_YELLOW 26
+#define BUTTON_GROUND 24
 
 //-------------------
 
