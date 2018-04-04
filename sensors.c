@@ -1,7 +1,7 @@
 #include "sensors.h"
 #include <pigpiod_if2.h>
 #include "constants.h"
-#include <adafruit_distance.h>
+#include "adafruit_distance.h"
 #include <stdio.h>
 #include <math.h>
 #include <unistd.h>
@@ -15,6 +15,8 @@
 
 const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_SHORT_DIST_ADDR}; // bogus addresses
 const int LONG_DIST_ADDRS[4] = {0x31, 0x30, 0x2F, 0x2E}; // bogus addresses
+
+int tinyHandle;
 
 
 // known short: SHORT_PIN_FRONT (-1), SHORT_PIN_BACK
@@ -64,19 +66,6 @@ static int pi;
 
 /* Local Functions */
 
-void test_write8(int handle, int address, int data){
-    int test;
-    char data_write[3];
-    data_write[0] = (address >> 8) & 0xFF;; // MSB of register address
-    data_write[1] = address & 0xFF; // LSB of register address
-    data_write[2] = data & 0xFF;
-    test = i2c_write_device(pi, handle, data_write, 3);
-    if (test != 0) printf("write returned %d\n", test);
-
-    int result = test_read8(handle, address);
-    printf("wrote %d and read back %d\n", data, result);
-  }
-
 int test_read8(int handle, int address)
 {
   char dataWrite[2];
@@ -92,6 +81,19 @@ int test_read8(int handle, int address)
 
   return (int)dataRead[0];
 }
+
+void test_write8(int handle, int address, int data){
+    int test;
+    char data_write[3];
+    data_write[0] = (address >> 8) & 0xFF;; // MSB of register address
+    data_write[1] = address & 0xFF; // LSB of register address
+    data_write[2] = data & 0xFF;
+    test = i2c_write_device(pi, handle, data_write, 3);
+    if (test != 0) printf("write returned %d\n", test);
+
+    int result = test_read8(handle, address);
+    printf("wrote %d and read back %d\n", data, result);
+  }
 
 int test_readblock(int handle, int address, char *buffer, int len){
   for(int i=0; i<len; i++){
@@ -340,4 +342,23 @@ void Sensor_free(){
     i2c_close(pi, short_dist_handles[i]);
     i2c_close(pi, long_dist_handles[i]);
   }
+}
+
+int Sensor_initTiny(int pi){
+	tinyHandle = i2c_open(pi, 1, 0x4, 0);
+	printf("Tiny Handle: %d\n", tinyHandle);
+}
+
+double Sensor_getEncoders(){
+	char data[17];
+	data[0] = 42;
+	data[17] = 43;
+	int ret = i2c_read_i2c_block_data(pi, tinyHandle, 1, data, 16);
+	printf("ret= %d\n", ret);
+
+	for(int i=0; i<17; i++){
+		printf("Byte %d: %d", data[i]);
+	}
+	return 0;
+
 }

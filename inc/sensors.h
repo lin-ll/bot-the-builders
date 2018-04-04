@@ -43,4 +43,9 @@ void Sensor_free();
 // finds all walls in square;
 void Sensor_findWalls(int *walls);
 
+int Sensor_initTiny(int pi);
+
+double Sensor_getEncoders();
+
+
 #endif
