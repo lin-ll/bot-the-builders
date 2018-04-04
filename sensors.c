@@ -18,14 +18,7 @@ const int LONG_DIST_ADDRS[4] = {0x31, 0x30, 0x2F, 0x2E}; // bogus addresses
 
 int tinyHandle;
 
-
-// known short: SHORT_PIN_FRONT (-1), SHORT_PIN_BACK
-// known long : SHORT_PIN_LEFT, LONG_PIN_FRONT
-
-// known short: SHORT_PIN_FRONT (-1)
-// known long : SHORT_PIN_BACK
-
-// NOTE: short_back must go first because it deson't have a shutdown pin
+// NOTE: short_back must go first because it doesn't have a shutdown pin
 const int SHORT_SHUTDOWN_PINS[4] = {SHORT_PIN_BACK, SHORT_PIN_FRONT, SHORT_PIN_LEFT, SHORT_PIN_RIGHT};
 const int LONG_SHUTDOWN_PINS[4] = {LONG_PIN_FRONT, LONG_PIN_BACK, LONG_PIN_LEFT, LONG_PIN_RIGHT};
 
@@ -208,38 +201,36 @@ int Sensor_init(int pifd) {
       gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_ON);
 
     sleep(1);
-    // Library thinks we're talking to the same sensor each time
 
+    // Library thinks we're talking to the same sensor each time
     printf("Changing address for handle %x to addr %x\n", short_dist_handles[3],SHORT_DIST_ADDRS[i]);
     adafruit_distance_change_address(short_dist_handles[3], SHORT_DIST_ADDRS[i]);
     success = adafruit_distance_begin(short_dist_handles[i]);
 
     if(!success)
       printf("Short distance sensor error: %d\n", i);
-
-    for(j=0; j<100;j++){
-      //printf("%d:\t%d\n", i, adafruit_distance_readRange(short_dist_handles[i]));
-    }
   }
 
-  /*
   // One by one, turn on long distance sensors
   for(i=0; i<4; i++) {
     printf("Turning on long distance sensor: %d\n", i);
     if(LONG_SHUTDOWN_PINS[i] != -1)
       gpio_write(pi, LONG_SHUTDOWN_PINS[i], DISTANCE_ON);
 
-    // Library thinks we're talking to the same sensor each time
-    adafruit_distance_change_address(long_dist_handles[3], LONG_DIST_ADDRS[i]);
-    success = adafruit_distance_begin(long_dist_handles[i]);
-    if(!success)
-      printf("Long distance sensor error: %d\n", i);
+    sleep(1);
 
-    for(j=0; j<100;j++){
-      //printf("%d:\t%d\n", i, adafruit_distance_readRange(long_dist_handles[i]));
-    }
+    // Library thinks we're talking to the same sensor each time
+    printf("Changing address for handle %x to addr %x\n", long_dist_handles[3],LONG_DIST_ADDRS[i]);
+    adafruit_distance_change_address(long_dist_handles[3], LONG_DIST_ADDRS[i]);
+    // success = adafruit_distance_begin(long_dist_handles[i]);
+    // if(!success)
+    //   printf("Long distance sensor error: %d\n", i);
+
+    // for(j=0; j<100;j++){
+    //   //printf("%d:\t%d\n", i, adafruit_distance_readRange(long_dist_handles[i]));
+    // }
   }
-  */
+  
 
   printf("ALL ON\n");
 
@@ -310,10 +301,9 @@ double Sensor_getShort(int num) {
   return (double)adafruit_distance_readRange(short_dist_handles[num]);
 }
 
-/* TODO: implement this */
 /* Return distance from long distance sensor in mm */
-double Sensor_getLong(enum Dir_t dir) {
-  return 1;
+double Sensor_getLong(int num) {
+  return (double)adafruit_distance_readRange(long_dist_handles[num]);
 }
 
 void Sensor_findWalls(int *walls) {

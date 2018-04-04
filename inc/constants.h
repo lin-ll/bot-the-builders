@@ -65,7 +65,6 @@
 //-------------------
 
 #define ORIG_SHORT_DIST_ADDR 0x29
-#define ORIG_LONG_DIST_ADDR 0x2A
 
 #define SHORT_PIN_FRONT 5
 #define SHORT_PIN_BACK -1
