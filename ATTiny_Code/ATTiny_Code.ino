@@ -46,6 +46,8 @@ int pi_i2c_SCL = 6;
 int pi_i2c_SDA = 4;
 int debug = 10;
 
+int LED_PIN = 3;
+
 void setup()
 {
   //-----------------------
@@ -108,6 +110,7 @@ void InputChanged(byte motor)
  
 }
 
+
 //ISR for i2c request from the PI
 void requestEvent()
 {  
@@ -128,10 +131,18 @@ void requestEvent()
       TinyWireS.send(counter_bytes[i]);   //Send all 16 bytes
     }
     digitalWrite(debug, LOW);            //Set the DEBUG Pin back to LOW
+
+
+    pinMode(LED_PIN, OUTPUT);
 }
 
 void loop() 
 {
+  digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(1000);                       // wait for a second
+  digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW
+  delay(1000);                       // wait for a second
+  
 }
 
 
