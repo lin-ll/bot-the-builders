@@ -11,6 +11,10 @@ void Maze_init();
 // if robot crashes, reset maze solving algorithm
 void Maze_reset();
 
+// if robot crashes but we don't want to reset the entire algorithm, update
+// current row and col to start space
+void Maze_partialReset();
+
 // if robot is at START_SPACE
 int Maze_isAtStart();
 

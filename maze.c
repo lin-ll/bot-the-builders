@@ -24,6 +24,11 @@ int Maze_isAtStart() {
 		return currRow == 0 && currCol == 0;
 }
 
+void Maze_partialReset() {
+	currRow = 0;
+	currCol = 0;
+}
+
 // converts node to row and column
 int getRowFromInt(int nodeRef) {
 	int row = nodeRef / MAZE_SIZE;
