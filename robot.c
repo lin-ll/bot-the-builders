@@ -81,37 +81,40 @@ void solveMaze() {
 }
 
 void main() {
-	//explore();
-	//returnToStart();
-	//solveMaze();
 
 	Led_setColor(255, 200, 0); //orange
 
 	pi = pigpio_start(NULL, NULL);
 
+	int button_pressed = -1;
+	while (button_pressed != BUTTON_GREEN) {
+			// do nothing
+	}
+
 	Button_init(pi);
 	Sensor_init(pi);
 	Controls2_init();
+	Maze_init();
 
 	// from danstan
 	float destX;
 	float destY;
 
-	Led_setColor(0, 255, 0); //green
+	Led_setColor(0, MAX_COLOR, 0); //green
 
 	int controls_finished = 1;
 	while (!Maze_isExplored()) {
 		// check buttons
 		int button_pressed = Button_update();
 		if (button_pressed == BUTTON_RED) {
-			Led_setColor(MAX_COLOR, 0, 0);
-			// TODO: action for red button
+			Led_setColor(MAX_COLOR, 0, 0); // red
 			Led_off();
+			Maze_reset();
 		}
 
 		// do controls thing
 		controls_finished = Controls2_update();
-		if (controls_finished) {
+		if (controls_finished == 0) {
 			int *walls = Sensor_findWalls(walls);
 			int up_wall = walls[0];
 			int down_wall = walls[1];
@@ -120,15 +123,11 @@ void main() {
 			do {
 				dir = Maze_dfs(up_wall, down_wall, left_wall, right_wall);
 			} while (dir == -1);
-
 			Controls2_setDir(dir);
 		}
 
 		Control_move();
-
-		//// do Kalman thing
-		// get all sensor values
-		// call Kalman with sensor values
 	}
+
 	Control_stop();
 }

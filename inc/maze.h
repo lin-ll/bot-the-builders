@@ -6,7 +6,7 @@
 #ifndef MAZE_INCLUDED
 #define MAZE_INCLUDED
 
-Graph Maze_init();
+void Maze_init();
 
 // if robot crashes, reset maze solving algorithm
 void Maze_reset();
