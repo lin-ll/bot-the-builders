@@ -1,13 +1,10 @@
 #include "sensors.h"
 #include <pigpiod_if2.h>
 #include "constants.h"
-#include "tof.h"
 #include "adafruit_distance.h"
 #include <stdio.h>
 #include <math.h>
 #include <unistd.h>
-#include "vl53l0x_python.h"
-#include "vl53l0x_platform.h"
 
 // new addresses
 const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, 0x2A};
@@ -121,13 +118,13 @@ static void initCompass() {
   //Sensor_calCompass(100);
 }
 
-int i2c_read(unsigned char address, unsigned char reg, unsigned char *data_p, unsigned char length) {
-  return i2c_read_i2c_block_data(pi, address, reg, data_p, length);
-}
+// int i2c_read(unsigned char address, unsigned char reg, unsigned char *data_p, unsigned char length) {
+//   return i2c_read_i2c_block_data(pi, address, reg, data_p, length);
+// }
 
-int i2c_write(unsigned char address, unsigned char reg, unsigned char *data_p, unsigned char length) {
-  return i2c_write_i2c_block_data(pi, address, reg, data_p, length);
-}
+// int i2c_write(unsigned char address, unsigned char reg, unsigned char *data_p, unsigned char length) {
+//   return i2c_write_i2c_block_data(pi, address, reg, data_p, length);
+// }
 
 /**
  * Initialize Sensors
@@ -184,7 +181,7 @@ int Sensor_init(int pifd) {
       printf("Short distance sensor error: %d\n", i);
   }
 
-  VL53L0X_set_i2c(i2c_read, i2c_write);
+  // VL53L0X_set_i2c(i2c_read, i2c_write);
 
   // One by one, turn on long distance sensors
   for(int i=0; i<4; i++) {
@@ -195,8 +192,7 @@ int Sensor_init(int pifd) {
 
     // Library thinks we're talking to the same sensor each time
     printf("Changing address for handle %x to addr %x\n", orig_handle, LONG_DIST_ADDRS[i]);
-    // tofInit(1, pi, long_dist_handles[i]);
-    startRanging(long_dist_handles[i], 0, LONG_DIST_ADDRS[i], 255, 0);
+    // startRanging(long_dist_handles[i], 0, LONG_DIST_ADDRS[i], 255, 0);
     // adafruit_distance_change_address(orig_handle, LONG_DIST_ADDRS[i]);
   }
 
@@ -272,9 +268,8 @@ double Sensor_getShort(int num) {
 /* Return distance from long distance sensor in mm */
 // TODO: fix this
 double Sensor_getLong(int num) {
-  return (double)getDistance(long_dist_handles[num]);
-  //return (double)tofReadDistance(long_dist_handles[num]);
-  //return (double)adafruit_distance_readRange(long_dist_handles[num]);
+  // return (double)getDistance(long_dist_handles[num]);
+  return (double)adafruit_distance_readRange(long_dist_handles[num]);
 }
 
 void Sensor_findWalls(int *walls) {
