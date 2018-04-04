@@ -131,7 +131,7 @@ static unsigned short readReg16(unsigned char ucAddr)
 unsigned char ucTemp[2];
 int rc;
 
-	rc = i2c_write_device(file_i2c, &ucAddr, 1);
+	rc = i2c_write_device(pi, file_i2c, &ucAddr, 1);
 	if (rc == 1)
 	{
 		rc = i2c_read_device(pi, file_i2c, ucTemp, 2);
