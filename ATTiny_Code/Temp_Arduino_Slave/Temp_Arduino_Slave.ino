@@ -27,9 +27,6 @@
  */
  
 #define I2C_SLAVE_ADDRESS 0x4 // the 7-bit address
-
-#include "TinyWireS.h" 
-
 //Declare variables
 int i = 0, j = 0;
 long counter[4];
@@ -47,11 +44,10 @@ int pi_i2c_SCL = 6;
 int pi_i2c_SDA = 4;
 int debug = 10;
 
-int LED_PIN = 3;
-
 void setup()
 {
-  digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW
+
+  Serial.begin(9600);
   //-----------------------
   // SETUP FOR THE MOTORS
   //-----------------------
@@ -61,7 +57,7 @@ void setup()
   }
 
   //**** Check for interrupt values for ATTiny
-  attachInterrupt(PinToInterrupt(motor_pins[0]), Motor0_InPhase_Changed, CHANGE);
+  /*attachInterrupt(PinToInterrupt(motor_pins[0]), Motor0_InPhase_Changed, CHANGE);
   attachInterrupt(PinToInterrupt(motor_pins[1]), Motor0_Quad_Changed,    CHANGE);
   attachInterrupt(PinToInterrupt(motor_pins[2]), Motor1_InPhase_Changed, CHANGE);
   attachInterrupt(PinToInterrupt(motor_pins[3]), Motor1_Quad_Changed,    CHANGE);
@@ -69,7 +65,7 @@ void setup()
   attachInterrupt(PinToInterrupt(motor_pins[5]), Motor2_Quad_Changed,    CHANGE);
   attachInterrupt(PinToInterrupt(motor_pins[6]), Motor3_InPhase_Changed, CHANGE);
   attachInterrupt(PinToInterrupt(motor_pins[7]), Motor3_Quad_Changed,    CHANGE);
-  
+  */
 
   //-----------------------
   // SETUP FOR THE i2c
@@ -77,8 +73,8 @@ void setup()
   pinMode(debug, OUTPUT); // Debug PIN is HIGH when sending data
   digitalWrite(debug, LOW); 
 
-  TinyWireS.begin(I2C_SLAVE_ADDRESS);
-  TinyWireS.onRequest(requestEvent);
+  //TinyWireS.begin(I2C_SLAVE_ADDRESS);
+  //TinyWireS.onRequest(requestEvent);
 }
 
 int PinToInterrupt(int pin)
@@ -131,12 +127,20 @@ void InputChanged(byte motor)
  
 }
 
-
 //ISR for i2c request from the PI
 void requestEvent()
 {  
-    digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
     digitalWrite(debug, HIGH); //Set the DEBUG Pin HIGH for Sending Data
+
+    counter[0] = 5;
+    counter[1] = 11;
+    counter[2] = 515;
+    counter[3] = 2318;
+    
+    Serial.println(counter[0]);
+    Serial.println(counter[1]);
+    Serial.println(counter[2]);
+    Serial.println(counter[3]);
 
     //Split each counter variable into bytes
     for(j=0;j<4; j++)   //Iterates through motors
@@ -147,24 +151,28 @@ void requestEvent()
       }
       counter[j] = 0;   //Clears the corresponding counter.
     }
-
+    Serial.println("");
     for(i=0;i<16;i++)
     {
       //TinyWireS.send(counter_bytes[i]);   //Send all 16 bytes
-      TinyWireS.send((byte)(i+10));   //Send all 16 bytes
+      Serial.print(counter_bytes[i]);
+      Serial.print(" ");
     }
     digitalWrite(debug, LOW);            //Set the DEBUG Pin back to LOW
-
-
-    pinMode(LED_PIN, OUTPUT);
 }
 
 void loop() 
 {
-  //digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  //delay(1000);                       // wait for a second
-  //digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW
-  //delay(1000);                       // wait for a second
+  if(Serial.available() > 0)
+  {
+    Serial.println("Available");
+    char c = Serial.read();
+    if(c == 'H')
+    {
+      Serial.println("Beginning Trans");
+      requestEvent();
+    }
+  }
   
 }
 
