@@ -1,6 +1,7 @@
 #include "sensors.h"
 #include <pigpiod_if2.h>
 #include "constants.h"
+#include "tof.h"
 #include "adafruit_distance.h"
 #include <stdio.h>
 #include <math.h>
@@ -182,11 +183,8 @@ int Sensor_init(int pifd) {
 
     // Library thinks we're talking to the same sensor each time
     printf("Changing address for handle %x to addr %x\n", orig_handle, LONG_DIST_ADDRS[i]);
-    adafruit_distance_change_address(orig_handle, LONG_DIST_ADDRS[i]);
-    
-    // int success = adafruit_distance_begin(long_dist_handles[i]);
-    // if(!success)
-    //   printf("Long distance sensor error: %d\n", i);
+    tofInit(1, pi, long_dist_handles[i]);
+    // adafruit_distance_change_address(orig_handle, LONG_DIST_ADDRS[i]);
   }
 
   printf("ALL ON\n--------------------\n");
@@ -259,6 +257,7 @@ double Sensor_getShort(int num) {
 }
 
 /* Return distance from long distance sensor in mm */
+// TODO: fix this
 double Sensor_getLong(int num) {
   return (double)adafruit_distance_readRange(long_dist_handles[num]);
 }
