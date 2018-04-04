@@ -197,12 +197,6 @@ int adafruit_distance_begin(int sensor_handle) {
   //int count = 0;
   current_handle = sensor_handle;
 
-  printf("Model whatever is %d\n", adafruit_distance_read8(VL6180X_REG_IDENTIFICATION_MODEL_ID));
-
-  if (adafruit_distance_read8(VL6180X_REG_IDENTIFICATION_MODEL_ID) != 0xB4) {
-    //return 0;
-  }
-
   //if (adafruit_distance_read8(VL6180X_REG_SYSTEM_FRESH_OUT_OF_RESET) == 0x01) {
   adafruit_distance_loadSettings();
   //}

@@ -36,11 +36,11 @@ int main(){
   Sensor_init(pi);
   printf("DONE SENSOR INIT\n");
 
-  printf("Testing short distance sensors:\n");
-  testShort();
+  // printf("Testing short distance sensors:\n");
+  // testShort();
 
-  //printf("Testing long distance sensorss:\n");
-  //testLong();
+  printf("Testing long distance sensors:\n");
+  testLong();
 
   return 0;
 }
