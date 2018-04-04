@@ -31,5 +31,9 @@ double kalman_getT();
 double kalman_getVt();
 
 
+// temp for matrix test
+void mat_mult(double *A, double *B, double *dest);
+
+
 
 #endif

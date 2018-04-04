@@ -1,7 +1,8 @@
 # Macros
 CC = gcc
 IDIR = ./inc
-CFLAGS = -I$(IDIR) -Wall -pthread -lpigpiod_if2 -lrt -lm 
+CFLAGS = -I$(IDIR) -Wall -pthread -lrt -lm 
+#-lpigpiod_if2 
 
 # Pattern rule
 %.o: %.c
@@ -28,7 +29,10 @@ test_distance: test_distance.o adafruit_distance.o constants.o
 test_leds: test_leds.o leds.o constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
-test_buttons: test_buttons.o buttons.o leds.o
+test_buttons: test_buttons.o buttons.o leds.o constants.o
+	$(CC) -o $@ $^ $(CFLAGS)
+
+test_matrix: test_matrix.o matrixInverse.o constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 #motors.o: motors.h

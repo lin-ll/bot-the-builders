@@ -6,6 +6,7 @@
    http://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/   */
 
 #define NUM 6
+#define SQUARE_SIZE 180 // TODO is this right?
 
 // x, y, t, vx, vy, vt
 // units are mm, mm/s, rad clockwise with 0 at +y, rad/s
@@ -237,10 +238,10 @@ void update(double *distances, double *encoders, double *imu, double *control, d
 
 	z[0] = dist_x;
 	z[1] = dist_y;
-	z[2] = 0;
+	z[2] = 0; // TODO compass
 	z[3] = encoder_vx;
 	z[4] = encoder_vy;
-	z[5] = encoder_vt;
+	z[5] = encoder_vt; // TODO gyro
 
 
 
@@ -250,19 +251,19 @@ void update(double *distances, double *encoders, double *imu, double *control, d
 
 	   compile with "gcc kalman.c inc/kalman.h"*/
 
-		 // equation 19
-	 	mat_add(P_hat, R, temp);
-	 	temp = matrixInverse(temp);
-	 	mat_mult(P_hat, temp, K);
+	// equation 19
+	mat_add(P_hat, R, temp);
+	matrixInvert(temp);
+	mat_mult(P_hat, temp, K);
 
-	 	// equation 18
-	 	mat_mult(K, P_hat, temp);
-	 	mat_subtract(P_hat, temp, P);
-	 	for (int i = 0; i < SIZE; i++) {
-	 			z[i] = z[i] - x_hat[i];
-	 	}
-	 	mat_vec_mult(K, z, tempVec);
-	 	for (int i = 0; i < SIZE; i++) {
-	 			x[i] = x_hat[i] + tempVec[i];
-	 	}
+	// equation 18
+	mat_mult(K, P_hat, temp);
+	mat_subtract(P_hat, temp, P);
+	for (int i = 0; i < NUM; i++) {
+			z[i] = z[i] - x_hat[i];
+	}
+	mat_vec_mult(K, z, tempVec);
+	for (int i = 0; i < NUM; i++) {
+			x[i] = x_hat[i] + tempVec[i];
+	}
 }
