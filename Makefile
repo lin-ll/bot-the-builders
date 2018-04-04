@@ -1,8 +1,7 @@
 # Macros
 CC = gcc
 IDIR = ./inc
-CFLAGS = -I$(IDIR) -Wall -pthread -lrt -lm 
-#-lpigpiod_if2 
+CFLAGS = -I$(IDIR) -Wall -pthread -lrt -lm -lpigpiod_if2 
 
 # Pattern rule
 %.o: %.c
@@ -20,7 +19,7 @@ robot: maze.o graph.o motors.o kalman.o constants.o
 test_sensors: test_sensors.o sensors.o adafruit_distance.o constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
-test_motors: test_motors.o constants.o
+test_motors: test_motors.o constants.o motors.o pid.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 test_distance: test_distance.o adafruit_distance.o constants.o
@@ -33,6 +32,9 @@ test_buttons: test_buttons.o buttons.o leds.o constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 test_matrix: test_matrix.o matrixInverse.o constants.o
+	$(CC) -o $@ $^ $(CFLAGS)
+
+test_tiny: test_tiny.o sensors.o adafruit_distance.o constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 #motors.o: motors.h

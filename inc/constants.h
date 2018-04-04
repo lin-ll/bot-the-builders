@@ -20,8 +20,6 @@
 #define MAZE_SIZE 16
 #define SQUARE_SIZE 180 // 168 + 12
 
-#define dt 0.1
-
 #define TWO_PI (2*3.1415926536)
 #define DISTANCE_OFF 0
 #define DISTANCE_ON 1
@@ -37,6 +35,7 @@
 #define BUTTON_BLUE 20
 #define BUTTON_GREEN 19
 #define BUTTON_YELLOW 26
+#define BUTTON_GROUND 24
 
 //-------------------
 

@@ -2,6 +2,7 @@
 This module creates PID loop objects.
 */
 
+#include <stdlib.h>
 #include "pid.h"
 #include "constants.h"
 
@@ -9,7 +10,7 @@ typedef struct PID *PID_T;
 
 // return a PID loop object
 PID_T Pid_init(double kP, double kI, double kD) {
-		struct PID *p = malloc(sizeof(PID));
+		struct PID *p = malloc(sizeof(PID_T));
 		p->kP = kP;
 		p->kI = kI;
 		p->kD = kD;
