@@ -1,53 +1,121 @@
 // The central file for controlling the robot
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "inc/maze.h"
-#include "inc/controls.h"
-#include "inc/kalman.h"
-#include "inc/heap.h"
+#include "maze.h"
+#include "controls2.h"
+#include <unistd.h>
+#include "buttons.h"
+#include "constants.h"
+#include "sensors.h"
+
+void solveMaze(int goal) {
+	Maze_assignPath(goal);
+
+	int controls_finished = 0;
+
+	while (true) {
+		// check buttons
+		int button_pressed = Button_update();
+		if (button_pressed == BUTTON_RED) {
+			Led_setColor(MAX_COLOR, 0, 0); // red
+			Motor_completeStop();
+			Maze_partialReset();
+			usleep(300000);
+			Led_off();
+			solveMaze(GOAL_SPACE);
+			return;
+		}
+
+		int dir;
+
+		// do controls thing
+		controls_finished = Controls2_update();
+		if (controls_finished) {
+			dir = Maze_followPath();
+			if (dir == -1) {
+				break;
+			}
+			Controls2_setDir(dir);
+		}
+
+		Controls2_update();
+	}
+}
 
 int explore() {
-    int explorationVelocity = 10; // speed for exploration
-    int row = 0;
-    int col = 0;
-    int currNode = getIntFromCoordinates(row, col);
-    while (!isExplored()) {
-        // gather information about walls from sensors
-        int leftWall = 0;
-        int rightWall = 0;
-        int upWall = 0;
-        int downWall = 0;
-        int nextNode = dfs(row, col, leftWall, rightWall, upWall, downWall);
-        moveTo(currNode, nextNode);
-        currNode = nextNode;
-    }
-}
+	int dir;
+	int controls_finished = 0;
 
-void traverseShortestPath(heap_t *path, int start) {
-		int curr = start;
-		while (!isEmpty(path)) {
-				int next = pop(path);
-				moveTo(curr, next);
-				curr = next;
+	while (true) {
+		// check buttons
+		int button_pressed = Button_update();
+		if (button_pressed == BUTTON_RED) {
+			Led_setColor(MAX_COLOR, 0, 0); // red
+			Motor_completeStop();
+			Maze_reset();
+			usleep(300000);
+			Led_off();
+			main();
+			return -1;
 		}
-}
 
-void returnToStart(Graph g, int currNode) {
-		int **distances = findShortestPath(g, currNode, startSpace);
-		heap_t *path = getShortestPath(distances, startSpace);
-		traverseShortestPath(path, currNode);
-}
+		// do controls thing
+		controls_finished = Controls2_update();
+		if (controls_finished) {
+			int *walls = Sensor_findWalls(walls);
+			int up_wall = walls[0];
+			int down_wall = walls[1];
+			int left_wall = walls[2];
+			int right_wall = walls[3];
+			do {
+				dir = Maze_dfs(up_wall, down_wall, left_wall, right_wall);
+			} while (dir == -1 && !(Maze_isExplored()));
+			if (Maze_isExplored()) {
+				break;
+			}
+			Controls2_setDir(dir);
+		}
 
-void solveMaze(Graph g) {
-		int **distances = findShortestPath(g, startSpace, goalSpace);
-		heap_t *path = getShortestPath(distances, goalSpace);
-		traverseShortestPath(path, startSpace);
+		Controls2_update();
+	}
+	return 0;
 }
 
 void main() {
-    explore();
-    returnToStart();
-    solveMaze();
-    }
+	// initialize everything
+	pi = pigpio_start(NULL, NULL);
+	Button_init(pi);
+	Led_init(pi);
+	Sensor_init(pi);
+	Controls2_init();
+	Maze_init();
+
+	Led_setColor(255, 200, 0); //orange
+
+	// green button triggers explore
+	int button_pressed = -1;
+	while (button_pressed != BUTTON_GREEN) {
+		button_pressed = Button_update();
+	}
+	Led_setColor(0, MAX_COLOR, 0); //green
+	int result = explore();
+	Led_off();
+	if (result == -1) {
+		return;
+	}
+
+	// this shouldn't ever be executed if dfs works properly but just in case.
+	if (!Maze_isAtStart()) {
+		Led_setColor(0, MAX_COLOR, MAX_COLOR); //cyan
+		solveMaze(START_SPACE);
+		Led_off();
+	}
+
+	button_pressed = -1;
+	while (button_pressed != BUTTON_BLUE) {
+		button_pressed = Button_update();
+	}
+
+	Led_setColor(0, 0, MAX_COLOR); //blue
+	solveMaze(GOAL_SPACE);
+	Led_off();
 }

@@ -1,21 +1,23 @@
 #include "inc/kalman.h"
+#include "inc/matrixInverse.h"
 #include <math.h> // for using NAN
 
 /* Naming conventions and general info from here:
    http://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/   */
 
 #define NUM 6
-
-const double SQUARE_SIZE = 168 + 12; // (square + wall)mm
+#define SQUARE_SIZE 180 // TODO is this right?
 
 // x, y, t, vx, vy, vt
 // units are mm, mm/s, rad clockwise with 0 at +y, rad/s
 double x[NUM];
+double z[NUM];
 double x_hat[NUM];
 double P[NUM*NUM];
 double P_hat[NUM*NUM];
 double temp[NUM*NUM];
-double R[NUM*NUM];
+double K[NUM*NUM];
+double tempVec[NUM];
 
 /* In each step, how much uncertainty is there in our prediction? */
 /* I really really am unsure of these values; if it fails miserably try dividing them by 10 ?? */
@@ -30,6 +32,37 @@ double F[NUM*NUM] =
 			0, 0, 0, 0, 1, 0,
 			0, 0, 0, 0, 0, 1};
 
+double R[NUM*NUM] =
+			{0.2, 0.0, 0.0, 0.0, 0.0, 0.0,
+			 0.0, 0.2, 0.0, 0.0, 0.0, 0.0,
+			 0.0, 0.0, 0.2, 0.0, 0.0, 0.0,
+			 0.0, 0.0, 0.0, 0.2, 0.0, 0.0,
+			 0.0, 0.0, 0.0, 0.0, 0.2, 0.0,
+			 0.0, 0.0, 0.0, 0.0, 0.0, 0.2};
+
+double kalman_getX() {
+		return x[0];
+}
+
+double kalman_getY() {
+		return x[1];
+}
+
+double kalman_getVx() {
+		return x[3];
+}
+
+double kalman_getVy() {
+		return x[4];
+}
+
+double kalman_getT() {
+		return x[2];
+}
+
+double kalman_getVt() {
+		return x[5];
+}
 
 void mat_mult(double *A, double *B, double *dest){
 	for (int i = 0; i < NUM; i++) {
@@ -42,6 +75,27 @@ void mat_mult(double *A, double *B, double *dest){
 		}
 	}
 }
+
+void mat_add(double *A, double* B, double *dest) {
+		for (int i = 0; i < NUM; i++) {
+				for (int j = 0; j < NUM; j++) {
+						int index = i*NUM + j;
+						dest[index] = 0.0;
+						dest[index] += A[index] + B[index];
+				}
+		}
+}
+
+void mat_subtract(double *A, double* B, double *dest) {
+		for (int i = 0; i < NUM; i++) {
+				for (int j = 0; j < NUM; j++) {
+						int index = i*NUM + j;
+						dest[index] = 0.0;
+						dest[index] += A[index] - B[index];
+				}
+		}
+}
+
 
 /* dest = A*transpose(B) */
 void mat_mult_btrans(double *A, double *B, double *dest){
@@ -186,9 +240,17 @@ void update(double *distances, double *encoders, double *imu, double *control, d
 
 	double encoder_vx, encoder_vy, encoder_vt;
 	interpret_encoders(encoders, &encoder_vx, &encoder_vy, &encoder_vt);
-
 	/* we're working hard to do all this interpretation beforehand so the matrix that transforms our
 	   sensor readings into the right dimensions (H in the tutorial) is just the identity */
+
+	z[0] = dist_x;
+	z[1] = dist_y;
+	z[2] = 0; // TODO compass
+	z[3] = encoder_vx;
+	z[4] = encoder_vy;
+	z[5] = encoder_vt; // TODO gyro
+
+
 
 	/* TODO: read the comment above. Create an R matrix for sensor noise covariances, and do the
 	   actual kalman update step, equations 18 and 19 here
@@ -196,7 +258,19 @@ void update(double *distances, double *encoders, double *imu, double *control, d
 
 	   compile with "gcc kalman.c inc/kalman.h"*/
 
+	// equation 19
+	mat_add(P_hat, R, temp);
+	matrixInvert(temp);
+	mat_mult(P_hat, temp, K);
 
-
-
+	// equation 18
+	mat_mult(K, P_hat, temp);
+	mat_subtract(P_hat, temp, P);
+	for (int i = 0; i < NUM; i++) {
+			z[i] = z[i] - x_hat[i];
+	}
+	mat_vec_mult(K, z, tempVec);
+	for (int i = 0; i < NUM; i++) {
+			x[i] = x_hat[i] + tempVec[i];
+	}
 }

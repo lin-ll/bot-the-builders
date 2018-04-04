@@ -6,19 +6,35 @@
 #ifndef MAZE_INCLUDED
 #define MAZE_INCLUDED
 
-Graph discoverMaze();
+void Maze_init();
 
-int dfs(int row, int col, int leftWall, int rightWall, int upWall, int downWall);
+// if robot crashes, reset maze solving algorithm
+void Maze_reset();
 
-int getIntFromCoordinates(int row, int col);
+// if robot crashes but we don't want to reset the entire algorithm, update
+// current row and col to start space
+void Maze_partialReset();
 
-int getRowFromInt(int nodeRef);
-int getColFromInt(int nodeRef);
+// if robot is at START_SPACE
+int Maze_isAtStart();
 
-int **findShortestPath(Graph g, int start, int finish);
+// if robot has fully explored the maze
+int Maze_isExplored();
+
+// returns direction to search maze
+int Maze_dfs(int row, int col, int leftWall, int rightWall, int upWall, int downWall);
+
+int Maze_getIntFromCoordinates(int row, int col);
+
 heap_t *getShortestPath(int **d, int finish);
 
-// returns true is maze is fully explored
-int isExplored();
+// assigns current path
+void Maze_assignPath(int goalSpace);
+
+// follows current path
+int Maze_followPath();
+
+// returns true if maze is fully explored
+int Maze_isExplored();
 
 #endif

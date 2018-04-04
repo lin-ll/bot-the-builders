@@ -25,9 +25,10 @@
  * Ref Pinouts on https://camo.githubusercontent.com/d46f3f004aaf977040d933ae5eaf25d22d33eac1/687474703a2f2f6472617a7a792e636f6d2f652f696d672f50696e6f7574543834612e6a7067
  * or http://www.akafugu.jp/images/microcontroller-reference-sheet.png
  */
+ 
 #define I2C_SLAVE_ADDRESS 0x4 // the 7-bit address
 
-#include <TinyWireS.h> //https://github.com/rambo/TinyWire
+#include "TinyWireS.h" 
 
 //Declare variables
 int i = 0, j = 0;
@@ -151,6 +152,9 @@ void requestEvent()
 
 void loop() 
 {
+  while (true) {
+      
+  }
 }
 
 

@@ -1,230 +1,93 @@
-/* motors.c */
-
-#include "inc/motors.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include "inc/pigpiod_if2.h"
-#include "inc/pid.h"
-#include "inc/sensors.h"
+#include "motors.h"
+#include <pigpiod_if2.h>
+#include "pid.h"
+#include "sensors.h"
+#include "constants.h"
 
 //-------------------
 
-#define UPPER_LEFT_FORWARD 5
-#define UPPER_RIGHT_FORWARD 6
-#define UPPER_LEFT_BACKWARD 7
-#define UPPER_RIGHT_BACKWARD 8
-#define LOWER_LEFT_FORWARD 9
-#define LOWER_RIGHT_FORWARD 10
-#define LOWER_LEFT_BACKWARD 11
-#define LOWER_RIGHT_BACKWARD 12
-#define MOTOR_RANGE 255
+const int FORWARD_PINS[4] = {UPPER_LEFT_FORWARD, UPPER_RIGHT_FORWARD, LOWER_LEFT_FORWARD, LOWER_RIGHT_FORWARD};
+const int BACKWARD_PINS[4] = {UPPER_LEFT_BACKWARD, UPPER_RIGHT_BACKWARD, LOWER_LEFT_BACKWARD, LOWER_RIGHT_BACKWARD};
 
-//-------------------
-
-static double upperLeftPercent = 0;
-static double upperRightPercent = 0;
-static double lowerLeftPercent = 0;
-static double lowerRightPercent = 0;
-
-static PID_T pidUpperLeft;
-static PID_T pidUpperRight;
-static PID_T pidLowerLeft;
-static PID_T pidLowerRight;
-
+static int desiredSpeeds[4];
+static PID_T pids[4];
 static int pi;
 
 int Motor_init(int pifd) {
   pi = pifd;
-  upperLeftPercent = 0;
-  upperRightPercent = 0;
-  lowerLeftPercent = 0;
-  lowerRightPercent = 0;
 
-  pidUpperLeft = init(10.0, 10.0, 1.0);
-  pidUpperRight = init(10.0, 10.0, 1.0);
-  pidLowerLeft = init(10.0, 10.0, 1.0);
-  pidLowerRight = init(10.0, 10.0, 1.0);
-
-  set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, 0.0);
-  set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, 0.0);
-  set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, 0.0);
-  set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, 0.0);
-  set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, 0.0);
-  set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, 0.0);
-  set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, 0.0);
-  set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, 0.0);
-
-  set_PWM_range(pi, UPPER_LEFT_FORWARD, MOTOR_RANGE);
-  set_PWM_range(pi, UPPER_LEFT_BACKWARD, MOTOR_RANGE);
-  set_PWM_range(pi, UPPER_RIGHT_FORWARD, MOTOR_RANGE);
-  set_PWM_range(pi, UPPER_RIGHT_BACKWARD, MOTOR_RANGE);
-  set_PWM_range(pi, LOWER_LEFT_FORWARD, MOTOR_RANGE);
-  set_PWM_range(pi, LOWER_LEFT_BACKWARD, MOTOR_RANGE);
-  set_PWM_range(pi, LOWER_RIGHT_FORWARD, MOTOR_RANGE);
-  set_PWM_range(pi, LOWER_RIGHT_BACKWARD, MOTOR_RANGE);
-  return 0;
-}
-
-// Assume sensors.c has a method witch returns current speed of motor
-// Call this motor motorSpeed();
-
-double Motor_getUpperLeft() {
-  return upperLeftPercent;
-}
-
-double Motor_getUpperRight() {
-  return upperRightPercent;
-}
-
-double Motor_getLowerLeft() {
-  return lowerLeftPercent;
-}
-
-double Motor_getLowerRight() {
-  return lowerRightPercent;
-}
-
-int Motor_setUpperLeft(double upperLeft) {
-  upperLeftPercent = upperLeft;
-  if (upperLeft >= 0) {
-    set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, (upperLeft * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, 0.0);
-  }
-  else {
-    set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, (upperLeft * MOTOR_RANGE / -100.0));
+  for (int i = 0; i < 4; i++) {
+    desiredSpeeds[i] = 0;
+    pids[i] = Pid_init(10.0, 10.0, 1.0);
+    set_PWM_dutycycle(pi, FORWARD_PINS[i], 0);
+    set_PWM_dutycycle(pi, BACKWARD_PINS[i], 0);
+    set_PWM_range(pi, FORWARD_PINS[i], MOTOR_RANGE);
+    set_PWM_range(pi, BACKWARD_PINS[i], MOTOR_RANGE);
   }
   return 0;
 }
 
-int Motor_adjustUpperLeft(double upperLeft) {
-  if (upperLeft >= 0) {
-    set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, (upperLeft * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, 0.0);
+int Motor_get(int motorPin) {
+  int idx = 0;
+  while (FORWARD_PINS[idx] != motorPin && BACKWARD_PINS[idx] != motorPin) {
+    idx++;
   }
-  else {
-    set_PWM_dutycycle(pi, UPPER_LEFT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, UPPER_LEFT_BACKWARD, (upperLeft * MOTOR_RANGE / -100.0));
-  }
-  return 0;
+  return desiredSpeeds[idx];
 }
 
-int Motor_setUpperRight(double upperRight) {
-  upperRightPercent = upperRight;
-  if (upperRight >= 0) {
-    set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, (upperRight * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, 0.0);
+/* COmmented out as long as we don't have encoders working
+void Motor_updateMotors(double dt) {
+  // TODO: Sensor_getMotorSpeed, what is this
+  for (int i = 0; i < 4; i++) {
+    PID_T currPid = pids[i];
+    int forwardMotor = FORWARD_PINS[i];
+    int backwardMotor = BACKWARD_PINS[i];
+    Pid_setPoint(currPid, desiredSpeeds[i]);
+    double encoderSpeed = Sensor_getMotorSpeed(forwardMotor);
+    Pid_update(currPid, encoderSpeed, dt);
+    double adjustSpeedDouble = Pid_getVal(currPid);
+    int adjustSpeed = (int) (adjustSpeedDouble * MOTOR_RANGE / MOTOR_MAX_SPEED); // TODO: unsure if this is correct
+    Motor_adjust(forwardMotor, backwardMotor, adjustSpeed);
   }
-  else {
-    set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, (upperRight * MOTOR_RANGE / -100.0));
+}
+*/
+
+void Motor_resetPID() {
+  for (int i = 0; i < 4; i++) {
+    Pid_reset(pids[i]);
   }
-  return 0;
 }
 
-int Motor_adjustUpperRight(double upperRight) {
-  if (upperRight >= 0) {
-    set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, (upperRight * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, 0.0);
+void Motor_adjust(int forwardMotor, int backwardMotor, int speed) {
+  if (speed >= 0) {
+    set_PWM_dutycycle(pi, forwardMotor, speed);
+    set_PWM_dutycycle(pi, backwardMotor, 0);
+  } else {
+    set_PWM_dutycycle(pi, forwardMotor, 0);
+    set_PWM_dutycycle(pi, backwardMotor, -speed);
   }
-  else {
-    set_PWM_dutycycle(pi, UPPER_RIGHT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, UPPER_RIGHT_BACKWARD, (upperRight * MOTOR_RANGE / -100.0));
-  }
-  return 0;
-}
-
-int Motor_setLowerLeft(double lowerLeft) {
-  lowerLeftPercent = lowerLeft;
-  if (lowerLeft >= 0) {
-    set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, (lowerLeft * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, 0.0);
-  }
-  else {
-    set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, (lowerLeft * MOTOR_RANGE / -100.0));
-  }
-  return 0;
-}
-
-int Motor_adjustLowerLeft(double lowerLeft) {
-  if (lowerLeft >= 0) {
-    set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, (lowerLeft * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, 0.0);
-  }
-  else {
-    set_PWM_dutycycle(pi, LOWER_LEFT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, LOWER_LEFT_BACKWARD, (lowerLeft * MOTOR_RANGE / -100.0));
-  }
-  return 0;
-}
-
-int Motor_setLowerRight(double lowerRight) {
-  lowerRightPercent = lowerRight;
-  if (lowerRight >= 0) {
-    set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, (lowerRight * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, 0.0);
-  }
-  else {
-    set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, (lowerRight * MOTOR_RANGE / -100.0));
-  }
-  return 0;
-}
-
-int Motor_adjustLowerRight(double lowerRight) {
-  if (lowerRight >= 0) {
-    set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, (lowerRight * MOTOR_RANGE / 100.0));
-    set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, 0.0);
-  }
-  else {
-    set_PWM_dutycycle(pi, LOWER_RIGHT_FORWARD, 0.0);
-    set_PWM_dutycycle(pi, LOWER_RIGHT_BACKWARD, (lowerRight * MOTOR_RANGE / -100.0));
-  }
-  return 0;
-}
-
-void updateMotors(double dt) {
-  setPoint(pidUpperLeft, upperLeftPercent);
-  double upperLeftSpeed = Sensor_getMotorSpeed(UPPER_LEFT_PIN);
-  update(pidUpperLeft, upperLeftSpeed, dt); // what is dt defined as?
-  double upperLeftAdjust = getVal(pidUpperLeft);
-  Motor_adjustUpperLeft(upperLeftAdjust);
-
-  setPoint(pidUpperRight, upperRightPercent);
-  double upperRightSpeed = Sensor_getMotorSpeed(UPPER_RIGHT_PIN);
-  update(pidUpperRight, upperRightSpeed, dt); // what is dt defined as?
-  double upperRightAdjust = getVal(pidUpperRight);
-  Motor_adjustUpperRight(upperRightAdjust);
-
-  setPoint(pidLowerLeft, lowerLeftPercent);
-  double lowerLeftSpeed = Sensor_getMotorSpeed(LOWER_LEFT_PIN);
-  update(pidLowerLeft, lowerLeftSpeed, dt); // what is dt defined as?
-  double lowerLeftAdjust = getVal(pidLowerLeft);
-  Motor_adjustLowerLeft(lowerLeftAdjust);
-
-  setPoint(pidLowerRight, lowerRightPercent);
-  double lowerRightSpeed = Sensor_getMotorSpeed(LOWER_RIGHT_PIN);
-  update(pidLowerRight, lowerRightSpeed, dt); // what is dt defined as?
-  double lowerRightAdjust = getVal(pidLowerRight);
-  Motor_adjustUpperLeft(lowerRightAdjust);
-}
-
-void resetPID() {
-    reset(pidUpperLeft);
-    reset(pidUpperRight);
-    reset(pidLowerLeft);
-    reset(pidLowerRight);
 }
 
 /* Utility Function, to input array */
-int Motor_set(double* motors) {
-  double ret = Motor_setUpperLeft(motors[0]);
-  ret = ret || Motor_setUpperRight(motors[1]);
-  ret = ret || Motor_setLowerRight(motors[2]);
-  ret = ret || Motor_setLowerLeft(motors[3]);
-  return ret;
+void Motor_set(int* speeds) {
+  for (int i = 0; i < 4; i++) {
+    desiredSpeeds[i] = speeds[i];
+  }
+}
+
+void Motor_off() {
+  for (int i = 0; i < 4; i++) {
+    Motor_adjust(FORWARD_PINS[i], BACKWARD_PINS[i], 0);
+  }
+}
+
+// bring all motors to a complete stop
+// also resets PID, no reason the old integral should carry over
+void Motor_completeStop(){
+  Motor_resetPID();
+  int speeds[4] = {0,0,0,0};
+  Motor_set(speeds);
+  Motor_off();
 }
 
 void Motor_free() {

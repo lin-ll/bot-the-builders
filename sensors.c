@@ -1,8 +1,10 @@
-#include <math.h>
-#include "inc/sensors.h"
-#include "inc/pigpiod_if2.h"
-#include <adafruit_distance.h>
+#include "sensors.h"
+#include <pigpiod_if2.h>
+#include "constants.h"
+#include "adafruit_distance.h"
 #include <stdio.h>
+#include <math.h>
+#include <unistd.h>
 
 /* Some quick bus info
 0x6B gyro
@@ -11,21 +13,21 @@
 0x52 Long distance
 */
 
-#define TWO_PI (2*3.1415926536)
-#define DISTANCE_OFF 0
-#define DISTANCE_ON 1
-
-const int BUS = 1;
-const int GYRO_ADDR = 0x6B; // 7 bit 1101011;
-const int COMPASS_ADDR = 0x1D; // if it's wrong, try 1F
-
-const int ORIG_SHORT_DIST_ADDR = 0x2A;
-const int ORIG_LONG_DIST_ADDR = 0x2A;
 const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_SHORT_DIST_ADDR}; // bogus addresses
-const int LONG_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_LONG_DIST_ADDR}; // bogus addresses
+const int LONG_DIST_ADDRS[4] = {0x31, 0x30, 0x2F, 0x2E}; // bogus addresses
 
-const int SHORT_SHUTDOWN_PINS[4] = {-1, 2, 3, 4}; // bogus pin numbers except for the -1
-const int LONG_SHUTDOWN_PINS[4] = {-1, 1, 2, 3}; // bogus pin numbers except for the -1
+int tinyHandle;
+
+
+// known short: SHORT_PIN_FRONT (-1), SHORT_PIN_BACK
+// known long : SHORT_PIN_LEFT, LONG_PIN_FRONT
+
+// known short: SHORT_PIN_FRONT (-1)
+// known long : SHORT_PIN_BACK
+
+// NOTE: short_back must go first because it deson't have a shutdown pin
+const int SHORT_SHUTDOWN_PINS[4] = {SHORT_PIN_BACK, SHORT_PIN_FRONT, SHORT_PIN_LEFT, SHORT_PIN_RIGHT};
+const int LONG_SHUTDOWN_PINS[4] = {LONG_PIN_FRONT, LONG_PIN_BACK, LONG_PIN_LEFT, LONG_PIN_RIGHT};
 
 // The datasheet gives 8.75mdps/digit for default sensitivity
 const double RPS_PER_DIGIT = 0.00875*TWO_PI/360;
@@ -63,6 +65,44 @@ static int long_dist_handles[4] = {0, 0, 0, 0};
 static int pi;
 
 /* Local Functions */
+
+int test_read8(int handle, int address)
+{
+  char dataWrite[2];
+  char dataRead[1];
+
+  dataWrite[0] = (address >> 8) & 0xFF;
+  dataWrite[1] = address & 0xFF;
+  int w = i2c_write_device(pi, handle, dataWrite, 2);
+  int r = i2c_read_device(pi, handle, dataRead, 1);
+
+  if(w != 0) printf("Write Code: %d\n", w);
+  if(r != 1) printf("Read Code: %d\n", r);
+
+  return (int)dataRead[0];
+}
+
+void test_write8(int handle, int address, int data){
+    int test;
+    char data_write[3];
+    data_write[0] = (address >> 8) & 0xFF;; // MSB of register address
+    data_write[1] = address & 0xFF; // LSB of register address
+    data_write[2] = data & 0xFF;
+    test = i2c_write_device(pi, handle, data_write, 3);
+    if (test != 0) printf("write returned %d\n", test);
+
+    int result = test_read8(handle, address);
+    printf("wrote %d and read back %d\n", data, result);
+  }
+
+int test_readblock(int handle, int address, char *buffer, int len){
+  for(int i=0; i<len; i++){
+    buffer[i] = test_read8(handle, address);
+    printf("Read byte %d: %d\n", i, buffer[i]);
+  }
+  return len; // TODO eh
+}
+
 static double getCompassRaw() {
   int temp = 0;
   int16_t xRaw;
@@ -71,7 +111,8 @@ static double getCompassRaw() {
 
   char buffer[32];
   buffer[6] = 42; // Sentinel to check whether it's being touched
-  temp = i2c_read_i2c_block_data(pi, compass_handle, COMPASS_REGISTER_OUT_X_H_M | 0x80, buffer, 6);
+  //temp = i2c_read_i2c_block_data(pi, compass_handle, COMPASS_REGISTER_OUT_X_H_M | 0x80, buffer, 6);
+  temp = test_readblock(compass_handle, COMPASS_REGISTER_OUT_X_H_M | 80, buffer, 6);
   if (temp != 6) {
     printf("ERROR: read_block_data returns %d\n", temp);
   }
@@ -79,7 +120,7 @@ static double getCompassRaw() {
   xRaw = ((int16_t)(buffer[5]) << 8) + (int16_t)(buffer[4]);
   yRaw = ((int16_t)(buffer[1]) << 8) + (int16_t)(buffer[0]);
 
-  angle = atan2(yRaw, xRaw);
+  angle = atan2((double)yRaw, (double)xRaw);
   return angle;
 }
 
@@ -91,11 +132,11 @@ static void initGyro() {
   int LOWODR = 0x39;
 
   gyro_handle = i2c_open(pi, BUS, GYRO_ADDR, 0);
-  i2c_write_byte_data(pi, gyro_handle, CTRL1, 0x6F);
-  i2c_write_byte_data(pi, gyro_handle, CTRL4, 0x00);
-  i2c_write_byte_data(pi, gyro_handle, LOWODR, 0x00);
-  printf("gyro_handle: %d\n", gyro_handler);
-  Sensor_calGyro(100);
+  test_write8(gyro_handle, CTRL1, 0x6F);
+  test_write8(gyro_handle, CTRL4, 0x00);
+  test_write8(gyro_handle, LOWODR, 0x00);
+  printf("gyro_handle: %d\n", gyro_handle);
+  //Sensor_calGyro(100);
 }
 
 /* Initialize compass handle and settings */
@@ -110,7 +151,8 @@ static void initCompass() {
   i2c_write_byte_data(pi, compass_handle, CTRL6, 0x20);
   i2c_write_byte_data(pi, compass_handle, CTRL7, 0x00);
   printf("compass_handle: %d\n", compass_handle);
-  Sensor_calCompass(100);
+  getCompassRaw();
+  //Sensor_calCompass(100);
 }
 
 /**
@@ -122,7 +164,6 @@ int Sensor_init(int pifd) {
   int i, j, success;
 
   adafruit_distance_set_pi_handle(pi);
-
   // Getting the handles for short and long distance
   for(i=0; i<4; i++) {
     short_dist_handles[i] = i2c_open(pi, BUS, SHORT_DIST_ADDRS[i], 0);
@@ -141,14 +182,14 @@ int Sensor_init(int pifd) {
   printf("GOT ALL HANDLES\n");
 
   // Shut all of the short and long distance pins down
-  for(i=0; i<3; i++) {
+  for(i=0; i<4; i++) {
     if(SHORT_SHUTDOWN_PINS[i] != -1) {
       gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_OFF);
       printf("Turn off short distance sensor: %d\n", SHORT_SHUTDOWN_PINS[i]);
     }
   }
 
-  for(i=0; i<3; i++) {
+  for(i=0; i<4; i++) {
     if(LONG_SHUTDOWN_PINS[i] != -1) {
       gpio_write(pi, LONG_SHUTDOWN_PINS[i], DISTANCE_OFF);
       printf("Turn off long distance sensor: %d\n", LONG_SHUTDOWN_PINS[i]);
@@ -157,25 +198,33 @@ int Sensor_init(int pifd) {
 
   printf("ALL OFF\n");
 
+  //success = adafruit_distance_begin(short_dist_handles[3]);
+  //printf("SUCCESS WAS %d\n", success);
+
   // One by one, turn on short distance sensors
-  for(i=0; i<3; i++) {
+  for(i=0; i<4; i++) {
     printf("Turning on short distance sensor: %d\n", i);
     if(SHORT_SHUTDOWN_PINS[i] != -1)
       gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_ON);
 
+    sleep(1);
     // Library thinks we're talking to the same sensor each time
+
+    printf("Changing address for handle %x to addr %x\n", short_dist_handles[3],SHORT_DIST_ADDRS[i]);
     adafruit_distance_change_address(short_dist_handles[3], SHORT_DIST_ADDRS[i]);
     success = adafruit_distance_begin(short_dist_handles[i]);
+
     if(!success)
       printf("Short distance sensor error: %d\n", i);
 
     for(j=0; j<100;j++){
-      printf("%d:\t%d\n", i, adafruit_distance_readRange(short_dist_handles[i]));
+      //printf("%d:\t%d\n", i, adafruit_distance_readRange(short_dist_handles[i]));
     }
   }
 
+  /*
   // One by one, turn on long distance sensors
-  for(i=0; i<3; i++) {
+  for(i=0; i<4; i++) {
     printf("Turning on long distance sensor: %d\n", i);
     if(LONG_SHUTDOWN_PINS[i] != -1)
       gpio_write(pi, LONG_SHUTDOWN_PINS[i], DISTANCE_ON);
@@ -187,9 +236,10 @@ int Sensor_init(int pifd) {
       printf("Long distance sensor error: %d\n", i);
 
     for(j=0; j<100;j++){
-      printf("%d:\t%d\n", i, adafruit_distance_readRange(long_dist_handles[i]));
+      //printf("%d:\t%d\n", i, adafruit_distance_readRange(long_dist_handles[i]));
     }
   }
+  */
 
   printf("ALL ON\n");
 
@@ -198,9 +248,9 @@ int Sensor_init(int pifd) {
   // TODO: figure out what to do with accelerometer
   //acc_handle = i2c_open(ACC_BUS, ACC_ADDRESS);
 
-  initGyro();
-  initCompass();
-  return EXIT_SUCCESS;
+  //initGyro();
+  //initCompass();
+  return 0;
 }
 
 /* Return angle in radians or radians/s. */
@@ -208,6 +258,9 @@ double Sensor_getGyro(){
   char buffer[32];
   // needs to be 16 bits signed so the signs work out correctly
   int16_t raw;
+
+  //int16_t a = adafruit_distance_read16(GYRO_REGISTER_OUT_X_L | 80);
+  //printf("A is %d\n", a);
 
   i2c_read_i2c_block_data(pi, gyro_handle, GYRO_REGISTER_OUT_X_L | 0x80, buffer, 6);
   raw = ((int16_t)(buffer[3]) << 8) + (int16_t)(buffer[2]);
@@ -252,15 +305,30 @@ void Sensor_calGyro(int n) {
   gyroOffset = c / (double)n;
 }
 
-/* Return distance from short distance sensor in cm */
+/* Return distance from short distance sensor in mm */
 double Sensor_getShort(int num) {
-  return adafruit_distance_readRange(short_dist_handles[num]);
+  return (double)adafruit_distance_readRange(short_dist_handles[num]);
 }
 
 /* TODO: implement this */
-/* Return distance from long distance sensor in cm */
+/* Return distance from long distance sensor in mm */
 double Sensor_getLong(enum Dir_t dir) {
   return 1;
+}
+
+void Sensor_findWalls(int *walls) {
+    if (Sensor_getShort(UP) > SQUARE_SIZE / 2) {
+        walls[0] = 1;
+    }
+    if (Sensor_getShort(DOWN) > SQUARE_SIZE / 2) {
+        walls[1] = 1;
+    }
+    if (Sensor_getShort(LEFT) > SQUARE_SIZE / 2) {
+        walls[2] = 1;
+    }
+    if (Sensor_getShort(RIGHT) > SQUARE_SIZE / 2) {
+        walls[3] = 1;
+    }
 }
 
 /* Any cleanup */
@@ -274,4 +342,23 @@ void Sensor_free(){
     i2c_close(pi, short_dist_handles[i]);
     i2c_close(pi, long_dist_handles[i]);
   }
+}
+
+int Sensor_initTiny(int pi){
+	tinyHandle = i2c_open(pi, 1, 0x4, 0);
+	printf("Tiny Handle: %d\n", tinyHandle);
+}
+
+double Sensor_getEncoders(){
+	char data[17];
+	data[0] = 42;
+	data[17] = 43;
+	int ret = i2c_read_i2c_block_data(pi, tinyHandle, 1, data, 16);
+	printf("ret= %d\n", ret);
+
+	for(int i=0; i<17; i++){
+		printf("Byte %d: %d", data[i]);
+	}
+	return 0;
+
 }
