@@ -22,7 +22,7 @@ static double speed = MOTOR_MAX_SPEED; // TODO dynamically change this?
 
 static double destX;
 static double destY;
-static int currDir; 
+static int currDir;
 
 #define MAX_SPEED 100
 #define MIN_SPEED_FRACTION .25 // slow down to this speed as we approach dest
@@ -41,12 +41,14 @@ double matrix = {
 int Controls2_init() {
     pidRight = Pid_init(1.0, 10.0, 10.0);
     pidTheta = Pid_init(1.0, 10.0, 10.0);
+		destX = 9.0;
+		destY = 9.0;
     Pid_setPoint(pidRight, 0.0);
     Pid_setPoint(pidTheta, 0.0);
     return 0;
 }
 
-// Returns the desired forward speed, OR returns 0.0 to 
+// Returns the desired forward speed, OR returns 0.0 to
 // signify that we're at the destination
 double getForwardSpeed() {
 	Motor_setUpperRight(speed);
@@ -57,10 +59,10 @@ double getForwardSpeed() {
 	double forwardDist;
 	switch(currDir){
 	case NORTH:
-		forwardDist = destY - kalman_getY();
+		forwardDist = -(destY - kalman_getY());
 		break;
 	case SOUTH:
-		forwardDist = -(destY - kalman_getY());
+		forwardDist = destY - kalman_getY();
 		break;
 	case EAST:
 		forwardDist = destX - kalman_getX();
@@ -74,7 +76,7 @@ double getForwardSpeed() {
 	if (forwardDist <= STOP_DIST) {
 		// This means speed 0, but also signifies we've arrived
 		Led_setColor(0, 0, 255); // Blue, means we're waiting for maze now
-		return 0.0; 
+		return 0.0;
 	} else if(forwardDist <= SLOW_DIST){
 		speedFraction = MIN_SPEED_FRACTION + (1-MIN_SPEED_FRACTION)*(forwarDist/SLOW_DIST);
 		Led_setColor((int)(255-255*speedFraction), (int)(255*speedFraction), 0); // transition green->red
@@ -144,10 +146,10 @@ void Controls2_setDir(int dir){
 	currDir = dir;
 	switch(currDir){
 	case NORTH:
-		destY += SQUARE_SIZE;
+		destY -= SQUARE_SIZE;
 		break;
 	case SOUTH:
-		destY -= SQUARE_SIZE;
+		destY += SQUARE_SIZE;
 		break;
 	case EAST:
 		destX += SQUARE_SIZE;
