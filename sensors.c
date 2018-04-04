@@ -7,6 +7,7 @@
 #include <math.h>
 #include <unistd.h>
 #include "vl53l0x_python.h"
+#include "vl53l0x_platform.h"
 
 // new addresses
 const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, 0x2A};
@@ -120,6 +121,14 @@ static void initCompass() {
   //Sensor_calCompass(100);
 }
 
+int i2c_read(unsigned char address, unsigned char reg, unsigned char *data_p, unsigned char length) {
+  return i2c_read_i2c_block_data(pi, address, reg, data_p, length);
+}
+
+int i2c_write(unsigned char address, unsigned char reg, unsigned char *data_p, unsigned char length) {
+  return i2c_write_i2c_block_data(pi, address, reg, data_p, length);
+}
+
 /**
  * Initialize Sensors
  * Return EXIT_SUCCESS (0) when done
@@ -174,6 +183,8 @@ int Sensor_init(int pifd) {
     if(!success)
       printf("Short distance sensor error: %d\n", i);
   }
+
+  VL53L0X_set_i2c(i2c_read, i2c_write);
 
   // One by one, turn on long distance sensors
   for(int i=0; i<4; i++) {
