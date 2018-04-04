@@ -23,6 +23,10 @@ int action(int which_button) {
 			Led_setColor(MAX_COLOR, MAX_COLOR, 0);
 			// TODO: action
 			break;
+		case BUTTON_RED:
+			Led_setColor(MAX_COLOR, 0, 0);
+			// TODO: action
+			break;
 	}
 	usleep(2000000); // TODO: remove 
 	Led_off();
@@ -34,7 +38,10 @@ int Button_init(int pifd) {
 	for (int i = 0; i < 4; i++) {
 		// set the mode and if it fails, return 1
 		set_mode(pi, BUTTON_PINS[i], PI_INPUT);
+		set_pull_up_down(pi, BUTTON_PINS[i], PI_PUD_UP);
 	}
+	set_mode(pi, 24, PI_OUTPUT);
+	gpio_write(pi, 24, 0);
 	return 0;
 }
 
