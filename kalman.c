@@ -16,7 +16,6 @@ double x_hat[NUM];
 double P[NUM*NUM];
 double P_hat[NUM*NUM];
 double temp[NUM*NUM];
-double R[NUM*NUM];
 double K[NUM*NUM];
 double tempVec[NUM];
 
@@ -32,6 +31,14 @@ double F[NUM*NUM] =
 			0, 0, 0, 1, 0, 0,
 			0, 0, 0, 0, 1, 0,
 			0, 0, 0, 0, 0, 1};
+
+double R[NUM*NUM] =
+			{0.2, 0.0, 0.0, 0.0, 0.0, 0.0,
+			 0.0, 0.2, 0.0, 0.0, 0.0, 0.0,
+			 0.0, 0.0, 0.2, 0.0, 0.0, 0.0,
+			 0.0, 0.0, 0.0, 0.2, 0.0, 0.0,
+			 0.0, 0.0, 0.0, 0.0, 0.2, 0.0,
+			 0.0, 0.0, 0.0, 0.0, 0.0, 0.2};
 
 double kalman_getX() {
 		return x[0];
