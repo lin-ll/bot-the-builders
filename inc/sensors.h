@@ -31,10 +31,10 @@ enum Dir_t {
 
 enum Orient_t {kNORTH, kEAST, kSOUTH, kWEST};
 
-/* Return distance in cm */
+/* Return distance in mm */
+double Sensor_getShort(int num);
+double Sensor_getLong(int num);
 
-double Sensor_getShort(int num);//Dir_t dir);
-double Sensor_getLong(enum Dir_t dir);
 double Sensor_orient(enum Dir_t dir);
 
 /* Any Cleanup */

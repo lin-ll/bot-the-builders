@@ -61,14 +61,31 @@
 #define BUS 1
 #define GYRO_ADDR 0x6B // 7 bit 1101011;
 #define COMPASS_ADDR 0x1D // if it's wrong, try 1F
+#define ORIG_ADDR 0x29 // the address the i2c listens to
+
+#define GYRO_REGISTER_OUT_X_L 0x28
+#define GYRO_REGISTER_OUT_X_H 0x29
+#define GYRO_REGISTER_OUT_Y_L 0x2A
+#define GYRO_REGISTER_OUT_Y_H 0x2B
+#define GYRO_REGISTER_OUT_Z_L 0x2C
+#define GYRO_REGISTER_OUT_Z_H 0x2D 
+#define ACC_REGISTER_OUT_X_L_A 0x28
+#define ACC_REGISTER_OUT_X_H_A 0x29
+#define ACC_REGISTER_OUT_Y_L_A 0x2A
+#define ACC_REGISTER_OUT_Y_H_A 0x2B
+#define ACC_REGISTER_OUT_Z_L_A 0x2C
+#define ACC_REGISTER_OUT_Z_H_A 0x2D 
+#define COMPASS_REGISTER_OUT_X_H_M 0x08 // HEY! if these values are wrong, try adding 5 to each
+#define COMPASS_REGISTER_OUT_X_L_M 0x09 // There's another version of this chip with those addresses
+#define COMPASS_REGISTER_OUT_Y_H_M 0x0A
+#define COMPASS_REGISTER_OUT_Y_L_M 0x0B
+#define COMPASS_REGISTER_OUT_Z_H_M 0x0C
+#define COMPASS_REGISTER_OUT_Z_L_M 0x0D
 
 //-------------------
 
-#define ORIG_SHORT_DIST_ADDR 0x29
-#define ORIG_LONG_DIST_ADDR 0x2A
-
 #define SHORT_PIN_FRONT 5
-#define SHORT_PIN_BACK -1
+#define SHORT_PIN_BACK 27
 #define SHORT_PIN_LEFT 17
 #define SHORT_PIN_RIGHT 21
 

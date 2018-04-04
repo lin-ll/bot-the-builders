@@ -89,7 +89,7 @@ void main() {
 	Controls2_init();
 	Maze_init();
 
-	Led_setColor(255, 200, 0); //orange
+	Led_setColor(MAX_COLOR, MAX_COLOR, 0); //orange
 
 	// green button triggers explore
 	int button_pressed = -1;

@@ -6,54 +6,15 @@
 #include <math.h>
 #include <unistd.h>
 
-/* Some quick bus info
-0x6B gyro
-0x1E Magnetometer (if that's wrong, try 1f)
-0x29 Short distance
-0x52 Long distance
-*/
+// new addresses
+const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, 0x2A};
+const int LONG_DIST_ADDRS[4] = {0x31, 0x30, 0x2F, 0x2E};
 
-const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, ORIG_SHORT_DIST_ADDR}; // bogus addresses
-const int LONG_DIST_ADDRS[4] = {0x31, 0x30, 0x2F, 0x2E}; // bogus addresses
-
-int tinyHandle;
-
-
-// known short: SHORT_PIN_FRONT (-1), SHORT_PIN_BACK
-// known long : SHORT_PIN_LEFT, LONG_PIN_FRONT
-
-// known short: SHORT_PIN_FRONT (-1)
-// known long : SHORT_PIN_BACK
-
-// NOTE: short_back must go first because it deson't have a shutdown pin
-const int SHORT_SHUTDOWN_PINS[4] = {SHORT_PIN_BACK, SHORT_PIN_FRONT, SHORT_PIN_LEFT, SHORT_PIN_RIGHT};
+const int SHORT_SHUTDOWN_PINS[4] = {SHORT_PIN_FRONT, SHORT_PIN_BACK, SHORT_PIN_LEFT, SHORT_PIN_RIGHT};
 const int LONG_SHUTDOWN_PINS[4] = {LONG_PIN_FRONT, LONG_PIN_BACK, LONG_PIN_LEFT, LONG_PIN_RIGHT};
 
 // The datasheet gives 8.75mdps/digit for default sensitivity
 const double RPS_PER_DIGIT = 0.00875*TWO_PI/360;
-
-enum { // TODO: Check these registers
-  GYRO_REGISTER_OUT_X_L          = 0x28,
-  GYRO_REGISTER_OUT_X_H          = 0x29,
-  GYRO_REGISTER_OUT_Y_L          = 0x2A,
-  GYRO_REGISTER_OUT_Y_H          = 0x2B,
-  GYRO_REGISTER_OUT_Z_L          = 0x2C,
-  GYRO_REGISTER_OUT_Z_H          = 0x2D,
-
-  ACC_REGISTER_OUT_X_L_A         = 0x28,
-  ACC_REGISTER_OUT_X_H_A         = 0x29,
-  ACC_REGISTER_OUT_Y_L_A         = 0x2A,
-  ACC_REGISTER_OUT_Y_H_A         = 0x2B,
-  ACC_REGISTER_OUT_Z_L_A         = 0x2C,
-  ACC_REGISTER_OUT_Z_H_A         = 0x2D,
-
-  COMPASS_REGISTER_OUT_X_H_M     = 0x08, // HEY! if these values are wrong, try adding 5 to each
-  COMPASS_REGISTER_OUT_X_L_M     = 0x09, // There's another version of this chip with those addresses
-  COMPASS_REGISTER_OUT_Y_H_M     = 0x0A,
-  COMPASS_REGISTER_OUT_Y_L_M     = 0x0B,
-  COMPASS_REGISTER_OUT_Z_H_M     = 0x0C,
-  COMPASS_REGISTER_OUT_Z_L_M     = 0x0D,
-};
 
 static double compassOffset = 0;
 static double gyroOffset = 0;
@@ -63,6 +24,8 @@ static int compass_handle = 0;
 static int short_dist_handles[4] = {0, 0, 0, 0};
 static int long_dist_handles[4] = {0, 0, 0, 0};
 static int pi;
+static int orig_handle;
+static int tinyHandle;
 
 /* Local Functions */
 
@@ -161,87 +124,72 @@ static void initCompass() {
  **/
 int Sensor_init(int pifd) {
   pi = pifd;
-  int i, j, success;
-
   adafruit_distance_set_pi_handle(pi);
+  orig_handle = i2c_open(pi, BUS, ORIG_ADDR, 0);
+
   // Getting the handles for short and long distance
-  for(i=0; i<4; i++) {
+  for(int i=0; i<4; i++) {
     short_dist_handles[i] = i2c_open(pi, BUS, SHORT_DIST_ADDRS[i], 0);
     if(short_dist_handles[i] < 0)
       printf("Bad handle for short distance sensor %d: %d\n", i, short_dist_handles[i]);
     printf("Short distance handle %d: %d\n", i, short_dist_handles[i]);
   }
 
-  for(i=0; i<4; i++) {
+  for(int i=0; i<4; i++) {
     long_dist_handles[i] = i2c_open(pi, BUS, LONG_DIST_ADDRS[i], 0);
     if(long_dist_handles[i] < 0)
       printf("Bad handle for long distance sensor %d: %d\n", i, long_dist_handles[i]);
     printf("Long distance handle %d: %d\n", i, long_dist_handles[i]);
   }
 
-  printf("GOT ALL HANDLES\n");
+  printf("GOT ALL HANDLES\n--------------------\n");
 
   // Shut all of the short and long distance pins down
-  for(i=0; i<4; i++) {
-    if(SHORT_SHUTDOWN_PINS[i] != -1) {
-      gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_OFF);
-      printf("Turn off short distance sensor: %d\n", SHORT_SHUTDOWN_PINS[i]);
-    }
+  for(int i=0; i<4; i++) {
+    gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_OFF);
+    printf("Turn off short distance sensor: %d\n", SHORT_SHUTDOWN_PINS[i]);
   }
 
-  for(i=0; i<4; i++) {
-    if(LONG_SHUTDOWN_PINS[i] != -1) {
-      gpio_write(pi, LONG_SHUTDOWN_PINS[i], DISTANCE_OFF);
-      printf("Turn off long distance sensor: %d\n", LONG_SHUTDOWN_PINS[i]);
-    }
+  for(int i=0; i<4; i++) {
+    gpio_write(pi, LONG_SHUTDOWN_PINS[i], DISTANCE_OFF);
+    printf("Turn off long distance sensor: %d\n", LONG_SHUTDOWN_PINS[i]);
   }
 
-  printf("ALL OFF\n");
-
-  //success = adafruit_distance_begin(short_dist_handles[3]);
-  //printf("SUCCESS WAS %d\n", success);
+  printf("ALL OFF\n--------------------\n");
 
   // One by one, turn on short distance sensors
-  for(i=0; i<4; i++) {
+  for(int i=0; i<4; i++) {
     printf("Turning on short distance sensor: %d\n", i);
-    if(SHORT_SHUTDOWN_PINS[i] != -1)
-      gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_ON);
+    gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_ON);
 
-    sleep(1);
+    usleep(50000);
+
     // Library thinks we're talking to the same sensor each time
+    printf("Changing address for handle %x to addr %x\n", orig_handle, SHORT_DIST_ADDRS[i]);
+    adafruit_distance_change_address(orig_handle, SHORT_DIST_ADDRS[i]);
 
-    printf("Changing address for handle %x to addr %x\n", short_dist_handles[3],SHORT_DIST_ADDRS[i]);
-    adafruit_distance_change_address(short_dist_handles[3], SHORT_DIST_ADDRS[i]);
-    success = adafruit_distance_begin(short_dist_handles[i]);
-
+    int success = adafruit_distance_begin(short_dist_handles[i]);
     if(!success)
       printf("Short distance sensor error: %d\n", i);
-
-    for(j=0; j<100;j++){
-      //printf("%d:\t%d\n", i, adafruit_distance_readRange(short_dist_handles[i]));
-    }
   }
 
-  /*
   // One by one, turn on long distance sensors
-  for(i=0; i<4; i++) {
+  for(int i=0; i<4; i++) {
     printf("Turning on long distance sensor: %d\n", i);
-    if(LONG_SHUTDOWN_PINS[i] != -1)
-      gpio_write(pi, LONG_SHUTDOWN_PINS[i], DISTANCE_ON);
+    gpio_write(pi, LONG_SHUTDOWN_PINS[i], DISTANCE_ON);
+
+    usleep(50000);
 
     // Library thinks we're talking to the same sensor each time
-    adafruit_distance_change_address(long_dist_handles[3], LONG_DIST_ADDRS[i]);
-    success = adafruit_distance_begin(long_dist_handles[i]);
-    if(!success)
-      printf("Long distance sensor error: %d\n", i);
-
-    for(j=0; j<100;j++){
-      //printf("%d:\t%d\n", i, adafruit_distance_readRange(long_dist_handles[i]));
-    }
+    printf("Changing address for handle %x to addr %x\n", orig_handle, LONG_DIST_ADDRS[i]);
+    adafruit_distance_change_address(orig_handle, LONG_DIST_ADDRS[i]);
+    
+    // int success = adafruit_distance_begin(long_dist_handles[i]);
+    // if(!success)
+    //   printf("Long distance sensor error: %d\n", i);
   }
-  */
 
-  printf("ALL ON\n");
+  printf("ALL ON\n--------------------\n");
 
   // TODO: subtract numbers from each of the sensors - if the calibration is wrong
 
@@ -310,10 +258,9 @@ double Sensor_getShort(int num) {
   return (double)adafruit_distance_readRange(short_dist_handles[num]);
 }
 
-/* TODO: implement this */
 /* Return distance from long distance sensor in mm */
-double Sensor_getLong(enum Dir_t dir) {
-  return 1;
+double Sensor_getLong(int num) {
+  return (double)adafruit_distance_readRange(long_dist_handles[num]);
 }
 
 void Sensor_findWalls(int *walls) {
