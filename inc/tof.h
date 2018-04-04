@@ -27,7 +27,7 @@ int tofGetModel(int *model, int *revision);
 //
 // Read the current distance in mm
 //
-int tofReadDistance(void);
+int tofReadDistance(int handle);
 
 //
 // Opens a file system handle to the I2C device

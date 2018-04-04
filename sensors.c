@@ -259,7 +259,8 @@ double Sensor_getShort(int num) {
 /* Return distance from long distance sensor in mm */
 // TODO: fix this
 double Sensor_getLong(int num) {
-  return (double)adafruit_distance_readRange(long_dist_handles[num]);
+  return (double)tofReadDistance(long_dist_handles[num]);
+  //return (double)adafruit_distance_readRange(long_dist_handles[num]);
 }
 
 void Sensor_findWalls(int *walls) {
