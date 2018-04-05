@@ -6,7 +6,7 @@
 #ifndef _VL53L0X_H
 #define _VL53L0X_H
 
-#include <cstdint>
+#include <stdint.h>
 
 //#define VL53L0X_ADDRESS_DEFAULT 0b0101001
 #define VL53L0X_ADDRESS_DEFAULT 0x29
@@ -130,7 +130,7 @@ class VL53L0X {
 		 *
 		 * \return true if initialization succeeded.
 		 */
-		bool init(bool ioMode2v8 = true);
+		bool init(int pi, bool ioMode2v8 = true);
 
 		void powerOn();
 		void powerOff();

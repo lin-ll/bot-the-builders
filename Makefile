@@ -6,6 +6,8 @@ CFLAGS = -I$(IDIR) -Wall -pthread -lrt -lm -lpigpiod_if2
 # Pattern rule
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
+%.o: %.cpp
+	$(CC) $(CFLAGS) -c $<
 
 # Dependency rules for non-file targets
 all: robot
@@ -38,7 +40,7 @@ test_tiny: test_tiny.o sensors.o adafruit_distance.o constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 test_long: test_long.o constants.o VL53L0X.o
-	$(CC) -o $@ $^ $(CFLAGS)
+	g++ -o $@ $^ $(CFLAGS) -std=c++11
 
 #motors.o: motors.h
 #sensors.o: sensors.h
