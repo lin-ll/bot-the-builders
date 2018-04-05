@@ -252,8 +252,8 @@ double Sensor_getShort(int num) {
 
 /* Return distance from long distance sensor in mm */
 double Sensor_getLong(int num) {
-  sensor = long_dist_sensors[num];
-  return (double)sensor.readRangeSingleMillimeters()
+  VL53L0X sensor = long_dist_sensors[num];
+  return (double)sensor.readRangeSingleMillimeters();
 }
 
 void Sensor_findWalls(int *walls) {
