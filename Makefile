@@ -18,7 +18,7 @@ clean:
 robot: maze.o graph.o motors.o kalman.o constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
-test_sensors: test_sensors.o sensors.o adafruit_distance.o constants.o
+test_sensors: test_sensors.o sensors.o adafruit_distance.o constants.o VL53L0X.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 test_motors: test_motors.o constants.o motors.o pid.o

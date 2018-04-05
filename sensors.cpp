@@ -1,5 +1,4 @@
 extern "C" {
-  #include "sensors.h"
   #include <pigpiod_if2.h>
   #include "constants.h"
   #include "adafruit_distance.h"
@@ -8,6 +7,7 @@ extern "C" {
   #include <unistd.h>
 }
 #include "VL53L0X.h"
+#include "sensors.h"
 
 // new addresses
 const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, 0x2A};
