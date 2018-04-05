@@ -51,6 +51,18 @@ static void initCompass() {
   printf("Compass handle: %d\n", compass_handle);
 }
 
+static double getCompassRaw() {
+  char buf[6];
+  int16_t c[3];
+
+  i2c_read_i2c_block_data(pi, compass_handle, COMPASS_OUT_X_L, buf, 6);
+  c[0] = (int16_t)(buf[0] | buf[1] << 8); //x
+  c[1] = (int16_t)(buf[2] | buf[3] << 8); //y
+  c[2] = (int16_t)(buf[4] | buf[5] << 8); //z
+
+  return atan2((double)c[1], (double)c[0]);
+}
+
 /**
  * Initialize Sensors
  * Return EXIT_SUCCESS (0) when done
@@ -142,22 +154,14 @@ double Sensor_getGyro() {
   return g[2] * RPS_PER_DIGIT - gyroOffset;
 }
 
-static double getCompassRaw() {
-  char buf[6];
-  int16_t c[3];
-
-  i2c_read_i2c_block_data(pi, compass_handle, COMPASS_OUT_X_L, buf, 6);
-  c[0] = (int16_t)(buf[0] | buf[1] << 8); //x
-  c[1] = (int16_t)(buf[2] | buf[3] << 8); //y
-  c[2] = (int16_t)(buf[4] | buf[5] << 8); //z
-
-  return atan2((double)c[1], (double)c[0]);
-}
-
 /* Return direction. */
 double Sensor_getCompass() {
   double raw = getCompassRaw();
-  return fmod(((raw - compassOffset) + TWO_PI), TWO_PI);
+  double heading = 180 * raw / PI;
+  if (heading < 0)
+    heading += 360;
+  return heading;
+  // return fmod(((raw - compassOffset) + TWO_PI), TWO_PI);
 }
 
 /* Calibrates current angle as "0", averaging over n readings */

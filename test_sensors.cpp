@@ -1,8 +1,8 @@
 #include "sensors.h"
 extern "C" {
-#include <pigpiod_if2.h>
-#include <unistd.h>
-#include <stdio.h>
+  #include <pigpiod_if2.h>
+  #include <unistd.h>
+  #include <stdio.h>
 }
 
 int pi = 0;
@@ -56,10 +56,10 @@ int main(){
   // printf("Testing long distance sensors:\n");
   // testLong();
 
-  printf("Testing gyro:\n");
-  //testGyro();
+  // printf("Testing gyro:\n");
+  // testGyro();
 
-  // printf("Testing compass:\n");
+  printf("Testing compass:\n");
   testCompass();
   
   return 0;
