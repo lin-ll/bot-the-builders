@@ -17,7 +17,7 @@ void testShort() {
 }
 
 void testLong() {
-  for(int i=0; i<10; i++){
+  for(int i=0; i<1000; i++){
     double reading0 = Sensor_getLong(0);
     double reading1 = Sensor_getLong(1);
     double reading2 = Sensor_getLong(2);

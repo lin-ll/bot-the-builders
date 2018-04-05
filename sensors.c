@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <unistd.h>
+#include "VL53L0X.h"
 
 // new addresses
 const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, 0x2A};
@@ -23,6 +24,7 @@ static int gyro_handle = 0;
 static int compass_handle = 0;
 static int short_dist_handles[4] = {0, 0, 0, 0};
 static int long_dist_handles[4] = {0, 0, 0, 0};
+static VL53L0X long_dist_sensors[4];
 static int pi;
 static int orig_handle;
 static int tinyHandle;
@@ -118,14 +120,6 @@ static void initCompass() {
   //Sensor_calCompass(100);
 }
 
-// int i2c_read(unsigned char address, unsigned char reg, unsigned char *data_p, unsigned char length) {
-//   return i2c_read_i2c_block_data(pi, address, reg, data_p, length);
-// }
-
-// int i2c_write(unsigned char address, unsigned char reg, unsigned char *data_p, unsigned char length) {
-//   return i2c_write_i2c_block_data(pi, address, reg, data_p, length);
-// }
-
 /**
  * Initialize Sensors
  * Return EXIT_SUCCESS (0) when done
@@ -135,7 +129,7 @@ int Sensor_init(int pifd) {
   adafruit_distance_set_pi_handle(pi);
   orig_handle = i2c_open(pi, BUS, ORIG_ADDR, 0);
 
-  // Getting the handles for short and long distance
+  // Getting the handles for short distance
   for(int i=0; i<4; i++) {
     short_dist_handles[i] = i2c_open(pi, BUS, SHORT_DIST_ADDRS[i], 0);
     if(short_dist_handles[i] < 0)
@@ -143,14 +137,7 @@ int Sensor_init(int pifd) {
     printf("Short distance handle %d: %d\n", i, short_dist_handles[i]);
   }
 
-  for(int i=0; i<4; i++) {
-    long_dist_handles[i] = i2c_open(pi, BUS, LONG_DIST_ADDRS[i], 0);
-    if(long_dist_handles[i] < 0)
-      printf("Bad handle for long distance sensor %d: %d\n", i, long_dist_handles[i]);
-    printf("Long distance handle %d: %d\n", i, long_dist_handles[i]);
-  }
-
-  printf("GOT ALL HANDLES\n--------------------\n");
+  printf("GOT SHORT DISTANCE HANDLES\n--------------------\n");
 
   // Shut all of the short and long distance pins down
   for(int i=0; i<4; i++) {
@@ -181,19 +168,17 @@ int Sensor_init(int pifd) {
       printf("Short distance sensor error: %d\n", i);
   }
 
-  // VL53L0X_set_i2c(i2c_read, i2c_write);
-
   // One by one, turn on long distance sensors
   for(int i=0; i<4; i++) {
     printf("Turning on long distance sensor: %d\n", i);
+    VL53L0X sensor(LONG_SHUTDOWN_PINS[i], ORIG_ADDR);
+
+    sensor.init(pi, 0);
+    sensor.setTimeout(200);
+
+    sensor.setAddress(LONG_DIST_ADDRS[i]);
     gpio_write(pi, LONG_SHUTDOWN_PINS[i], DISTANCE_ON);
-
-    usleep(50000);
-
-    // Library thinks we're talking to the same sensor each time
-    printf("Changing address for handle %x to addr %x\n", orig_handle, LONG_DIST_ADDRS[i]);
-    // startRanging(long_dist_handles[i], 0, LONG_DIST_ADDRS[i], 255, 0);
-    // adafruit_distance_change_address(orig_handle, LONG_DIST_ADDRS[i]);
+    long_dist_sensors[i] = sensor;
   }
 
   printf("ALL ON\n--------------------\n");
@@ -266,10 +251,9 @@ double Sensor_getShort(int num) {
 }
 
 /* Return distance from long distance sensor in mm */
-// TODO: fix this
 double Sensor_getLong(int num) {
-  // return (double)getDistance(long_dist_handles[num]);
-  return (double)adafruit_distance_readRange(long_dist_handles[num]);
+  sensor = long_dist_sensors[num];
+  return (double)sensor.readRangeSingleMillimeters()
 }
 
 void Sensor_findWalls(int *walls) {
