@@ -118,6 +118,14 @@ static void initCompass() {
   //Sensor_calCompass(100);
 }
 
+// int i2c_read(unsigned char address, unsigned char reg, unsigned char *data_p, unsigned char length) {
+//   return i2c_read_i2c_block_data(pi, address, reg, data_p, length);
+// }
+
+// int i2c_write(unsigned char address, unsigned char reg, unsigned char *data_p, unsigned char length) {
+//   return i2c_write_i2c_block_data(pi, address, reg, data_p, length);
+// }
+
 /**
  * Initialize Sensors
  * Return EXIT_SUCCESS (0) when done
@@ -173,6 +181,8 @@ int Sensor_init(int pifd) {
       printf("Short distance sensor error: %d\n", i);
   }
 
+  // VL53L0X_set_i2c(i2c_read, i2c_write);
+
   // One by one, turn on long distance sensors
   for(int i=0; i<4; i++) {
     printf("Turning on long distance sensor: %d\n", i);
@@ -182,11 +192,8 @@ int Sensor_init(int pifd) {
 
     // Library thinks we're talking to the same sensor each time
     printf("Changing address for handle %x to addr %x\n", orig_handle, LONG_DIST_ADDRS[i]);
-    adafruit_distance_change_address(orig_handle, LONG_DIST_ADDRS[i]);
-    
-    // int success = adafruit_distance_begin(long_dist_handles[i]);
-    // if(!success)
-    //   printf("Long distance sensor error: %d\n", i);
+    // startRanging(long_dist_handles[i], 0, LONG_DIST_ADDRS[i], 255, 0);
+    // adafruit_distance_change_address(orig_handle, LONG_DIST_ADDRS[i]);
   }
 
   printf("ALL ON\n--------------------\n");
@@ -259,7 +266,9 @@ double Sensor_getShort(int num) {
 }
 
 /* Return distance from long distance sensor in mm */
+// TODO: fix this
 double Sensor_getLong(int num) {
+  // return (double)getDistance(long_dist_handles[num]);
   return (double)adafruit_distance_readRange(long_dist_handles[num]);
 }
 
