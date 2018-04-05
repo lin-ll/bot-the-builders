@@ -1,4 +1,4 @@
-#include "VL53L0X.h"
+#include "inc/VL53L0X.h"
 #include <stdio.h>
 #include "constants.h"
 #include <unistd.h>
@@ -11,7 +11,7 @@ const int SHORT_DIST_ADDRS[4] = {0x2D, 0x2C, 0x2B, 0x2A};
 const int LONG_DIST_ADDRS[4] = {0x31, 0x30, 0x2F, 0x2E};
 
 int main(){
-	int pi = pigpio_begin(NULL, NULL);
+	int pi = pigpio_start(NULL, NULL);
 
 	for(int i=0; i<4; i++) {
 	    gpio_write(pi, SHORT_SHUTDOWN_PINS[i], DISTANCE_OFF);
@@ -27,7 +27,7 @@ int main(){
 
 	usleep(50000);
 
-	VL32L0X sensor(LONG_SHUTDOWN_PINS[0], ORIG_ADDR);
+	VL53L0X sensor(LONG_SHUTDOWN_PINS[0], ORIG_ADDR);
 
 	sensor.init(pi, 0);
 	sensor.setTimeout(200);
@@ -36,7 +36,7 @@ int main(){
 
 
 
-	for(int i=0; i<5; i++) {
+	for(int i=0; i<300; i++) {
 		uint16_t distance = sensor.readRangeSingleMillimeters();
 		printf("Distance: %d\n", distance);
 		if(sensor.timeoutOccurred()){

@@ -11,9 +11,11 @@
 // close()
 #include <unistd.h>
 // GPIO: gpioSetMode(), gpioWrite()
-#include <pigpio.h>
+// #include <pigpio.h>
 // I2C: wiringPiI2CWriteReg() etc
 //#include <wiringPiI2C.h>
+#include <pigpiod_if2.h>
+
 
 /*** Defines ***/
 
@@ -66,14 +68,14 @@ bool VL53L0X::init(int pi_handle, bool ioMode2v8) {
 
 	// Set XSHUT pin mode (if pin set)
 	if (this->xshutGPIOPin >= 0) {
-		gpioSetMode(this->xshutGPIOPin, PI_OUTPUT);
+	  set_mode(pi, this->xshutGPIOPin, PI_OUTPUT);
 	}
 
 	// Enable the sensor
 	this->powerOn();
 
 	// Initialize I2C communication
-	this->i2cFileDescriptor = i2c_Open(pi, 1, this->address, 0);
+	this->i2cFileDescriptor = i2c_open(pi, 1, this->address, 0);
 	if (this->i2cFileDescriptor == -1) {
 		throw(std::string("Error initializing I2C communication: ") + std::string(strerror(errno)));
 	}
@@ -300,7 +302,7 @@ bool VL53L0X::init(int pi_handle, bool ioMode2v8) {
 
 void VL53L0X::powerOn() {
 	if (this->xshutGPIOPin >= 0) {
-		gpioWrite(this->xshutGPIOPin, PI_HIGH);
+	  gpio_write(pi, this->xshutGPIOPin, PI_HIGH);
 		// t_boot is 1.2ms max, wait 2ms just to be sure
 		usleep(2000);
 	}
@@ -308,7 +310,7 @@ void VL53L0X::powerOn() {
 
 void VL53L0X::powerOff() {
 	if (this->xshutGPIOPin >= 0) {
-		gpioWrite(this->xshutGPIOPin, PI_LOW);
+	  gpio_write(pi, this->xshutGPIOPin, PI_LOW);
 	}
 }
 
