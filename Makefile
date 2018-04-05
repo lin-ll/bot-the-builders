@@ -33,7 +33,7 @@ test_buttons: test_buttons.o buttons.o leds.o constants.o
 test_matrix: test_matrix.o matrixInverse.o constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
-test_tiny: test_tiny.o sensors.o adafruit_distance.o constants.o
+test_tiny: test_tiny.c constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 #motors.o: motors.h

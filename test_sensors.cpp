@@ -1,7 +1,9 @@
 #include "sensors.h"
+extern "C" {
 #include <pigpiod_if2.h>
 #include <unistd.h>
 #include <stdio.h>
+}
 
 int pi = 0;
 
@@ -28,14 +30,14 @@ void testLong() {
 }
 
 void testGyro() {
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 1000; i++) {
     double reading = Sensor_getGyro();
     printf("%f\n", reading);
   }
 }
 
 void testCompass() {
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 1000; i++) {
     double reading = Sensor_getCompass();
     printf("%f\n", reading);
   }
@@ -55,10 +57,10 @@ int main(){
   // testLong();
 
   printf("Testing gyro:\n");
-  testGyro();
+  //testGyro();
 
   // printf("Testing compass:\n");
-  // testCompass();
+  testCompass();
   
   return 0;
 }

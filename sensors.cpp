@@ -131,10 +131,10 @@ int Sensor_init(int pifd) {
 
 /* Return angle in radians or radians/s. */
 double Sensor_getGyro() {
-  uint8_t buf[6];
+  char buf[6];
   int16_t g[3];
 
-  i2c_read_i2c_block_data(pi, gyro_handle, GYRO_OUT_X_L, buf, 6)
+  i2c_read_i2c_block_data(pi, gyro_handle, GYRO_OUT_X_L, buf, 6);
   g[0] = (int16_t)(buf[0] | buf[1] << 8); //x
   g[1] = (int16_t)(buf[2] | buf[3] << 8); //y
   g[2] = (int16_t)(buf[4] | buf[5] << 8); //z
@@ -143,10 +143,10 @@ double Sensor_getGyro() {
 }
 
 static double getCompassRaw() {
-  uint8_t buf[6];
+  char buf[6];
   int16_t c[3];
 
-  i2c_read_i2c_block_data(pi, compass_handle, COMPASS_OUT_X_L, buf, 6)
+  i2c_read_i2c_block_data(pi, compass_handle, COMPASS_OUT_X_L, buf, 6);
   c[0] = (int16_t)(buf[0] | buf[1] << 8); //x
   c[1] = (int16_t)(buf[2] | buf[3] << 8); //y
   c[2] = (int16_t)(buf[4] | buf[5] << 8); //z
