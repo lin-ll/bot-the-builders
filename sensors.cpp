@@ -25,7 +25,6 @@ static double gyroOffset = 0;
 static int gyro_handle = 0;
 static int compass_handle = 0;
 static int short_dist_handles[4] = {0, 0, 0, 0};
-static int long_dist_handles[4] = {0, 0, 0, 0};
 static VL53L0X long_dist_sensors[4];
 static int pi;
 static int orig_handle;
@@ -190,7 +189,9 @@ int Sensor_init(int pifd) {
   // TODO: figure out what to do with accelerometer
   //acc_handle = i2c_open(ACC_BUS, ACC_ADDRESS);
 
-  //initGyro();
+  printf("Initializing gyroscope:\n");
+  initGyro();
+  
   //initCompass();
   return 0;
 }
@@ -282,7 +283,7 @@ void Sensor_free(){
   // TODO: not sure whether it's a good idea to reset addresses before shutting down
   for(i=0; i<4; i++){
     i2c_close(pi, short_dist_handles[i]);
-    i2c_close(pi, long_dist_handles[i]);
+    long_dist_sensors[i].powerOff();
   }
 }
 
