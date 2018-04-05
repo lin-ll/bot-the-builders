@@ -135,6 +135,7 @@ void InputChanged(byte motor)
 //ISR for i2c request from the PI
 void requestEvent()
 {  
+    /*
     digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
     digitalWrite(debug, HIGH); //Set the DEBUG Pin HIGH for Sending Data
 
@@ -157,14 +158,14 @@ void requestEvent()
 
 
     pinMode(LED_PIN, OUTPUT);
+    */
+
+    TinyWireS.send(42);
 }
 
 void loop() 
 {
-  //digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  //delay(1000);                       // wait for a second
-  //digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW
-  //delay(1000);                       // wait for a second
+  TinyWireS_stop_check();
   
 }
 
