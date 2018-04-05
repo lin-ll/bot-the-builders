@@ -20,6 +20,7 @@
 #define MAZE_SIZE 16
 #define SQUARE_SIZE 180 // 168 + 12
 
+#define PI 3.1415926536
 #define TWO_PI (2*3.1415926536)
 #define DISTANCE_OFF 0
 #define DISTANCE_ON 1

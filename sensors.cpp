@@ -26,87 +26,29 @@ static int gyro_handle = 0;
 static int compass_handle = 0;
 static int short_dist_handles[4] = {0, 0, 0, 0};
 static VL53L0X long_dist_sensors[4];
+
 static int pi;
 static int orig_handle;
 static int tinyHandle;
 
 /* Local Functions */
 
-int test_read8(int handle, int address)
-{
-  char dataWrite[2];
-  char dataRead[1];
-
-  dataWrite[0] = (address >> 8) & 0xFF;
-  dataWrite[1] = address & 0xFF;
-  int w = i2c_write_device(pi, handle, dataWrite, 2);
-  int r = i2c_read_device(pi, handle, dataRead, 1);
-
-  if(w != 0) printf("Write Code: %d\n", w);
-  if(r != 1) printf("Read Code: %d\n", r);
-
-  return (int)dataRead[0];
-}
-
-void test_write8(int handle, int address, int data){
-    int test;
-    char data_write[3];
-    data_write[0] = (address >> 8) & 0xFF;; // MSB of register address
-    data_write[1] = address & 0xFF; // LSB of register address
-    data_write[2] = data & 0xFF;
-    test = i2c_write_device(pi, handle, data_write, 3);
-    if (test != 0) printf("write returned %d\n", test);
-
-    int result = test_read8(handle, address);
-    printf("wrote %d and read back %d\n", data, result);
-  }
-
-int test_readblock(int handle, int address, char *buffer, int len){
-  for(int i=0; i<len; i++){
-    buffer[i] = test_read8(handle, address);
-    printf("Read byte %d: %d\n", i, buffer[i]);
-  }
-  return len; // TODO eh
-}
-
-static double getCompassRaw() {
-  int temp = 0;
-  int16_t xRaw;
-  int16_t yRaw;
-  double angle;
-
-  char buffer[32];
-  buffer[6] = 42; // Sentinel to check whether it's being touched
-  //temp = i2c_read_i2c_block_data(pi, compass_handle, COMPASS_REGISTER_OUT_X_H_M | 0x80, buffer, 6);
-  temp = test_readblock(compass_handle, COMPASS_REGISTER_OUT_X_H_M | 80, buffer, 6);
-  if (temp != 6) {
-    printf("ERROR: read_block_data returns %d\n", temp);
-  }
-
-  xRaw = ((int16_t)(buffer[5]) << 8) + (int16_t)(buffer[4]);
-  yRaw = ((int16_t)(buffer[1]) << 8) + (int16_t)(buffer[0]);
-
-  angle = atan2((double)yRaw, (double)xRaw);
-  return angle;
-}
-
 /* Initialize gyro handle and settings */
 static void initGyro() {
   gyro_handle = i2c_open(pi, BUS, GYRO_ADDR, 0);
   i2c_write_byte_data(pi, gyro_handle, GYRO_CTRL2, 0x80);
   i2c_write_byte_data(pi, gyro_handle, COMMON_CTRL3, 0x04);
-  printf("gyro_handle: %d\n", gyro_handle);
+  printf("Gyroscope handle: %d\n", gyro_handle);
 }
 
 /* Initialize compass handle and settings */
 static void initCompass() {
   compass_handle = i2c_open(pi, BUS, COMPASS_ADDR, 0);
-  i2c_write_byte_data(pi, compass_handle, CTRL5, 0x64);
-  i2c_write_byte_data(pi, compass_handle, CTRL6, 0x20);
-  i2c_write_byte_data(pi, compass_handle, CTRL7, 0x00);
-  printf("compass_handle: %d\n", compass_handle);
-  getCompassRaw();
-  //Sensor_calCompass(100);
+  i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL1, 0x70);
+  i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL2, 0x00);
+  i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL3, 0x00);
+  i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL4, 0x0C);
+  printf("Compass handle: %d\n", compass_handle);
 }
 
 /**
@@ -172,11 +114,6 @@ int Sensor_init(int pifd) {
 
   printf("ALL ON\n--------------------\n");
 
-  // TODO: subtract numbers from each of the sensors - if the calibration is wrong
-
-  // TODO: figure out what to do with accelerometer
-  //acc_handle = i2c_open(ACC_BUS, ACC_ADDRESS);
-
   printf("Initializing gyroscope:\n");
   initGyro();
   Sensor_calGyro(100);
@@ -185,6 +122,8 @@ int Sensor_init(int pifd) {
   initCompass();
   Sensor_calCompass(100);
 
+  // TODO: subtract numbers from each of the sensors - if the calibration is wrong
+  // TODO: initialize accelerometer if necessary
   printf("--------------------\nFINISHED\n--------------------\n");
 
   return 0;
@@ -203,6 +142,18 @@ double Sensor_getGyro() {
   return g[2] * RPS_PER_DIGIT - gyroOffset;
 }
 
+static double getCompassRaw() {
+  uint8_t buf[6];
+  int16_t c[3];
+
+  i2c_read_i2c_block_data(pi, compass_handle, COMPASS_OUT_X_L, buf, 6)
+  c[0] = (int16_t)(buf[0] | buf[1] << 8); //x
+  c[1] = (int16_t)(buf[2] | buf[3] << 8); //y
+  c[2] = (int16_t)(buf[4] | buf[5] << 8); //z
+
+  return atan2((double)c[1], (double)c[0]);
+}
+
 /* Return direction. */
 double Sensor_getCompass() {
   double raw = getCompassRaw();
@@ -211,31 +162,27 @@ double Sensor_getCompass() {
 
 /* Calibrates current angle as "0", averaging over n readings */
 void Sensor_calCompass(int n) {
-  int i;
   double center = getCompassRaw();
-  double c;
   double offset = 0;
-  for (i = 0; i < n; i++) {
-    c = getCompassRaw();
-    if (c - center > (TWO_PI/2)) {
-      offset += c - TWO_PI;
-    } else if (c - center < (-1*TWO_PI/2)) {
-      offset += c + TWO_PI;
-    } else {
-      offset += c;
+  for (int i = 0; i < n; i++) {
+    double c = getCompassRaw();
+    offset += c;
+    if (c - center > PI) {
+      offset -= TWO_PI;
+    } else if (c - center < -PI) {
+      offset += TWO_PI;
     }
   }
   compassOffset = offset / n;
 }
 
-/* Calibrate gyro */
+/* Calibrates gyro over n readings */
 void Sensor_calGyro(int n) {
   double c = 0;
   for (int i = 0; i < n; i++) {
     c += Sensor_getGyro();
   }
-
-  gyroOffset = c / (double)n;
+  gyroOffset = c / n;
 }
 
 /* Return distance from short distance sensor in mm */
@@ -262,31 +209,29 @@ void Sensor_findWalls(int *walls) {
 }
 
 /* Any cleanup */
-void Sensor_free(){
+void Sensor_free() {
   i2c_close(pi, gyro_handle);
   i2c_close(pi, compass_handle);
-
   for(int i=0; i<4; i++) {
     i2c_close(pi, short_dist_handles[i]);
     long_dist_sensors[i].powerOff();
   }
 }
 
-int Sensor_initTiny(int pi){
+int Sensor_initTiny(int pi) {
 	tinyHandle = i2c_open(pi, 1, 0x4, 0);
 	printf("Tiny Handle: %d\n", tinyHandle);
 }
 
-double Sensor_getEncoders(){
+double Sensor_getEncoders() {
 	char data[17];
 	data[0] = 42;
 	data[17] = 43;
 	int ret = i2c_read_i2c_block_data(pi, tinyHandle, 1, data, 16);
 	printf("ret= %d\n", ret);
 
-	for(int i=0; i<17; i++){
+	for(int i=0; i<17; i++) {
 		printf("Byte %d: %d", data[i]);
 	}
 	return 0;
-
 }
