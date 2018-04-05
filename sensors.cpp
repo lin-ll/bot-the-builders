@@ -92,26 +92,14 @@ static double getCompassRaw() {
 
 /* Initialize gyro handle and settings */
 static void initGyro() {
-  // From datasheet of sensor
-  int CTRL1 = 0x20;
-  int CTRL4 = 0x23;
-  int LOWODR = 0x39;
-
   gyro_handle = i2c_open(pi, BUS, GYRO_ADDR, 0);
-  test_write8(gyro_handle, CTRL1, 0x6F);
-  test_write8(gyro_handle, CTRL4, 0x00);
-  test_write8(gyro_handle, LOWODR, 0x00);
+  i2c_write_byte_data(pi, gyro_handle, GYRO_CTRL2, 0x80);
+  i2c_write_byte_data(pi, gyro_handle, COMMON_CTRL3, 0x04);
   printf("gyro_handle: %d\n", gyro_handle);
-  //Sensor_calGyro(100);
 }
 
 /* Initialize compass handle and settings */
 static void initCompass() {
-  // From datasheet of sensor
-  int CTRL5 = 0x24;
-  int CTRL6 = 0x25;
-  int CTRL7 = 0x26;
-
   compass_handle = i2c_open(pi, BUS, COMPASS_ADDR, 0);
   i2c_write_byte_data(pi, compass_handle, CTRL5, 0x64);
   i2c_write_byte_data(pi, compass_handle, CTRL6, 0x20);
@@ -191,34 +179,38 @@ int Sensor_init(int pifd) {
 
   printf("Initializing gyroscope:\n");
   initGyro();
-  
-  //initCompass();
+  Sensor_calGyro(100);
+
+  printf("Initializing compass:\n");
+  initCompass();
+  Sensor_calCompass(100);
+
+  printf("--------------------\nFINISHED\n--------------------\n");
+
   return 0;
 }
 
 /* Return angle in radians or radians/s. */
-double Sensor_getGyro(){
-  char buffer[32];
-  // needs to be 16 bits signed so the signs work out correctly
-  int16_t raw;
+double Sensor_getGyro() {
+  uint8_t buf[6];
+  int16_t g[3];
 
-  //int16_t a = adafruit_distance_read16(GYRO_REGISTER_OUT_X_L | 80);
-  //printf("A is %d\n", a);
+  i2c_read_i2c_block_data(pi, gyro_handle, GYRO_OUT_X_L, buf, 6)
+  g[0] = (int16_t)(buf[0] | buf[1] << 8); //x
+  g[1] = (int16_t)(buf[2] | buf[3] << 8); //y
+  g[2] = (int16_t)(buf[4] | buf[5] << 8); //z
 
-  i2c_read_i2c_block_data(pi, gyro_handle, GYRO_REGISTER_OUT_X_L | 0x80, buffer, 6);
-  raw = ((int16_t)(buffer[3]) << 8) + (int16_t)(buffer[2]);
-
-  return raw * RPS_PER_DIGIT - gyroOffset;
+  return g[2] * RPS_PER_DIGIT - gyroOffset;
 }
 
 /* Return direction. */
-double Sensor_getCompass(){
+double Sensor_getCompass() {
   double raw = getCompassRaw();
   return fmod(((raw - compassOffset) + TWO_PI), TWO_PI);
 }
 
 /* Calibrates current angle as "0", averaging over n readings */
-void Sensor_calCompass(int n){
+void Sensor_calCompass(int n) {
   int i;
   double center = getCompassRaw();
   double c;
@@ -238,10 +230,8 @@ void Sensor_calCompass(int n){
 
 /* Calibrate gyro */
 void Sensor_calGyro(int n) {
-  int i;
   double c = 0;
-
-  for (i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++) {
     c += Sensor_getGyro();
   }
 
@@ -260,28 +250,23 @@ double Sensor_getLong(int num) {
 }
 
 void Sensor_findWalls(int *walls) {
-    if (Sensor_getShort(UP) > SQUARE_SIZE / 2) {
-        walls[0] = 1;
-    }
-    if (Sensor_getShort(DOWN) > SQUARE_SIZE / 2) {
-        walls[1] = 1;
-    }
-    if (Sensor_getShort(LEFT) > SQUARE_SIZE / 2) {
-        walls[2] = 1;
-    }
-    if (Sensor_getShort(RIGHT) > SQUARE_SIZE / 2) {
-        walls[3] = 1;
-    }
+  if (Sensor_getShort(UP) > SQUARE_SIZE / 2) {
+    walls[0] = 1;
+  } if (Sensor_getShort(DOWN) > SQUARE_SIZE / 2) {
+    walls[1] = 1;
+  } if (Sensor_getShort(LEFT) > SQUARE_SIZE / 2) {
+    walls[2] = 1;
+  } if (Sensor_getShort(RIGHT) > SQUARE_SIZE / 2) {
+    walls[3] = 1;
+  }
 }
 
 /* Any cleanup */
 void Sensor_free(){
-  int i;
   i2c_close(pi, gyro_handle);
   i2c_close(pi, compass_handle);
 
-  // TODO: not sure whether it's a good idea to reset addresses before shutting down
-  for(i=0; i<4; i++){
+  for(int i=0; i<4; i++) {
     i2c_close(pi, short_dist_handles[i]);
     long_dist_sensors[i].powerOff();
   }
