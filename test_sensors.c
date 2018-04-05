@@ -1,7 +1,9 @@
-#include "sensors.h"
-#include <pigpiod_if2.h>
-#include <unistd.h>
-#include <stdio.h>
+extern "C" {
+  #include "sensors.h"
+  #include <pigpiod_if2.h>
+  #include <unistd.h>
+  #include <stdio.h>
+}
 
 int pi = 0;
 
