@@ -18,7 +18,7 @@ int Motor_init(int pifd) {
 
   for (int i = 0; i < 4; i++) {
     desiredSpeeds[i] = 0;
-    pids[i] = Pid_init(10.0, 10.0, 1.0);
+    pids[i] = Pid_init(1.0, 0.0, 0.0);
     set_PWM_dutycycle(pi, FORWARD_PINS[i], 0);
     set_PWM_dutycycle(pi, BACKWARD_PINS[i], 0);
     set_PWM_range(pi, FORWARD_PINS[i], MOTOR_RANGE);

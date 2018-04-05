@@ -39,8 +39,8 @@ double matrix = {
 
 
 int Controls2_init() {
-    pidRight = Pid_init(1.0, 10.0, 10.0);
-    pidTheta = Pid_init(1.0, 10.0, 10.0);
+    pidRight = Pid_init(1.0, 0.0, 0.0);
+    pidTheta = Pid_init(1.0, 0.0, 0.0);
 		destX = 9.0;
 		destY = 9.0;
     Pid_setPoint(pidRight, 0.0);

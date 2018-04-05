@@ -33,12 +33,12 @@ double F[NUM*NUM] =
 			0, 0, 0, 0, 0, 1};
 
 double R[NUM*NUM] =
-			{0.2, 0.0, 0.0, 0.0, 0.0, 0.0,
-			 0.0, 0.2, 0.0, 0.0, 0.0, 0.0,
-			 0.0, 0.0, 0.2, 0.0, 0.0, 0.0,
-			 0.0, 0.0, 0.0, 0.2, 0.0, 0.0,
-			 0.0, 0.0, 0.0, 0.0, 0.2, 0.0,
-			 0.0, 0.0, 0.0, 0.0, 0.0, 0.2};
+			{4.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+			 0.0, 4.0, 0.0, 0.0, 0.0, 0.0,
+			 0.0, 0.0, 10.0, 0.0, 0.0, 0.0,
+			 0.0, 0.0, 0.0, 10.0, 0.0, 0.0,
+			 0.0, 0.0, 0.0, 0.0, 0.01, 0.0,
+			 0.0, 0.0, 0.0, 0.0, 0.0, 0.01};
 
 double kalman_getX() {
 		return x[0];
@@ -242,13 +242,47 @@ void update(double *distances, double *encoders, double *imu, double *control, d
 	interpret_encoders(encoders, &encoder_vx, &encoder_vy, &encoder_vt);
 	/* we're working hard to do all this interpretation beforehand so the matrix that transforms our
 	   sensor readings into the right dimensions (H in the tutorial) is just the identity */
+	if (isnan(dist_x)) {
+			z[0] = x_hat[0];
+			R[0][0] = 40000;
+	} else {
+			z[0] = dist_x;
+			R[0][0] = 4.0;
+	}
 
-	z[0] = dist_x;
-	z[1] = dist_y;
+	if (isnan(dist_y)) {
+			z[1] = x_hat[1];
+			R[1][1] = 40000;
+	} else {
+			z[1] = dist_x;
+			R[1][1] = 4.0;
+	}
+
 	z[2] = 0; // TODO compass
-	z[3] = encoder_vx;
-	z[4] = encoder_vy;
-	z[5] = encoder_vt; // TODO gyro
+
+	if (isnan(encoder_vx)) {
+			z[3] = x_hat[3];
+			R[3][3] = 110889;
+	} else {
+			z[2] = dist_x;
+			R[3][3] = 10.0
+	}
+
+	if (isnan(encoder_vy)) {
+			z[4] = x_hat[4];
+			R[4][4] = 110889;
+	} else {
+			z[4] = dist_x;
+			R[3][3] = 10.0;
+	}
+
+	if (isnan(encoder_vt)) {
+			z[5] = x_hat[5];
+			R[5][5] = 10;
+	} else {
+			z[5] = dist_x;
+			R[5][5] = 0.01;
+	}
 
 
 
