@@ -1,10 +1,12 @@
-#include "sensors.h"
-#include <pigpiod_if2.h>
-#include "constants.h"
-#include "adafruit_distance.h"
-#include <stdio.h>
-#include <math.h>
-#include <unistd.h>
+extern "C" {
+  #include "sensors.h"
+  #include <pigpiod_if2.h>
+  #include "constants.h"
+  #include "adafruit_distance.h"
+  #include <stdio.h>
+  #include <math.h>
+  #include <unistd.h>
+}
 #include "VL53L0X.h"
 
 // new addresses
