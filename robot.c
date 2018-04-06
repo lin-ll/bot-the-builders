@@ -49,7 +49,7 @@ void solveMaze(int goal) {
 			Control_setDir(dir);
 		}
 
-		Kalman_update(dt);
+		Kalman_update(dt, NULL);
 	}
 }
 
@@ -92,7 +92,7 @@ int explore() {
 			Control_setDir(dir);
 		}
 
-		Kalman_update(dt);
+		Kalman_update(dt, NULL);
 	}
 	return 0;
 }
