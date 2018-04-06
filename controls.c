@@ -1,8 +1,9 @@
 /*----------------------------------------------------------------------------*/
-/* CONTROLS2 receives a direction from maze and sets motor desired values                 */
+/* CONTROLS receives a direction from maze and sets motor desired values                 */
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
 #include <stlib.h>
+#include "controls.h"
 #include "motors.h"
 #include "kalman.h"
 #include "constants.h"
@@ -38,7 +39,7 @@ double matrix = {
 	{1, -1, -1, 1},
 	{1, 1, -1, -1}};
 
-int Controls2_init() {
+int Control_init() {
 	pidRight = Pid_init(1.0, 0.0, 0.0);
 	pidTheta = Pid_init(1.0, 0.0, 0.0);
 	destX = START;
@@ -135,7 +136,7 @@ void setMotors(double northSpeed, double eastSpeed, double thetaSpeed) {
 	Motor_set(motors);
 }
 
-void Controls2_setDir(int dir) {
+void Control_setDir(int dir) {
 	currDir = dir;
 	switch (currDir) {
 		case NORTH:
@@ -153,7 +154,7 @@ void Controls2_setDir(int dir) {
 	}
 }
 
-int Controls2_update() {
+int Control_update() {
 	double forward = getForwardSpeed();
 	if (forward == 0.0) {
 		// we're done with this destination
