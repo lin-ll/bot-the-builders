@@ -1,6 +1,7 @@
 #include "inc/kalman.h"
 #include "inc/matrixInverse.h"
 #include <math.h> // for using NAN
+#include <time.h>
 
 /* Naming conventions and general info from here:
    http://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/   */
@@ -18,6 +19,8 @@ double P_hat[NUM*NUM];
 double temp[NUM*NUM];
 double K[NUM*NUM];
 double tempVec[NUM];
+
+clock_t prevTime;
 
 /* In each step, how much uncertainty is there in our prediction? */
 /* I really really am unsure of these values; if it fails miserably try dividing them by 10 ?? */
@@ -134,6 +137,8 @@ void init(){
 	P[7] = 4.0; // (2.0mm)^2
 	P[14] = 0.0289; // (0.17rad)^2
 
+	prevTime = clock();
+
 }
 
 // given the current location and distance to the wall, where is the nearby distance you
@@ -201,9 +206,13 @@ double combine_vt(double encoder, double gyro){
 
 
 
-/*
-void update(double dt, double *control){
-	
+
+void update(double *control){
+	clock_t currentTime = clock();
+	dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;
+	prevTime = currentTime;
+
+
 	// TODO :(
 	double encoders[4];
 	for(int i=0; i<3; i++){
@@ -224,7 +233,7 @@ void update(double dt, double *control){
 	update_given_sensors(dt, encoders, distances, gyro, compass, control);
 
 }
-*/
+
 
 /**
  * update with new sensor values
@@ -237,7 +246,6 @@ void update(double dt, double *control){
  *
  **/
 void Kalman_update_given_sensors(double dt, double *encoders, double *distances, double gyro, double compass, double *control){
-
 
 	/* First, the predict step. Without sensors, what do we guess the new x is?
 	   We write a matrix that will take old x to new x */
