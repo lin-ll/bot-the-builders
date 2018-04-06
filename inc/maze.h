@@ -28,7 +28,7 @@ int Maze_dfs(int leftWall, int rightWall, int upWall, int downWall);
 
 int Maze_getIntFromCoordinates(int row, int col);
 
-heap_t *getShortestPath(int **d, int finish);
+void getShortestPath(int **d, int finish);
 
 // assigns current path
 void Maze_assignPath(int goalSpace);
