@@ -68,6 +68,7 @@ int main(){
   printf("Testing compass:\n");
   testCompass();
 
+  printf("TURNING SENSORS OFF\n");
   Sensor_free();
   
   return 0;
