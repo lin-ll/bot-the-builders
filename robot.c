@@ -12,12 +12,19 @@
 
 int main();
 
+clock_t prevTime;
+
 void solveMaze(int goal) {
 	Maze_assignPath(goal);
 
 	int controls_finished = 0;
 
+	clock_t prevTime = clock();
 	while (true) {
+		clock_t currentTime = clock();
+		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;
+		prevTime = currentTime;
+
 		// check buttons
 		int button_pressed = Button_update();
 		if (button_pressed == BUTTON_RED) {
@@ -50,7 +57,11 @@ int explore() {
 	int dir;
 	int controls_finished = 0;
 
+	clock_t prevTime = clock();
 	while (true) {
+		clock_t currentTime = clock();
+		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;
+		prevTime = currentTime;
 		// check buttons
 		int button_pressed = Button_update();
 		if (button_pressed == BUTTON_RED) {
