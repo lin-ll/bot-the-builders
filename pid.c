@@ -10,7 +10,7 @@ typedef struct PID *PID_T;
 
 // return a PID loop object
 PID_T Pid_init(double kP, double kI, double kD) {
-		struct PID *p = malloc(sizeof(PID_T));
+  struct PID *p = (PID *)malloc(sizeof(PID_T));
 		p->kP = kP;
 		p->kI = kI;
 		p->kD = kD;

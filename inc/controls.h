@@ -9,6 +9,6 @@ void Control_setDir(int direction);
 
 // communicates with motors.c
 // returns whether robot is at destination
-int Control_update();
+int Control_update(double dt);
 
 #endif

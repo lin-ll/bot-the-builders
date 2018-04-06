@@ -2,22 +2,23 @@
 /* CONTROLS receives a direction from maze and sets motor desired values                 */
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
-#include <stlib.h>
+#include <stdlib.h>
 #include "controls.h"
 #include "motors.h"
 #include "kalman.h"
+#include "leds.h"
 #include "constants.h"
 #include "pid.h"
 
 // WRITING UNDER THE ASSUMED FRAMEWORK:
 /*
-	1. kalman.c processes information from sensors.h and should pass information
-	2. this file will then process the movement, checking back with kalman.c,
+	1. Kalman.c processes information from sensors.h and should pass information
+	2. this file will then process the movement, checking back with Kalman.c,
 		maybe even with sensors.c
 	3. Communicate with motors.c to move the omniwheels
 */
 
-const START = SQUARE_SIZE / 2;
+const int START = SQUARE_SIZE / 2;
 
 static PID_T pidRight;
 static PID_T pidTheta;
@@ -34,7 +35,7 @@ static int currDir;
 // matrix entry i,j is how much velocity j contributes to motor i
 // j: UL, UR, LL, LR
 // i: north, east, clockwise (should be counterclockwise?)
-double matrix = {
+double matrix[3][4] = {
 	{1, 1, 1, 1},
 	{1, -1, -1, 1},
 	{1, 1, -1, -1}};
@@ -54,16 +55,16 @@ int getForwardSpeed() {
 	double forwardDist;
 	switch (currDir) {
 		case NORTH:
-			forwardDist = -(destY - kalman_getY());
+			forwardDist = -(destY - Kalman_getY());
 			break;
 		case SOUTH:
-			forwardDist = destY - kalman_getY();
+			forwardDist = destY - Kalman_getY();
 			break;
 		case EAST:
-			forwardDist = destX - kalman_getX();
+			forwardDist = destX - Kalman_getX();
 			break;
 		case WEST:
-			forwardDist = -(destX - kalman_getX());
+			forwardDist = -(destX - Kalman_getX());
 			break;
 	}
 
@@ -73,7 +74,7 @@ int getForwardSpeed() {
 		Led_setColor(0, 0, MAX_COLOR); // Blue, means we're waiting for maze now
 		desiredSpeed = 0;
 	} else if (forwardDist <= SLOW_DIST) {
-		double speedFraction = MIN_SPEED_FRACTION + (1-MIN_SPEED_FRACTION) * (forwarDist / SLOW_DIST);
+		double speedFraction = MIN_SPEED_FRACTION + (1-MIN_SPEED_FRACTION) * (forwardDist / SLOW_DIST);
 		Led_setColor((int)(MAX_COLOR - MAX_COLOR * speedFraction), (int)(MAX_COLOR * speedFraction), 0); // transition green->red
 		desiredSpeed = speed * speedFraction;
 	}
@@ -81,32 +82,32 @@ int getForwardSpeed() {
 	return desiredSpeed;
 }
 
-double getRightSpeed(dt) {
+double getRightSpeed(double dt) {
 	// positive error means right-hand-side of the line
 	double error;
 	switch (currDir) {
 		case NORTH:
-			error = kalman_getX() - destX;
+			error = Kalman_getX() - destX;
 			break;
 		case SOUTH:
-			error = -(kalman_getX() - destX);
+			error = -(Kalman_getX() - destX);
 			break;
 		case EAST:
-			error = -(kalman_getY() - destY);
+			error = -(Kalman_getY() - destY);
 			break;
 		case WEST:
-			error = kalman_getY() - destY;
+			error = Kalman_getY() - destY;
 			break;
 	}
 
 	Pid_update(pidRight, error, dt);
-	double val = Pid_getVal(pidLeftRight);
+	double val = Pid_getVal(pidRight);
 	printf("Right error %.2f, PID says %.2f\n", error, val);
 	return val;
 }
 
-double getThetaSpeed(dt) {
-	double error = kalman_getT();
+double getThetaSpeed(double dt) {
+	double error = Kalman_getT();
 	Pid_update(pidTheta, error, dt);
 	return Pid_getVal(pidTheta);
 }
@@ -130,7 +131,9 @@ void setMotors(double northSpeed, double eastSpeed, double thetaSpeed) {
 		// scale down all motors so largest is MOTOR_RANGE = 255
 		for (int i=0; i<4; i++) {
 			double motorSpeed = (double)MOTOR_RANGE/largest;
-			motors[i] = min(motor[i]*motorSpeed, MOTOR_RANGE);
+			motors[i] = motors[i]*motorSpeed;
+			if (motors[i] > MOTOR_RANGE)
+				motors[i] = MOTOR_RANGE;
 		}
 	}
 
@@ -155,7 +158,7 @@ void Control_setDir(int dir) {
 	}
 }
 
-int Control_update() {
+int Control_update(double dt) {
 	double forward = getForwardSpeed();
 	if (forward == 0.0) {
 		// we're done with this destination
@@ -163,8 +166,8 @@ int Control_update() {
 		return 1;
 	}
 
-	double right = getRightSpeed();
-	double theta = getThetaSpeed();
+	double right = getRightSpeed(dt);
+	double theta = getThetaSpeed(dt);
 
 	switch (currDir) {
 		case NORTH:
