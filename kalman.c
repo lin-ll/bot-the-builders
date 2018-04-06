@@ -21,8 +21,6 @@ double temp[NUM*NUM];
 double K[NUM*NUM];
 double tempVec[NUM];
 
-clock_t prevTime;
-
 /* In each step, how much uncertainty is there in our prediction? */
 /* I really really am unsure of these values; if it fails miserably try dividing them by 10 ?? */
 double Q_diag[NUM] = {1.0, 1.0, 0.0081, 4.0, 4.0, .0289};
@@ -208,11 +206,7 @@ double combine_vt(double encoder, double gyro){
 
 
 
-void Kalman_update(double *control){
-	clock_t currentTime = clock();
-	double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;
-	prevTime = currentTime;
-
+void Kalman_update(double dt, double *control){
 
 	// TODO :(
 	double encoders[4];

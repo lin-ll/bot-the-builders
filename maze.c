@@ -323,6 +323,3 @@ int Maze_followPath() {
 	return -1;
 }
 
-// Find the maze, solve it for shortest path, and traverse this path.
-int main(int argc, char *argv[]) {
-}

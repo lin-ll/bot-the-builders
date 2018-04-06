@@ -12,12 +12,19 @@
 
 int main();
 
+clock_t prevTime;
+
 void solveMaze(int goal) {
 	Maze_assignPath(goal);
 
 	int controls_finished = 0;
 
+	clock_t prevTime = clock();
 	while (true) {
+		clock_t currentTime = clock();
+		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;
+		prevTime = currentTime;
+
 		// check buttons
 		int button_pressed = Button_update();
 		if (button_pressed == BUTTON_RED) {
@@ -33,7 +40,7 @@ void solveMaze(int goal) {
 		int dir;
 
 		// do controls thing
-		controls_finished = Control_update();
+		controls_finished = Control_update(dt);
 		if (controls_finished) {
 			dir = Maze_followPath();
 			if (dir == -1) {
@@ -42,7 +49,7 @@ void solveMaze(int goal) {
 			Control_setDir(dir);
 		}
 
-		Control_update();
+		Kalman_update(dt, NULL);
 	}
 }
 
@@ -50,7 +57,11 @@ int explore() {
 	int dir;
 	int controls_finished = 0;
 
+	clock_t prevTime = clock();
 	while (true) {
+		clock_t currentTime = clock();
+		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;
+		prevTime = currentTime;
 		// check buttons
 		int button_pressed = Button_update();
 		if (button_pressed == BUTTON_RED) {
@@ -64,7 +75,7 @@ int explore() {
 		}
 
 		// do controls thing
-		controls_finished = Control_update();
+		controls_finished = Control_update(dt);
 		if (controls_finished) {
 			int *walls;
 			Sensor_findWalls(walls);
@@ -81,7 +92,7 @@ int explore() {
 			Control_setDir(dir);
 		}
 
-		Control_update();
+		Kalman_update(dt, NULL);
 	}
 	return 0;
 }
