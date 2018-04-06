@@ -82,7 +82,7 @@ int explore() {
 	return 0;
 }
 
-void main() {
+int main() {
 	// initialize everything
 	int pi = pigpio_start(NULL, NULL);
 	Button_init(pi);
@@ -104,7 +104,7 @@ void main() {
 	int result = explore();
 	Led_off();
 	if (result == -1) {
-		return;
+		return -1;
 	}
 
 	// this shouldn't ever be executed if dfs works properly but just in case.
@@ -122,4 +122,5 @@ void main() {
 	Led_setColor(0, 0, MAX_COLOR); //blue
 	solveMaze(GOAL_SPACE);
 	Led_off();
+	return 0;
 }

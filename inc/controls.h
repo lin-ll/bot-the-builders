@@ -5,7 +5,7 @@
 int Control_init();
 
 // sets direction of movement
-void Control_setDir();
+void Control_setDir(int direction);
 
 // communicates with motors.c
 // returns whether robot is at destination
