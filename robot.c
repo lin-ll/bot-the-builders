@@ -1,14 +1,14 @@
 // The central file for controlling the robot
-
-#include "inc/maze.h"
-#include "inc/controls2.h"
-#include "leds.h"
+#include "maze.h"
+#include "controls.h"
 #include <unistd.h>
-#include "inc/buttons.h"
-#include "inc/constants.h"
-#include "inc/sensors.h"
-#include "inc/motors.h"
+#include "buttons.h"
+#include "constants.h"
+#include "sensors.h"
+#include "leds.h"
+#include "motors.h"
 #include <stdio.h>
+#include <pigpiod_if2.h>
 
 int main();
 
@@ -33,16 +33,16 @@ void solveMaze(int goal) {
 		int dir;
 
 		// do controls thing
-		controls_finished = Controls2_update();
+		controls_finished = Control_update();
 		if (controls_finished) {
 			dir = Maze_followPath();
 			if (dir == -1) {
 				break;
 			}
-			Controls2_setDir(dir);
+			Control_setDir(dir);
 		}
 
-		Controls2_update();
+		Control_update();
 	}
 }
 
@@ -64,7 +64,7 @@ int explore() {
 		}
 
 		// do controls thing
-		controls_finished = Controls2_update();
+		controls_finished = Control_update();
 		if (controls_finished) {
 			int *walls = Sensor_findWalls(walls);
 			int up_wall = walls[0];
@@ -77,21 +77,21 @@ int explore() {
 			if (Maze_isExplored()) {
 				break;
 			}
-			Controls2_setDir(dir);
+			Control_setDir(dir);
 		}
 
-		Controls2_update();
+		Control_update();
 	}
 	return 0;
 }
 
 int main() {
 	// initialize everything
-	pi = pigpio_start(NULL, NULL);
+	int pi = pigpio_start(NULL, NULL);
 	Button_init(pi);
 	Led_init(pi);
 	Sensor_init(pi);
-	Controls2_init();
+	Control_init();
 	Maze_init();
 
 	printf("IN MAIN\n");
@@ -107,7 +107,7 @@ int main() {
 	int result = explore();
 	Led_off();
 	if (result == -1) {
-		return;
+		return -1;
 	}
 
 	// this shouldn't ever be executed if dfs works properly but just in case.
@@ -125,4 +125,5 @@ int main() {
 	Led_setColor(0, 0, MAX_COLOR); //blue
 	solveMaze(GOAL_SPACE);
 	Led_off();
+	return 0;
 }
