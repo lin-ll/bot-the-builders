@@ -36,6 +36,8 @@ test_matrix: test_matrix.o matrixInverse.o constants.o
 test_tiny: test_tiny.c constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
+maze: maze.o graph.o heap.o
+
 #motors.o: motors.h
 #sensors.o: sensors.h
 #graph.o: graph.h

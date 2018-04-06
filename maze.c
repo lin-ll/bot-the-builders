@@ -234,7 +234,7 @@ void findShortestPath(Graph g, int start, int finish) {
 }
 
 // Traverse the shortest path.
-void getShortestPath(int* d[16], int finish) {
+void getShortestPath(int **d, int finish) {
 	int nodeRef = finish;
 	int row = getRowFromInt(finish);
 	int col = getRowFromInt(finish);
@@ -293,7 +293,7 @@ void Maze_assignPath(int finish) {
 	int currNode = Maze_getIntFromCoordinates(currRow, currCol);
 	Maze_clearPath();
 	findShortestPath(maze, currNode, finish);
-	getShortestPath(distances, finish);
+	getShortestPath((int **)distances, finish);
 }
 
 // Follow current path, returns direction of next node
