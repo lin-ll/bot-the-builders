@@ -2,7 +2,6 @@
 /* CONTROLS receives a direction from maze and sets motor desired values                 */
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
-#include <stdlib.h>
 #include "controls.h"
 #include "motors.h"
 #include "kalman.h"
@@ -35,7 +34,7 @@ static int currDir;
 // matrix entry i,j is how much velocity j contributes to motor i
 // j: UL, UR, LL, LR
 // i: north, east, clockwise (should be counterclockwise?)
-double **matrix = {
+double matrix[4][3] = {
 	{1, 1, 1, 1},
 	{1, -1, -1, 1},
 	{1, 1, -1, -1}};
@@ -131,7 +130,9 @@ void setMotors(double northSpeed, double eastSpeed, double thetaSpeed) {
 		// scale down all motors so largest is MOTOR_RANGE = 255
 		for (int i=0; i<4; i++) {
 			double motorSpeed = (double)MOTOR_RANGE/largest;
-			motors[i] = min(motors[i]*motorSpeed, MOTOR_RANGE);
+			motors[i] = motors[i]*motorSpeed;
+			if (motors[i] > MOTOR_RANGE)
+				motors[i] = MOTOR_RANGE;
 		}
 	}
 
