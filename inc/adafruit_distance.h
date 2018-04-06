@@ -80,7 +80,7 @@ void adafruit_distance_write16(int address, int data);
 void adafruit_distance_set_pi_handle(int pi_handle_1);
 // Make current handle be old and write to
 // VL6180X_REG_I2C_SLAVE_DEVICE_ADDR the new handle
-void adafruit_distance_change_address(int old, int new);
+void adafruit_distance_change_address(int old_handle, int new_handle);
 
 /************************************************************************/
 /*  Reading range and lux                                               */

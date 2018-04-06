@@ -20,6 +20,7 @@
 #define MAZE_SIZE 16
 #define SQUARE_SIZE 180 // 168 + 12
 
+#define PI 3.1415926536
 #define TWO_PI (2*3.1415926536)
 #define DISTANCE_OFF 0
 #define DISTANCE_ON 1
@@ -28,6 +29,11 @@
 #define GOAL_SPACE 0
 
 #define MAX_COLOR 255
+
+#define BUS 1
+#define ORIG_ADDR 0x29
+#define GYRO_ADDR 0x6B
+#define COMPASS_ADDR 0x1E
 
 //-------------------
 
@@ -58,29 +64,45 @@
 
 //-------------------
 
-#define BUS 1
-#define GYRO_ADDR 0x6B // 7 bit 1101011;
-#define COMPASS_ADDR 0x1D // if it's wrong, try 1F
-#define ORIG_ADDR 0x29 // the address the i2c listens to
+#define ACC_CTRL1 0x10
+#define GYRO_CTRL2 0x11
+#define COMMON_CTRL3 0x12
+#define COMMON_CTRL4 0x13
+#define COMMON_CTRL5 0x14
+#define COMMON_CTRL6 0x15
+#define GYRO_CTRL7 0x16
+#define ACC_CTRL8 0x17
+#define ACC_CTRL9 0x18
+#define COMMON_CTRL10 0x19
 
-#define GYRO_REGISTER_OUT_X_L 0x28
-#define GYRO_REGISTER_OUT_X_H 0x29
-#define GYRO_REGISTER_OUT_Y_L 0x2A
-#define GYRO_REGISTER_OUT_Y_H 0x2B
-#define GYRO_REGISTER_OUT_Z_L 0x2C
-#define GYRO_REGISTER_OUT_Z_H 0x2D 
-#define ACC_REGISTER_OUT_X_L_A 0x28
-#define ACC_REGISTER_OUT_X_H_A 0x29
-#define ACC_REGISTER_OUT_Y_L_A 0x2A
-#define ACC_REGISTER_OUT_Y_H_A 0x2B
-#define ACC_REGISTER_OUT_Z_L_A 0x2C
-#define ACC_REGISTER_OUT_Z_H_A 0x2D 
-#define COMPASS_REGISTER_OUT_X_H_M 0x08 // HEY! if these values are wrong, try adding 5 to each
-#define COMPASS_REGISTER_OUT_X_L_M 0x09 // There's another version of this chip with those addresses
-#define COMPASS_REGISTER_OUT_Y_H_M 0x0A
-#define COMPASS_REGISTER_OUT_Y_L_M 0x0B
-#define COMPASS_REGISTER_OUT_Z_H_M 0x0C
-#define COMPASS_REGISTER_OUT_Z_L_M 0x0D
+#define GYRO_OUT_X_L 0x22
+#define GYRO_OUT_X_H 0x23
+#define GYRO_OUT_Y_L 0x24
+#define GYRO_OUT_Y_H 0x25
+#define GYRO_OUT_Z_L 0x26
+#define GYRO_OUT_Z_H 0x27
+
+#define ACC_OUT_X_L 0x28
+#define ACC_OUT_X_H 0x29
+#define ACC_OUT_Y_L 0x2A
+#define ACC_OUT_Y_H 0x2B
+#define ACC_OUT_Z_L 0x2C
+#define ACC_OUT_Z_H 0x2D 
+
+//-------------------
+
+#define COMPASS_CTRL1 20
+#define COMPASS_CTRL2 21
+#define COMPASS_CTRL3 22
+#define COMPASS_CTRL4 23
+#define COMPASS_CTRL5 24
+
+#define COMPASS_OUT_X_L 0x28
+#define COMPASS_OUT_X_H 0x29
+#define COMPASS_OUT_Y_L 0x2A
+#define COMPASS_OUT_Y_H 0x2B
+#define COMPASS_OUT_Z_L 0x2C
+#define COMPASS_OUT_Z_H 0x2D
 
 //-------------------
 
