@@ -7,7 +7,10 @@
 #include "inc/buttons.h"
 #include "inc/constants.h"
 #include "inc/sensors.h"
+#include "inc/motors.h"
 #include <stdio.h>
+
+int main();
 
 void solveMaze(int goal) {
 	Maze_assignPath(goal);
@@ -82,7 +85,7 @@ int explore() {
 	return 0;
 }
 
-void main() {
+int main() {
 	// initialize everything
 	pi = pigpio_start(NULL, NULL);
 	Button_init(pi);

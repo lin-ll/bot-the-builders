@@ -204,7 +204,7 @@ double Sensor_getLong(int num) {
   return (double)sensor.readRangeSingleMillimeters();
 }
 
-void Sensor_findWalls(int *walls) {
+int* Sensor_findWalls(int *walls) {
   if (Sensor_getShort(UP) > SQUARE_SIZE / 2) {
     walls[0] = 1;
   } if (Sensor_getShort(DOWN) > SQUARE_SIZE / 2) {
