@@ -41,6 +41,7 @@ test_kalman: test_kalman.o kalman.o constants.o
 
 
 maze: maze.o graph.o heap.o
+	$(CC) -o $@ $^ $(CFLAGS)
 
 #motors.o: motors.h
 #sensors.o: sensors.h
