@@ -40,7 +40,7 @@ int getColFromInt(int nodeRef) {
 	return col;
 }
 
-void Maze_clearPath {
+void Maze_clearPath() {
 	while (!isEmpty(currentPath)) {
 		pop(currentPath);
 	}
