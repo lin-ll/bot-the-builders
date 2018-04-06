@@ -120,8 +120,8 @@ void mat_vec_mult(double *A, double *x, double *dest){
 }
 
 void init(){
-	x[0] = 1.0; // x
-	x[1] = 1.0; // y
+	x[0] = 9.0; // x
+	x[1] = 9.0; // y
 	x[2] = 0.0; // t
 	x[3] = 0.0; // vx
 	x[4] = 0.0; // vy
