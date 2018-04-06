@@ -6,18 +6,19 @@
 #include "controls.h"
 #include "motors.h"
 #include "kalman.h"
+#include "leds.h"
 #include "constants.h"
 #include "pid.h"
 
 // WRITING UNDER THE ASSUMED FRAMEWORK:
 /*
-	1. kalman.c processes information from sensors.h and should pass information
-	2. this file will then process the movement, checking back with kalman.c,
+	1. Kalman.c processes information from sensors.h and should pass information
+	2. this file will then process the movement, checking back with Kalman.c,
 		maybe even with sensors.c
 	3. Communicate with motors.c to move the omniwheels
 */
 
-const START = SQUARE_SIZE / 2;
+const int START = SQUARE_SIZE / 2;
 
 static PID_T pidRight;
 static PID_T pidTheta;
@@ -54,16 +55,16 @@ int getForwardSpeed() {
 	double forwardDist;
 	switch (currDir) {
 		case NORTH:
-			forwardDist = -(destY - kalman_getY());
+			forwardDist = -(destY - Kalman_getY());
 			break;
 		case SOUTH:
-			forwardDist = destY - kalman_getY();
+			forwardDist = destY - Kalman_getY();
 			break;
 		case EAST:
-			forwardDist = destX - kalman_getX();
+			forwardDist = destX - Kalman_getX();
 			break;
 		case WEST:
-			forwardDist = -(destX - kalman_getX());
+			forwardDist = -(destX - Kalman_getX());
 			break;
 	}
 
@@ -81,21 +82,21 @@ int getForwardSpeed() {
 	return desiredSpeed;
 }
 
-double getRightSpeed(dt) {
+double getRightSpeed(double dt) {
 	// positive error means right-hand-side of the line
 	double error;
 	switch (currDir) {
 		case NORTH:
-			error = kalman_getX() - destX;
+			error = Kalman_getX() - destX;
 			break;
 		case SOUTH:
-			error = -(kalman_getX() - destX);
+			error = -(Kalman_getX() - destX);
 			break;
 		case EAST:
-			error = -(kalman_getY() - destY);
+			error = -(Kalman_getY() - destY);
 			break;
 		case WEST:
-			error = kalman_getY() - destY;
+			error = Kalman_getY() - destY;
 			break;
 	}
 
@@ -105,8 +106,8 @@ double getRightSpeed(dt) {
 	return val;
 }
 
-double getThetaSpeed(dt) {
-	double error = kalman_getT();
+double getThetaSpeed(double dt) {
+	double error = Kalman_getT();
 	Pid_update(pidTheta, error, dt);
 	return Pid_getVal(pidTheta);
 }
