@@ -83,7 +83,7 @@ int explore() {
 		if (controls_finished) {
 
 			printf("Debug B\n");
-			int *walls;
+			int walls[4];
 			Sensor_findWalls(walls);
 			int up_wall = walls[0];
 			int down_wall = walls[1];
