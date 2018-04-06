@@ -5,7 +5,7 @@
 heap_t *heap_init() {
     heap_t *heap;
 
-    heap = (heap_t *) malloc(sizeof(struct heap_t));
+    heap = (heap_t *) malloc(sizeof(heap_t));
 
     heap->len = 0;
     heap->size = 0;

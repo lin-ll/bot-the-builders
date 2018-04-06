@@ -136,8 +136,6 @@ void init(){
 	P[7] = 4.0; // (2.0mm)^2
 	P[14] = 0.0289; // (0.17rad)^2
 
-	prevTime = clock();
-
 }
 
 // given the current location and distance to the wall, where is the nearby distance you
