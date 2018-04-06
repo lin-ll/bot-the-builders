@@ -46,9 +46,12 @@ static void initCompass() {
   compass_handle = i2c_open(pi, BUS, COMPASS_ADDR, 0);
   int ret = i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL1, 0x70);
   printf("ret is %d\n", ret);
-  i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL2, 0x00);
-  i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL3, 0x00);
-  i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL4, 0x0C);
+  ret = i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL2, 0x00);
+  printf("ret is %d\n", ret);
+  ret = i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL3, 0x00);
+  printf("ret is %d\n", ret);
+  ret = i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL4, 0x0C);
+  printf("ret is %d\n", ret);
   printf("Compass handle: %d\n", compass_handle);
 }
 
