@@ -40,7 +40,7 @@ void solveMaze(int goal) {
 		int dir;
 
 		// do controls thing
-		controls_finished = Control_update();
+		controls_finished = Control_update(dt);
 		if (controls_finished) {
 			dir = Maze_followPath();
 			if (dir == -1) {
@@ -49,7 +49,7 @@ void solveMaze(int goal) {
 			Control_setDir(dir);
 		}
 
-		Control_update();
+		Kalman_update(dt);
 	}
 }
 
@@ -75,7 +75,7 @@ int explore() {
 		}
 
 		// do controls thing
-		controls_finished = Control_update();
+		controls_finished = Control_update(dt);
 		if (controls_finished) {
 			int *walls;
 			Sensor_findWalls(walls);
@@ -92,7 +92,7 @@ int explore() {
 			Control_setDir(dir);
 		}
 
-		Control_update();
+		Kalman_update(dt);
 	}
 	return 0;
 }
