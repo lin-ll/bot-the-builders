@@ -1,11 +1,11 @@
 // The central file for controlling the robot
 
-#include "inc/maze.h"
-#include "inc/controls2.h"
+#include "maze.h"
+#include "controls.h"
 #include <unistd.h>
-#include "inc/buttons.h"
-#include "inc/constants.h"
-#include "inc/sensors.h"
+#include "buttons.h"
+#include "constants.h"
+#include "sensors.h"
 
 void solveMaze(int goal) {
 	Maze_assignPath(goal);
@@ -28,16 +28,16 @@ void solveMaze(int goal) {
 		int dir;
 
 		// do controls thing
-		controls_finished = Controls2_update();
+		controls_finished = Control_update();
 		if (controls_finished) {
 			dir = Maze_followPath();
 			if (dir == -1) {
 				break;
 			}
-			Controls2_setDir(dir);
+			Control_setDir(dir);
 		}
 
-		Controls2_update();
+		Control_update();
 	}
 }
 
@@ -59,7 +59,7 @@ int explore() {
 		}
 
 		// do controls thing
-		controls_finished = Controls2_update();
+		controls_finished = Control_update();
 		if (controls_finished) {
 			int *walls = Sensor_findWalls(walls);
 			int up_wall = walls[0];
@@ -72,10 +72,10 @@ int explore() {
 			if (Maze_isExplored()) {
 				break;
 			}
-			Controls2_setDir(dir);
+			Control_setDir(dir);
 		}
 
-		Controls2_update();
+		Control_update();
 	}
 	return 0;
 }
@@ -86,7 +86,7 @@ void main() {
 	Button_init(pi);
 	Led_init(pi);
 	Sensor_init(pi);
-	Controls2_init();
+	Control_init();
 	Maze_init();
 
 	Led_setColor(MAX_COLOR, MAX_COLOR, 0); //orange

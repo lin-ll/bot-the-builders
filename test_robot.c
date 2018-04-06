@@ -1,12 +1,12 @@
-#include "inc/controls2.h"
+#include "controls.h"
 
 void main() {
   while (true) {
-    int controls_finished = Controls2_update();
+    int controls_finished = Control_update();
     if (controls_finished) {
       dir = UP;
-      Controls2_setDir(dir);
+      Control_setDir(dir);
       }
-    Controls2_update();
+    Control_update();
   }
 }
