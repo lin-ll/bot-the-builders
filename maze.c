@@ -64,6 +64,7 @@ void Maze_init() {
 	graph_add_edge(maze, 135, 136);
 	currRow = 0;
 	currCol = 0;
+	stepTrace = heap_init();
 	push(stepTrace, currPriority, START_SPACE);
 }
 
@@ -190,7 +191,7 @@ void findShortestPath(Graph g, int start, int finish) {
 	int startCol = getColFromInt(start);
 	distances[startRow][startCol] = 0;
 
-	heap_t *unvisited;
+	heap_t *unvisited = heap_init();
 
 	int nodeRef = start;
 	int row = getRowFromInt(nodeRef);
@@ -234,12 +235,12 @@ void findShortestPath(Graph g, int start, int finish) {
 }
 
 // Traverse the shortest path.
-heap_t *getShortestPath(int **d, int finish) {
+void getShortestPath(int **d, int finish) {
 	int nodeRef = finish;
 	int row = getRowFromInt(finish);
 	int col = getRowFromInt(finish);
 	int currDistance = d[row][col];
-	heap_t *path;
+	heap_t *path = heap_init();
 	push(path, currDistance, nodeRef);
 	while (currDistance > 0) {
 		row = getRowFromInt(nodeRef);
