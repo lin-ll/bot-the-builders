@@ -1,66 +1,48 @@
 #include <pigpiod_if2.h>
 #include <unistd.h>
-#include <stdio.h>
 #include "constants.h"
 #include "motors.h"
 
 const int FORWARD[4] = {UPPER_LEFT_FORWARD, UPPER_RIGHT_FORWARD, LOWER_LEFT_FORWARD, LOWER_RIGHT_FORWARD};
 const int BACKWARD[4] = {UPPER_LEFT_BACKWARD, UPPER_RIGHT_BACKWARD, LOWER_LEFT_BACKWARD, LOWER_RIGHT_BACKWARD};
+const int FORWARD = 0;
+const int RIGHT = 1;
+const int BACKWARD = 2;
+const int LEFT = 3;
 
 int pi = 0;
 
-void set_forward(int speed) {
-	int speeds[4] = {speed, speed, speed, speed};
-	for (int i = 0; i < 4; i++) {
-		Motor_adjust(FORWARD[i], BACKWARD[i], speeds[i]);
+void set(int direction, int speed) {
+	int speeds[4];
+	switch (direction) {
+		case FORWARD:
+			speeds = {speed, speed, speed, speed};
+			break;
+		case BACKWARD:
+			speeds = {-speed, -speed, -speed, -speed};
+			break;
+		case RIGHT:
+			speeds = {speed, -speed, -speed, speed};
+			break;
+		case LEFT:
+			speeds = {-speed, speed, speed, -speed};
+			break;
 	}
-}
-
-void set_backward(int speed) {
-	int speeds[4] = {-speed, -speed, -speed, -speed};
-	for (int i = 0; i < 4; i++) {
-		Motor_adjust(FORWARD[i], BACKWARD[i], speeds[i]);
-	}
-}
-
-void set_right(int speed) {
-	int speeds[4] = {speed, -speed, -speed, speed};
-	for (int i = 0; i < 4; i++) {
-		Motor_adjust(FORWARD[i], BACKWARD[i], speeds[i]);
-	}
-}
-
-void set_left(int speed) {
-	int speeds[4] = {-speed, speed, speed, -speed};
-	for (int i = 0; i < 4; i++) {
-		Motor_adjust(FORWARD[i], BACKWARD[i], speeds[i]);
-	}
+	Motor_set(speeds);
 }
 
 int main(){
 	pi = pigpio_start(NULL, NULL);
+	Motor_init(pi);
 	int speed = 255;
 	int time = 2000000;
-	
-	set_forward(speed);
-	usleep(time);
-	Motor_off();
-	usleep(500000);
 
-	set_right(speed);
-	usleep(time);
-	Motor_off();
-	usleep(500000);
-
-	set_backward(speed);
-	usleep(time);
-	Motor_off();
-	usleep(500000);
-
-	set_left(speed);
-	usleep(time);
-	Motor_off();
-	usleep(500000);
+	for (int i = 0; i < 4; i++) {
+		set(i, speed);
+		usleep(time);
+		Motor_off();
+		usleep(500000);
+	}
 
 	return 0;
 }

@@ -18,9 +18,6 @@ double Sensor_getCompass();
 void Sensor_calCompass(int n);
 void Sensor_calGyro(int n);
 
-/* Return speed of motors */
-double Sensor_getMotorSpeed(int motor);
-
 /* Linear Stuff */
 enum Dir_t {
   kFRONT,
@@ -43,9 +40,9 @@ void Sensor_free();
 // finds all walls in square;
 void Sensor_findWalls(int *walls);
 
-int Sensor_initTiny(int pi);
+// int Sensor_initTiny(int pi);
 
-double Sensor_getEncoders();
+// double Sensor_getEncoders();
 
 
 #endif
