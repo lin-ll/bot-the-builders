@@ -6,6 +6,7 @@
 #include "inc/buttons.h"
 #include "inc/constants.h"
 #include "inc/sensors.h"
+#include <stdio.h>
 
 void solveMaze(int goal) {
 	Maze_assignPath(goal);
@@ -88,6 +89,8 @@ void main() {
 	Sensor_init(pi);
 	Controls2_init();
 	Maze_init();
+
+	printf("IN MAIN\n");
 
 	Led_setColor(MAX_COLOR, MAX_COLOR, 0); //orange
 
