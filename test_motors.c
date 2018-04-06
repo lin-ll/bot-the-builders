@@ -5,27 +5,28 @@
 
 const int FORWARD[4] = {UPPER_LEFT_FORWARD, UPPER_RIGHT_FORWARD, LOWER_LEFT_FORWARD, LOWER_RIGHT_FORWARD};
 const int BACKWARD[4] = {UPPER_LEFT_BACKWARD, UPPER_RIGHT_BACKWARD, LOWER_LEFT_BACKWARD, LOWER_RIGHT_BACKWARD};
-const int FORWARD = 0;
-const int RIGHT = 1;
-const int BACKWARD = 2;
-const int LEFT = 3;
+const int F = 0;
+const int R = 1;
+const int B = 2;
+const int L = 3;
 
 int pi = 0;
 
 void set(int direction, int speed) {
-	int speeds[4];
+	int speeds[4] = {speed, speed, speed, speed};
 	switch (direction) {
-		case FORWARD:
-			speeds = {speed, speed, speed, speed};
+		case B:
+			for (int i = 0; i < 4; i++) {
+				speeds[i] = -speed;
+			}
 			break;
-		case BACKWARD:
-			speeds = {-speed, -speed, -speed, -speed};
+		case R:
+			speeds[1] = -speed;
+			speeds[2] = -speed;
 			break;
-		case RIGHT:
-			speeds = {speed, -speed, -speed, speed};
-			break;
-		case LEFT:
-			speeds = {-speed, speed, speed, -speed};
+		case L:
+			speeds[0] = -speed;
+			speeds[3] = -speed;
 			break;
 	}
 	Motor_set(speeds);
