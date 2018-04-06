@@ -1,11 +1,11 @@
 // The central file for controlling the robot
 
-#include "maze.h"
-#include "controls2.h"
+#include "inc/maze.h"
+#include "inc/controls2.h"
 #include <unistd.h>
-#include "buttons.h"
-#include "constants.h"
-#include "sensors.h"
+#include "inc/buttons.h"
+#include "inc/constants.h"
+#include "inc/sensors.h"
 
 void solveMaze(int goal) {
 	Maze_assignPath(goal);
