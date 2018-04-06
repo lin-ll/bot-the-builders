@@ -37,6 +37,7 @@ test_tiny: test_tiny.c constants.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 maze: maze.o graph.o heap.o
+	$(CC) -o $@ $^ $(CFLAGS)
 
 #motors.o: motors.h
 #sensors.o: sensors.h
