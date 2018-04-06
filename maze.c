@@ -11,6 +11,8 @@
 
 static Graph maze; // graph recording walls and such
 static int traversed[MAZE_SIZE][MAZE_SIZE] = {0}; // record of traversed squares
+static int MAZE_AREA = MAZE_SIZE * MAZE_SIZE; // size of maze
+static int currPriority = MAZE_AREA + 1;
 
 static int currRow = 0; // current row
 static int currCol = 0; // current col
@@ -27,6 +29,11 @@ int Maze_isAtStart() {
 void Maze_partialReset() {
 	currRow = 0;
 	currCol = 0;
+}
+
+// converts row and column to label of node in graph
+int Maze_getIntFromCoordinates(int row, int col) {
+	return row * MAZE_SIZE + col;
 }
 
 // converts node to row and column
@@ -57,7 +64,7 @@ void Maze_init() {
 	graph_add_edge(maze, 135, 136);
 	currRow = 0;
 	currCol = 0;
-	push(stepTrace, START_SPACE);
+	push(stepTrace, currPriority, START_SPACE);
 }
 
 void Maze_reset() {
@@ -72,25 +79,25 @@ void Maze_reset() {
 }
 
 void add_edges (int upWall, int downWall, int leftWall, int rightWall, int nodeRef) {
-	if (col != 0 && leftWall == 0) {
+	if (currCol != 0 && leftWall == 0) {
 		if (!graph_has_edge(maze, nodeRef, nodeRef - 1)) {
 			graph_add_edge(maze, nodeRef, nodeRef - 1);
 		}
 	}
 	// right
-	if (col != MAZE_SIZE - 1 && rightWall == 0) {
+	if (currCol != MAZE_SIZE - 1 && rightWall == 0) {
 		if (!graph_has_edge(maze, nodeRef, nodeRef + 1)) {
 			graph_add_edge(maze, nodeRef, nodeRef + 1);
 		}
 	}
 	// up
-	if (row != 0 && upWall == 0) {
+	if (currRow != 0 && upWall == 0) {
 		if (!graph_has_edge(maze, nodeRef, nodeRef - MAZE_SIZE)) {
 			graph_add_edge(maze, nodeRef, nodeRef - MAZE_SIZE);
 		}
 	}
 	// down
-	if (row != MAZE_SIZE - 1 && downWall == 0) {
+	if (currRow != MAZE_SIZE - 1 && downWall == 0) {
 		if (!graph_has_edge(maze, nodeRef, nodeRef + MAZE_SIZE)) {
 				graph_add_edge(maze, nodeRef, nodeRef + MAZE_SIZE);
 		}
@@ -105,6 +112,7 @@ int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 
 	if (traversed[currRow][currCol] == 0) {
 		traversed[currRow][currCol] = 1;
+		currPriority--;
 	}
 
 	int nodeRef = Maze_getIntFromCoordinates(currRow, currCol);
@@ -115,58 +123,53 @@ int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 	if (currCol != 0 && graph_has_edge(maze, nodeRef, nodeRef - 1)) {
 		if (traversed[currRow][currCol - 1] == 0) {
 			currCol--;
-			push(stepTrace, nodeRef);
+			push(stepTrace, currPriority, nodeRef);
 			return LEFT;
 		}
 	}
 	// right
-	if (CurrCol != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + 1)) {
+	if (currCol != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + 1)) {
 		if (traversed[currRow][currCol + 1] == 0) {
 			currCol++;
-			push(stepTrace, nodeRef);
+			push(stepTrace, currPriority, nodeRef);
 			return RIGHT;
 		}
 	}
 	// up
-	if (CurrRow != 0 && graph_has_edge(maze, nodeRef, nodeRef - MAZE_SIZE)) {
+	if (currRow != 0 && graph_has_edge(maze, nodeRef, nodeRef - MAZE_SIZE)) {
 		if (traversed[currRow - 1][currCol] == 0) {
 			currRow--;
-			push(stepTrace, nodeRef);
+			push(stepTrace, currPriority, nodeRef);
 			return UP;
 		}
 	}
 	// down
-	if (CurrRow != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + MAZE_SIZE)) {
+	if (currRow != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + MAZE_SIZE)) {
 		if (traversed[currRow + 1][currCol] == 0) {
 			currRow++;
-			push(stepTrace, nodeRef);
+			push(stepTrace, currPriority, nodeRef);
 			return DOWN;
 		}
 	}
 
 	int nextNode = pop(stepTrace);
 
-	if (nextNode == currNode - MAZE_SIZE) {
+	if (nextNode == nodeRef - MAZE_SIZE) {
 		currRow--;
 		return UP;
-	} else if (nextNode == currNode + MAZE_SIZE) {
+	} else if (nextNode == nodeRef + MAZE_SIZE) {
 		currRow++;
 		return DOWN;
-	} else if (nextNode == currNode + 1) {
+	} else if (nextNode == nodeRef + 1) {
 		currCol++;
 		return RIGHT;
-	} else if (nextNode == currNode - 1) {
+	} else if (nextNode == nodeRef - 1) {
 		currCol--;
 		return LEFT;
-	} else {
-		return -1;
 	}
 
-}
+	return -1;
 
-// converts row and column to label of node in graph
-int Maze_getIntFromCoordinates(int row, int col) {
-	return row * MAZE_SIZE + col;
 }
 
 // returns whether maze has been fully explored
@@ -187,7 +190,6 @@ void findShortestPath(Graph g, int start, int finish) {
 	int startCol = getColFromInt(start);
 	distances[startRow][startCol] = 0;
 
-	heap_t *visited;
 	heap_t *unvisited;
 
 	int nodeRef = start;
@@ -197,28 +199,28 @@ void findShortestPath(Graph g, int start, int finish) {
 	while (nodeRef != finish) {
 
 		// left
-		if (col != 0 && graph_has_edge(g, nodeRef, nodeRef - 1) == 0) {
+		if (col != 0 && graph_has_edge(maze, nodeRef, nodeRef - 1) == 0) {
 			if (distances[row][col - 1] > distances[row][col] + 1) {
 				distances[row][col - 1] = distances[row][col] + 1;
 				push(unvisited, distances[row][col - 1], nodeRef - 1);
 			}
 		}
 		// right
-		if (col != MAZE_SIZE - 1 && graph_has_edge(g, nodeRef, nodeRef + 1) == 0) {
+		if (col != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + 1) == 0) {
 			if (distances[row][col + 1] > distances[row][col] + 1) {
 				distances[row][col + 1] = distances[row][col] + 1;
 				push(unvisited, distances[row][col + 1], nodeRef + 1);
 			}
 		}
 		// up
-		if (row != 0 && graph_has_edge(g, nodeRef, nodeRef - MAZE_SIZE) == 0) {
+		if (row != 0 && graph_has_edge(maze, nodeRef, nodeRef - MAZE_SIZE) == 0) {
 			if (distances[row - 1][col] > distances[row][col] + 1) {
 				distances[row - 1][col] = distances[row][col] + 1;
 				push(unvisited, distances[row - 1][col], nodeRef - MAZE_SIZE);
 			}
 		}
 		// down
-		if (row != MAZE_SIZE - 1 && graph_has_edge(g, nodeRef, nodeRef + MAZE_SIZE) == 0) {
+		if (row != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + MAZE_SIZE) == 0) {
 			if (distances[row + 1][col] > distances[row][col] + 1) {
 				distances[row + 1][col] = distances[row][col] + 1;
 				push(unvisited, distances[row + 1][col], nodeRef + MAZE_SIZE);
@@ -244,7 +246,7 @@ void getShortestPath(int **d, int finish) {
 		col = getColFromInt(nodeRef);
 
 		// left
-		if (col != 0 && graph_has_edge(g, nodeRef, nodeRef - 1) == 0) {
+		if (col != 0 && graph_has_edge(maze, nodeRef, nodeRef - 1) == 0) {
 			if (d[row][col - 1] < d[row][col]) {
 				push(path, d[row][col - 1], nodeRef - 1);
 				currDistance = d[row][col - 1];
@@ -254,7 +256,7 @@ void getShortestPath(int **d, int finish) {
 		}
 
 		// right
-		if (col != MAZE_SIZE - 1 && graph_has_edge(g, nodeRef, nodeRef + 1) == 0) {
+		if (col != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + 1) == 0) {
 			if (d[row][col + 1] < d[row][col]) {
 				push(path, d[row][col + 1], nodeRef + 1);
 				currDistance = d[row][col + 1];
@@ -264,8 +266,8 @@ void getShortestPath(int **d, int finish) {
 		}
 
 		// up
-		if (row != 0 && graph_has_edge(g, nodeRef, nodeRef - MAZE_SIZE) == 0) {
-			if (d[row - 1][col] < d[row - 1][col]) {
+		if (row != 0 && graph_has_edge(maze, nodeRef, nodeRef - MAZE_SIZE) == 0) {
+			if (d[row - 1][col] < d[row][col]) {
 				push(path, d[row - 1][col], nodeRef - MAZE_SIZE);
 				currDistance = d[row - 1][col];
 				nodeRef = nodeRef - MAZE_SIZE;
@@ -274,7 +276,7 @@ void getShortestPath(int **d, int finish) {
 		}
 
 		// down
-		if (row != MAZE_SIZE - 1 && graph_has_edge(g, nodeRef, nodeRef + MAZE_SIZE) == 0) {
+		if (row != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + MAZE_SIZE) == 0) {
 			if (d[row + 1][col] < d[row][col]) {
 				push(path, d[row + 1][col], nodeRef + MAZE_SIZE);
 				currDistance = d[row + 1][col];
@@ -291,7 +293,7 @@ void Maze_assignPath(int finish) {
 	int currNode = Maze_getIntFromCoordinates(currRow, currCol);
 	Maze_clearPath();
 	findShortestPath(maze, currNode, finish);
-	getShortestPath(distances, finish);
+	getShortestPath((int **)distances, finish);
 }
 
 // Follow current path, returns direction of next node
@@ -316,6 +318,8 @@ int Maze_followPath() {
 		currCol--;
 		return LEFT;
 	}
+
+	return -1;
 }
 
 // Find the maze, solve it for shortest path, and traverse this path.
