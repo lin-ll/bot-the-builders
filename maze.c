@@ -234,7 +234,7 @@ void findShortestPath(Graph g, int start, int finish) {
 }
 
 // Traverse the shortest path.
-void getShortestPath(int **d, int finish) {
+heap_t *getShortestPath(int **d, int finish) {
 	int nodeRef = finish;
 	int row = getRowFromInt(finish);
 	int col = getRowFromInt(finish);
