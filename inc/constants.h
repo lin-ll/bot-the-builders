@@ -19,6 +19,7 @@
 
 #define MAZE_SIZE 16
 #define SQUARE_SIZE 180 // 168 + 12
+#define HALF_CHASSIS_SIZE 40 // mm from robot center to distance sensor
 
 #define PI 3.1415926536
 #define TWO_PI (2*3.1415926536)
