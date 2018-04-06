@@ -115,6 +115,7 @@ int main() {
 	Sensor_init(pi);
 	Control_init();
 	//Maze_init();
+	Kalman_init();
 
 	printf("IN MAIN\n");
 

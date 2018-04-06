@@ -3,6 +3,7 @@
 #include <math.h> // for using NAN
 #include <time.h>
 #include "sensors.h"
+#include <stdio.h>
 
 /* Naming conventions and general info from here:
    http://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/   */
@@ -133,7 +134,7 @@ void mat_vec_mult(double *A, double *x, double *dest){
 	}
 }
 
-void init(){
+void Kalman_init(){
 	x[0] = 90.0; // x
 	x[1] = 90.0; // y
 	x[2] = 0.0; // t
@@ -232,7 +233,8 @@ void Kalman_update(double dt, double *control){
 		distances[4+i] = Sensor_getLong(i);
 	}
 
-	double gyro = Sensor_getGyro();
+	// TODO use gyro
+	double gyro = 0*Sensor_getGyro();
 	double compass = NAN;
 
 	Kalman_update_given_sensors(dt, encoders, distances, gyro, compass, control);
@@ -316,7 +318,7 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 			z[1] = x_hat[1];
 			R[NUM*1+1] = 40000;
 	} else {
-			z[1] = dist_x;
+			z[1] = dist_y;
 			R[NUM*1+1] = 4.0;
 	}
 
@@ -326,7 +328,7 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 			z[3] = x_hat[3];
 			R[NUM*3+3] = 110889;
 	} else {
-			z[2] = dist_x;
+			z[2] = encoder_vx;
 			R[NUM*3+3] = 10.0;
 	}
 
@@ -334,7 +336,7 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 			z[4] = x_hat[4];
 			R[NUM*4+4] = 110889;
 	} else {
-			z[4] = dist_x;
+			z[4] = encoder_vy;
 			R[NUM*3+3] = 10.0;
 	}
 
@@ -342,7 +344,7 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 			z[5] = x_hat[5];
 			R[NUM*5+5] = 10;
 	} else {
-			z[5] = dist_x;
+			z[5] = vt_estimate;
 			R[NUM*5+5] = 0.01;
 	}
 
