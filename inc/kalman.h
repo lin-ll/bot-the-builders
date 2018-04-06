@@ -16,8 +16,8 @@ void Kalman_init();
  * send 8 distance sensors, 4 encoders, accx / accy / gyro,
  * attempted vx/vy/spin from control, address to write position
  **/
-void Kalman_update_given_sensors(double *encoders, double *distances, double gyro, double compass, double *control);
-void Kalman_update(double dt, double *control);
+void Kalman_update_given_sensors(double dt, double *encoders, double *distances, double gyro, double compass, double *control);
+void Kalman_update(double *control);
 
 // x position/velocity in mm with the corner of the maze 0
 double Kalman_getX();
