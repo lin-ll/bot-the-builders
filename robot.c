@@ -9,6 +9,7 @@
 #include "motors.h"
 #include <stdio.h>
 #include <pigpiod_if2.h>
+#include "kalman.h"
 
 int main();
 
