@@ -51,10 +51,6 @@ int Controls2_init() {
 // Returns the desired forward speed, OR returns 0.0 to
 // signify that we're at the destination
 double getForwardSpeed() {
-	Motor_setUpperRight(speed);
-	Motor_setLowerLeft(speed);
-	Motor_setLowerRight(speed);
-	// start slowing down
 
 	double forwardDist;
 	switch(currDir){
