@@ -79,6 +79,14 @@ void print() {
 }
 
 
+void print_distances(double *distances) {
+	for(int i=0; i<8; i++){
+		printf("%.1f\t", distances[i]);
+	}
+	printf("\n");
+}
+
+
 void mat_mult(double *A, double *B, double *dest){
 	for (int i = 0; i < NUM; i++) {
 		for (int j = 0; j < NUM; j++) {
@@ -254,6 +262,7 @@ void Kalman_update(double dt, double *control){
  **/
 void Kalman_update_given_sensors(double dt, double *encoders, double *distances, double gyro, double compass, double *control){
 
+	print_distances(distances);
 
 	printf("Top of update\n");
 	print();
