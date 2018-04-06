@@ -66,6 +66,18 @@ double Kalman_getVt() {
 		return x[5];
 }
 
+void print() {
+	double x  = Kalman_getX();
+	double y  = Kalman_getY();
+	double t  = Kalman_getT();
+	double vx = Kalman_getVx();
+	double vy = Kalman_getVy();
+	double vt = Kalman_getVt();
+
+	printf("%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t", x, y, t, vx, vy, vt);
+}
+
+
 void mat_mult(double *A, double *B, double *dest){
 	for (int i = 0; i < NUM; i++) {
 		for (int j = 0; j < NUM; j++) {
@@ -240,6 +252,9 @@ void Kalman_update(double dt, double *control){
  **/
 void Kalman_update_given_sensors(double dt, double *encoders, double *distances, double gyro, double compass, double *control){
 
+
+	printf("Top of update\n");
+	print();
 	/* First, the predict step. Without sensors, what do we guess the new x is?
 	   We write a matrix that will take old x to new x */
 	F[3] = dt; // x += vx*dt
@@ -354,4 +369,7 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 	for (int i = 0; i < NUM; i++) {
 			x[i] = x_hat[i] + tempVec[i];
 	}
+
+	printf("Bottom of update\n");
+	print();
 }
