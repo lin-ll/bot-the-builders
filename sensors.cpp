@@ -195,7 +195,7 @@ void Sensor_calGyro(int n) {
 
 /* Return distance from short distance sensor in mm */
 double Sensor_getShort(int num) {
-  return (double)adafruit_distance_readRange(short_dist_handles[num]);
+  return HALF_CHASSIS_SIZE+(double)adafruit_distance_readRange(short_dist_handles[num]);
 }
 
 /* Return distance from long distance sensor in mm */
@@ -205,13 +205,17 @@ double Sensor_getLong(int num) {
 }
 
 void Sensor_findWalls(int *walls) {
-  if (Sensor_getShort(UP) > SQUARE_SIZE / 2) {
+  walls[0] = 0;
+  walls[1] = 0;
+  walls[2] = 0;
+  walls[3] = 0;
+  if (Sensor_getShort(UP) > SQUARE_SIZE) {
     walls[0] = 1;
-  } if (Sensor_getShort(DOWN) > SQUARE_SIZE / 2) {
+  } if (Sensor_getShort(DOWN) > SQUARE_SIZE) {
     walls[1] = 1;
-  } if (Sensor_getShort(LEFT) > SQUARE_SIZE / 2) {
+  } if (Sensor_getShort(LEFT) > SQUARE_SIZE) {
     walls[2] = 1;
-  } if (Sensor_getShort(RIGHT) > SQUARE_SIZE / 2) {
+  } if (Sensor_getShort(RIGHT) > SQUARE_SIZE) {
     walls[3] = 1;
   }
 }
