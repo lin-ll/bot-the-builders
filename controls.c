@@ -2,7 +2,7 @@
 /* CONTROLS receives a direction from maze and sets motor desired values                 */
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
-#include <stlib.h>
+#include <stdlib.h>
 #include "controls.h"
 #include "motors.h"
 #include "kalman.h"
