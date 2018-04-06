@@ -145,7 +145,7 @@ double snap_to_wall(double pos, double dist){
 	return pos - err;
 }
 
-double interpret_distance_aux(double pos, double dist, double *estimate, int *count){
+void interpret_distance_aux(double pos, double dist, double *estimate, int *count){
 	if(!isnan(dist)){
 		*estimate += snap_to_wall(pos, dist);
 		*count += 1;
@@ -201,7 +201,7 @@ double combine_vt(double encoder, double gyro){
 
 
 
-
+/*
 void update(double dt, double *control){
 	
 	// TODO :(
@@ -224,6 +224,7 @@ void update(double dt, double *control){
 	update_given_sensors(dt, encoders, distances, gyro, compass, control);
 
 }
+*/
 
 /**
  * update with new sensor values
@@ -235,9 +236,7 @@ void update(double dt, double *control){
  * Distance sensors are +y,-y,+x,-x for short, then those four for long
  *
  **/
-void Kalman_update_given_sensors(double dt, double *encoders, double *distances, double gyro, double compass, double control){
-
-	double dt = 0.05; // TODO use an actual timer
+void Kalman_update_given_sensors(double dt, double *encoders, double *distances, double gyro, double compass, double *control){
 
 
 	/* First, the predict step. Without sensors, what do we guess the new x is?
@@ -291,44 +290,44 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 
 	if (isnan(dist_x)) {
 			z[0] = x_hat[0];
-			R[0][0] = 40000;
+			R[NUM*0+0] = 40000;
 	} else {
 			z[0] = dist_x;
-			R[0][0] = 4.0;
+			R[NUM*0+0] = 4.0;
 	}
 
 	if (isnan(dist_y)) {
 			z[1] = x_hat[1];
-			R[1][1] = 40000;
+			R[NUM*1+1] = 40000;
 	} else {
 			z[1] = dist_x;
-			R[1][1] = 4.0;
+			R[NUM*1+1] = 4.0;
 	}
 
 	z[2] = 0; // TODO compass
 
 	if (isnan(encoder_vx)) {
 			z[3] = x_hat[3];
-			R[3][3] = 110889;
+			R[NUM*3+3] = 110889;
 	} else {
 			z[2] = dist_x;
-			R[3][3] = 10.0
+			R[NUM*3+3] = 10.0;
 	}
 
 	if (isnan(encoder_vy)) {
 			z[4] = x_hat[4];
-			R[4][4] = 110889;
+			R[NUM*4+4] = 110889;
 	} else {
 			z[4] = dist_x;
-			R[3][3] = 10.0;
+			R[NUM*3+3] = 10.0;
 	}
 
-	if (isnan(encoder_vt)) {
+	if (isnan(vt_estimate)) {
 			z[5] = x_hat[5];
-			R[5][5] = 10;
+			R[NUM*5+5] = 10;
 	} else {
 			z[5] = dist_x;
-			R[5][5] = 0.01;
+			R[NUM*5+5] = 0.01;
 	}
 
 
@@ -341,7 +340,7 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 
 	// equation 19
 	mat_add(P_hat, R, temp);
-	matrixInvert(temp);
+	invert(temp);
 	mat_mult(P_hat, temp, K);
 
 	// equation 18

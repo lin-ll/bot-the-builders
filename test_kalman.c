@@ -3,12 +3,12 @@
 #include <math.h> // for NAN
 
 void print() {
-	x  = Kalman_getZ();
-	y  = Kalman_getY();
-	t  = Kalman_getT();
-	vx = Kalman_getVx();
-	vy = Kalman_getVy();
-	vt = Kalman_getVt();
+	double x  = Kalman_getX();
+	double y  = Kalman_getY();
+	double t  = Kalman_getT();
+	double vx = Kalman_getVx();
+	double vy = Kalman_getVy();
+	double vt = Kalman_getVt();
 
 	printf("%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t", x, y, t, vx, vy, vt);
 }
@@ -21,7 +21,7 @@ void print() {
 int main() {
 	for(int i=0; i<100; i++){
 		double simulatedY = i*1.0;
-		double sumulatedX = i>50? (i-50)*.01 : 0.0;
+		double simulatedX = i>50? (i-50)*.01 : 0.0;
 
 		double gyro = 0;
 		double compass = NAN;
@@ -36,8 +36,8 @@ int main() {
 		double distances[8];
 		distances[0] = NAN; // forward
 		distances[1] = simulatedY; // back
-		distances[2] = 90; // left
-		distances[3] = 90; //right
+		distances[2] = 90+simulatedX; // left
+		distances[3] = 90-simulatedX; //right
 		distances[4] = NAN;
 		distances[5] = NAN;
 		distances[6] = NAN;
