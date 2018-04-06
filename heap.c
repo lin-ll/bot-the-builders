@@ -2,6 +2,18 @@
 #include <stdlib.h>
 #include "heap.h"
 
+heap_t *heap_init() {
+    heap_t *heap;
+
+    heap = (heap_t *) malloc(sizeof(struct heap_t));
+
+    heap->len = 0;
+    heap->size = 0;
+    heap->nodes = (node_t *) malloc(0);
+
+    return heap;
+}
+
 int isEmpty(heap_t *h) {
     return h->size == 0;
 }

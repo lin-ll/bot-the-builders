@@ -19,6 +19,8 @@ typedef struct {
     int size;
 } heap_t;
 
+heap_t *heap_init();
+
 int isEmpty(heap_t *h);
 void push (heap_t *h, int priority, int data);
 int pop (heap_t *h);
