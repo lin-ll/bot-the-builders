@@ -28,6 +28,10 @@ static double destX;
 static double destY;
 static int currDir;
 
+double forward;
+double right;
+double theta;
+
 #define MIN_SPEED_FRACTION .25 // slow down to this speed as we approach dest
 #define SLOW_DIST 20 // mm, start to slow down when this far away
 #define STOP_DIST 1 // mm, come to a stop when this far away
@@ -48,6 +52,17 @@ int Control_init() {
 	Pid_setPoint(pidRight, 0.0);
 	Pid_setPoint(pidTheta, 0.0);
 	return 0;
+}
+
+/* These 3 are used for the control vector in Kalman */
+double Control_getForward() {
+	return forward * MOTOR_TO_MPS;
+}
+double Control_getRight() {
+	return right * MOTOR_TO_MPS;
+}
+double Control_getTheta() {
+	return theta * MOTOR_TO_RPS;
 }
 
 // Returns the desired forward speed, OR returns 0 to signify that we're at the destination
@@ -159,15 +174,15 @@ void Control_setDir(int dir) {
 }
 
 int Control_update(double dt) {
-	double forward = getForwardSpeed();
+	forward = getForwardSpeed();
 	if (forward == 0.0) {
 		// we're done with this destination
 		Motor_completeStop();
 		return 1;
 	}
 
-	double right = getRightSpeed(dt);
-	double theta = getThetaSpeed(dt);
+	right = getRightSpeed(dt);
+	theta = getThetaSpeed(dt);
 
 	switch (currDir) {
 		case NORTH:
