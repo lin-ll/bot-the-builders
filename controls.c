@@ -2,6 +2,7 @@
 /* CONTROLS receives a direction from maze and sets motor desired values                 */
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
 #include "controls.h"
 #include "motors.h"
 #include "kalman.h"
@@ -34,7 +35,7 @@ static int currDir;
 // matrix entry i,j is how much velocity j contributes to motor i
 // j: UL, UR, LL, LR
 // i: north, east, clockwise (should be counterclockwise?)
-double matrix[4][3] = {
+double matrix[3][4] = {
 	{1, 1, 1, 1},
 	{1, -1, -1, 1},
 	{1, 1, -1, -1}};
