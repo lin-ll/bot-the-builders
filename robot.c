@@ -55,11 +55,13 @@ void solveMaze(int goal) {
 }
 
 int explore() {
+	printf("Explore\n");
 	int dir;
 	int controls_finished = 0;
 
 	clock_t prevTime = clock();
 	while (true) {
+		printf("Top of while\n");
 		clock_t currentTime = clock();
 		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;
 		prevTime = currentTime;
@@ -75,23 +77,30 @@ int explore() {
 			return -1;
 		}
 
+		printf("Debug A\n");
 		// do controls thing
 		controls_finished = Control_update(dt);
 		if (controls_finished) {
+
+			printf("Debug B\n");
 			int *walls;
 			Sensor_findWalls(walls);
 			int up_wall = walls[0];
 			int down_wall = walls[1];
 			int left_wall = walls[2];
-			int right_wall = walls[3];
+			int right_wall = walls[3]; /*
 			do {
 				dir = Maze_dfs(up_wall, down_wall, left_wall, right_wall);
 			} while (dir == -1 && !(Maze_isExplored()));
 			if (Maze_isExplored()) {
 				break;
 			}
+
 			Control_setDir(dir);
+			*/
+			Control_setDir(0);
 		}
+		printf("Debug C\n");
 
 		Kalman_update(dt, NULL);
 	}
@@ -105,7 +114,7 @@ int main() {
 	Led_init(pi);
 	Sensor_init(pi);
 	Control_init();
-	Maze_init();
+	//Maze_init();
 
 	printf("IN MAIN\n");
 
