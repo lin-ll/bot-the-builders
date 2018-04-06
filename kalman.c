@@ -2,6 +2,7 @@
 #include "inc/matrixInverse.h"
 #include <math.h> // for using NAN
 #include <time.h>
+#include "sensors.h"
 
 /* Naming conventions and general info from here:
    http://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/   */
@@ -207,9 +208,9 @@ double combine_vt(double encoder, double gyro){
 
 
 
-void update(double *control){
+void Kalman_update(double *control){
 	clock_t currentTime = clock();
-	dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;
+	double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;
 	prevTime = currentTime;
 
 
@@ -230,7 +231,7 @@ void update(double *control){
 	double gyro = Sensor_getGyro();
 	double compass = NAN;
 
-	update_given_sensors(dt, encoders, distances, gyro, compass, control);
+	Kalman_update_given_sensors(dt, encoders, distances, gyro, compass, control);
 
 }
 
