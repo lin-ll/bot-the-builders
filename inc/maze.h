@@ -24,7 +24,7 @@ int Maze_isAtStart();
 int Maze_isExplored();
 
 // returns direction to search maze
-int Maze_dfs(int row, int col, int leftWall, int rightWall, int upWall, int downWall);
+int Maze_dfs(int leftWall, int rightWall, int upWall, int downWall);
 
 int Maze_getIntFromCoordinates(int row, int col);
 
