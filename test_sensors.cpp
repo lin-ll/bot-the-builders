@@ -37,9 +37,10 @@ void testGyro() {
 }
 
 void testCompass() {
-  for (int i = 0; i < 1000; i++) {
+  for (int i = 0; i < 10; i++) {
     double reading = Sensor_getCompass();
     printf("%f\n", reading);
+    usleep(500000);
   }
 }
 

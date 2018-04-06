@@ -44,7 +44,8 @@ static void initGyro() {
 /* Initialize compass handle and settings */
 static void initCompass() {
   compass_handle = i2c_open(pi, BUS, COMPASS_ADDR, 0);
-  i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL1, 0x70);
+  int ret = i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL1, 0x70);
+  printf("ret is %d\n", ret);
   i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL2, 0x00);
   i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL3, 0x00);
   i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL4, 0x0C);
