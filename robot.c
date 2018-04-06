@@ -5,7 +5,9 @@
 #include "buttons.h"
 #include "constants.h"
 #include "sensors.h"
+#include "leds.h"
 #include <stdio.h>
+#include <pigpiod_if2.h>
 
 void solveMaze(int goal) {
 	Maze_assignPath(goal);
@@ -82,7 +84,7 @@ int explore() {
 
 void main() {
 	// initialize everything
-	pi = pigpio_start(NULL, NULL);
+	int pi = pigpio_start(NULL, NULL);
 	Button_init(pi);
 	Led_init(pi);
 	Sensor_init(pi);
