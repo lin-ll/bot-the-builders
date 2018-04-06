@@ -26,7 +26,7 @@ void push (heap_t *h, int priority, int data) {
 int pop (heap_t *h) {
     int i, j, k;
     if (!h->len) {
-        return NULL;
+        return -1;
     }
     int data = h->nodes[1].data;
 

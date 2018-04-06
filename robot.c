@@ -1,11 +1,11 @@
 // The central file for controlling the robot
-
 #include "maze.h"
 #include "controls.h"
 #include <unistd.h>
 #include "buttons.h"
 #include "constants.h"
 #include "sensors.h"
+#include <stdio.h>
 
 void solveMaze(int goal) {
 	Maze_assignPath(goal);
@@ -88,6 +88,8 @@ void main() {
 	Sensor_init(pi);
 	Control_init();
 	Maze_init();
+
+	printf("IN MAIN\n");
 
 	Led_setColor(MAX_COLOR, MAX_COLOR, 0); //orange
 

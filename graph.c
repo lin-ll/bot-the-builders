@@ -15,15 +15,17 @@
 /* these arrays may or may not be sorted: if one gets long enough
  * and you call graph_has_edge on its source, it will be */
 
+struct successors {
+    int d;          /* number of successors */
+    int len;        /* number of slots in array */
+    char is_sorted; /* true if list is already sorted */
+    int list[1];    /* actual list of successors */
+};
+
 struct graph {
     int n;              /* number of vertices */
     int m;              /* number of edges */
-    struct successors {
-        int d;          /* number of successors */
-        int len;        /* number of slots in array */
-        char is_sorted; /* true if list is already sorted */
-        int list[1];    /* actual list of successors */
-    } *alist[1];
+    struct successors *alist[1];
 };
 
 /* create a new graph with n vertices labeled 0..n-1 and no edges */
@@ -32,14 +34,14 @@ Graph graph_create(int n)
     Graph g;
     int i;
 
-    g = malloc(sizeof(struct graph) + sizeof(struct successors *) * (n-1));
+    g = (Graph) malloc(sizeof(struct graph) + sizeof(struct successors *) * (n-1));
     assert(g);
 
     g->n = n;
     g->m = 0;
 
     for(i = 0; i < n; i++) {
-        g->alist[i] = malloc(sizeof(struct successors));
+        g->alist[i] = (successors *)malloc(sizeof(struct successors));
         assert(g->alist[i]);
 
         g->alist[i]->d = 0;
@@ -70,7 +72,7 @@ void graph_add_edge(Graph g, int u, int v)
     /* do we need to grow the list? */
     while(g->alist[u]->d >= g->alist[u]->len) {
         g->alist[u]->len *= 2;
-        g->alist[u] =
+        g->alist[u] = (successors *)
             realloc(g->alist[u],
                 sizeof(struct successors) + sizeof(int) * (g->alist[u]->len - 1));
     }

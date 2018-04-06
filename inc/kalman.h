@@ -9,26 +9,27 @@
 /* Kalman filter for estimating position */
 
 // THIS NEEDS SOME MORE POLISHING ~DC
-void init();
+void Kalman_init();
 
 /**
  * update with new sensor values
  * send 8 distance sensors, 4 encoders, accx / accy / gyro,
  * attempted vx/vy/spin from control, address to write position
  **/
-void update(double *distances, double *encoders, double *imu, double *control, double *pos);
+void Kalman_update_given_sensors(double dt, double *encoders, double *distances, double gyro, double compass, double *control);
+void Kalman_update(double dt, double *control);
 
 // x position/velocity in mm with the corner of the maze 0
-double kalman_getX();
-double kalman_getVx();
+double Kalman_getX();
+double Kalman_getVx();
 
 // y position/velocity in mm with the corner of the maze 0
-double kalman_getY();
-double kalman_getVy();
+double Kalman_getY();
+double Kalman_getVy();
 
 // robot's current rotation/velocity (theta) in radians
-double kalman_getT();
-double kalman_getVt();
+double Kalman_getT();
+double Kalman_getVt();
 
 
 // temp for matrix test
