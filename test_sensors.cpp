@@ -1,4 +1,5 @@
 #include "sensors.h"
+
 extern "C" {
   #include <pigpiod_if2.h>
   #include <unistd.h>
@@ -44,6 +45,10 @@ void testCompass() {
   }
 }
 
+// void calibrateCompass() {
+//   return;
+// }
+
 int main(){
   pi = pigpio_start(NULL, NULL);
   printf("Error code: <%s>\n", pigpio_error(-2011));
@@ -62,6 +67,9 @@ int main(){
 
   printf("Testing compass:\n");
   testCompass();
+
+  printf("TURNING SENSORS OFF\n");
+  Sensor_free();
   
   return 0;
 }

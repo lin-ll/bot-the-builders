@@ -21,7 +21,7 @@ robot: maze.o graph.o motors.o kalman.o constants.o
 test_sensors: test_sensors.o sensors.o adafruit_distance.o constants.o VL53L0X.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
-test_motors: test_motors.o constants.o motors.o pid.o
+test_motors: test_motors.o constants.o motors.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 test_leds: test_leds.o leds.o constants.o

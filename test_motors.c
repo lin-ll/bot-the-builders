@@ -1,66 +1,49 @@
 #include <pigpiod_if2.h>
 #include <unistd.h>
-#include <stdio.h>
 #include "constants.h"
 #include "motors.h"
 
 const int FORWARD[4] = {UPPER_LEFT_FORWARD, UPPER_RIGHT_FORWARD, LOWER_LEFT_FORWARD, LOWER_RIGHT_FORWARD};
 const int BACKWARD[4] = {UPPER_LEFT_BACKWARD, UPPER_RIGHT_BACKWARD, LOWER_LEFT_BACKWARD, LOWER_RIGHT_BACKWARD};
+const int F = 0;
+const int R = 1;
+const int B = 2;
+const int L = 3;
 
 int pi = 0;
 
-void set_forward(int speed) {
+void set(int direction, int speed) {
 	int speeds[4] = {speed, speed, speed, speed};
-	for (int i = 0; i < 4; i++) {
-		Motor_adjust(FORWARD[i], BACKWARD[i], speeds[i]);
+	switch (direction) {
+		case B:
+			for (int i = 0; i < 4; i++) {
+				speeds[i] = -speed;
+			}
+			break;
+		case R:
+			speeds[1] = -speed;
+			speeds[2] = -speed;
+			break;
+		case L:
+			speeds[0] = -speed;
+			speeds[3] = -speed;
+			break;
 	}
-}
-
-void set_backward(int speed) {
-	int speeds[4] = {-speed, -speed, -speed, -speed};
-	for (int i = 0; i < 4; i++) {
-		Motor_adjust(FORWARD[i], BACKWARD[i], speeds[i]);
-	}
-}
-
-void set_right(int speed) {
-	int speeds[4] = {speed, -speed, -speed, speed};
-	for (int i = 0; i < 4; i++) {
-		Motor_adjust(FORWARD[i], BACKWARD[i], speeds[i]);
-	}
-}
-
-void set_left(int speed) {
-	int speeds[4] = {-speed, speed, speed, -speed};
-	for (int i = 0; i < 4; i++) {
-		Motor_adjust(FORWARD[i], BACKWARD[i], speeds[i]);
-	}
+	Motor_set(speeds);
 }
 
 int main(){
 	pi = pigpio_start(NULL, NULL);
+	Motor_init(pi);
 	int speed = 255;
 	int time = 2000000;
-	
-	set_forward(speed);
-	usleep(time);
-	Motor_off();
-	usleep(500000);
 
-	set_right(speed);
-	usleep(time);
-	Motor_off();
-	usleep(500000);
-
-	set_backward(speed);
-	usleep(time);
-	Motor_off();
-	usleep(500000);
-
-	set_left(speed);
-	usleep(time);
-	Motor_off();
-	usleep(500000);
+	for (int i = 0; i < 4; i++) {
+		set(i, speed);
+		usleep(time);
+		Motor_off();
+		usleep(500000);
+	}
 
 	return 0;
 }

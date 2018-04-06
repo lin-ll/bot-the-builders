@@ -21,7 +21,7 @@ heap_t *currentPath; // path currently being traversed
 static int distances[MAZE_SIZE][MAZE_SIZE] = {0}; // distances used in findShortestPath
 
 int Maze_isAtStart() {
-		return currRow == 0 && currCol == 0;
+	return currRow == 0 && currCol == 0;
 }
 
 void Maze_partialReset() {
@@ -40,10 +40,10 @@ int getColFromInt(int nodeRef) {
 	return col;
 }
 
-void Maze_clearPath {
-		while (!isEmpty(currentPath)) {
-				pop(currentPath);
-		}
+void Maze_clearPath() {
+	while (!isEmpty(currentPath)) {
+		pop(currentPath);
+	}
 }
 
 // Visualize the maze and parse it into a graph. Descritize each unit of maze
@@ -99,15 +99,12 @@ void add_edges (int upWall, int downWall, int leftWall, int rightWall, int nodeR
 
 // implements depth first search
 int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
-	if (currRow < 0 || currRow >= MAZE_SIZE) {
-		return -1; // invalid row
-	}
-	if (currCol < 0 || currCol >= MAZE_SIZE) {
-		return -1; // invalid col
+	if (currRow < 0 || currRow >= MAZE_SIZE || currCol < 0 || currCol >= MAZE_SIZE) {
+		return -1; // invalid row or col
 	}
 
 	if (traversed[currRow][currCol] == 0) {
-			traversed[currRow][currCol] = 1;
+		traversed[currRow][currCol] = 1;
 	}
 
 	int nodeRef = Maze_getIntFromCoordinates(currRow, currCol);

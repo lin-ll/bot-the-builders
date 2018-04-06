@@ -29,7 +29,7 @@ static VL53L0X long_dist_sensors[4];
 
 static int pi;
 static int orig_handle;
-static int tinyHandle;
+// static int tinyHandle;
 
 /* Local Functions */
 
@@ -46,9 +46,12 @@ static void initCompass() {
   compass_handle = i2c_open(pi, BUS, COMPASS_ADDR, 0);
   int ret = i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL1, 0x70);
   printf("ret is %d\n", ret);
-  i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL2, 0x00);
-  i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL3, 0x00);
-  i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL4, 0x0C);
+  ret = i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL2, 0x00);
+  printf("ret is %d\n", ret);
+  ret = i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL3, 0x00);
+  printf("ret is %d\n", ret);
+  ret = i2c_write_byte_data(pi, compass_handle, COMPASS_CTRL4, 0x0C);
+  printf("ret is %d\n", ret);
   printf("Compass handle: %d\n", compass_handle);
 }
 
@@ -223,20 +226,20 @@ void Sensor_free() {
   }
 }
 
-int Sensor_initTiny(int pi) {
-	tinyHandle = i2c_open(pi, 1, 0x4, 0);
-	printf("Tiny Handle: %d\n", tinyHandle);
-}
+// int Sensor_initTiny(int pi) {
+// 	tinyHandle = i2c_open(pi, 1, 0x4, 0);
+// 	printf("Tiny Handle: %d\n", tinyHandle);
+// }
 
-double Sensor_getEncoders() {
-	char data[17];
-	data[0] = 42;
-	data[17] = 43;
-	int ret = i2c_read_i2c_block_data(pi, tinyHandle, 1, data, 16);
-	printf("ret= %d\n", ret);
+// double Sensor_getEncoders() {
+// 	char data[17];
+// 	data[0] = 42;
+// 	data[17] = 43;
+// 	int ret = i2c_read_i2c_block_data(pi, tinyHandle, 1, data, 16);
+// 	printf("ret= %d\n", ret);
 
-	for(int i=0; i<17; i++) {
-		printf("Byte %d: %d", data[i]);
-	}
-	return 0;
-}
+// 	for(int i=0; i<17; i++) {
+// 		printf("Byte %d: %d", data[i]);
+// 	}
+// 	return 0;
+// }
