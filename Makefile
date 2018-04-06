@@ -15,7 +15,7 @@ clean:
 	rm -f *.o test_leds test_buttons test_sensors test_tiny test_matrix robot
 
 # Dependency rules for file targets
-robot: maze.o graph.o motors.o kalman.o constants.o
+robot: robot.o maze.o heap.o graph.o motors.o kalman.o constants.o matrixInverse.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
 test_sensors: test_sensors.o sensors.o adafruit_distance.o constants.o VL53L0X.o

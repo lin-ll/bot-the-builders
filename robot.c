@@ -2,6 +2,7 @@
 
 #include "inc/maze.h"
 #include "inc/controls2.h"
+#include "leds.h"
 #include <unistd.h>
 #include "inc/buttons.h"
 #include "inc/constants.h"
