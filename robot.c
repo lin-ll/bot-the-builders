@@ -66,7 +66,8 @@ int explore() {
 		// do controls thing
 		controls_finished = Control_update();
 		if (controls_finished) {
-			int *walls = Sensor_findWalls(walls);
+			int *walls;
+			Sensor_findWalls(walls);
 			int up_wall = walls[0];
 			int down_wall = walls[1];
 			int left_wall = walls[2];
