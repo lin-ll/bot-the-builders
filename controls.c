@@ -35,7 +35,7 @@ static int currDir;
 // matrix entry i,j is how much velocity j contributes to motor i
 // j: UL, UR, LL, LR
 // i: north, east, clockwise (should be counterclockwise?)
-double matrix = {
+double **matrix = {
 	{1, 1, 1, 1},
 	{1, -1, -1, 1},
 	{1, 1, -1, -1}};
@@ -74,7 +74,7 @@ int getForwardSpeed() {
 		Led_setColor(0, 0, MAX_COLOR); // Blue, means we're waiting for maze now
 		desiredSpeed = 0;
 	} else if (forwardDist <= SLOW_DIST) {
-		double speedFraction = MIN_SPEED_FRACTION + (1-MIN_SPEED_FRACTION) * (forwarDist / SLOW_DIST);
+		double speedFraction = MIN_SPEED_FRACTION + (1-MIN_SPEED_FRACTION) * (forwardDist / SLOW_DIST);
 		Led_setColor((int)(MAX_COLOR - MAX_COLOR * speedFraction), (int)(MAX_COLOR * speedFraction), 0); // transition green->red
 		desiredSpeed = speed * speedFraction;
 	}
@@ -101,7 +101,7 @@ double getRightSpeed(double dt) {
 	}
 
 	Pid_update(pidRight, error, dt);
-	double val = Pid_getVal(pidLeftRight);
+	double val = Pid_getVal(pidRight);
 	printf("Right error %.2f, PID says %.2f\n", error, val);
 	return val;
 }
@@ -131,7 +131,7 @@ void setMotors(double northSpeed, double eastSpeed, double thetaSpeed) {
 		// scale down all motors so largest is MOTOR_RANGE = 255
 		for (int i=0; i<4; i++) {
 			double motorSpeed = (double)MOTOR_RANGE/largest;
-			motors[i] = min(motor[i]*motorSpeed, MOTOR_RANGE);
+			motors[i] = min(motors[i]*motorSpeed, MOTOR_RANGE);
 		}
 	}
 
@@ -156,7 +156,7 @@ void Control_setDir(int dir) {
 	}
 }
 
-int Control_update() {
+int Control_update(double dt) {
 	double forward = getForwardSpeed();
 	if (forward == 0.0) {
 		// we're done with this destination
@@ -164,8 +164,8 @@ int Control_update() {
 		return 1;
 	}
 
-	double right = getRightSpeed();
-	double theta = getThetaSpeed();
+	double right = getRightSpeed(dt);
+	double theta = getThetaSpeed(dt);
 
 	switch (currDir) {
 		case NORTH:
