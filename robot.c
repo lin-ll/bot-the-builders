@@ -23,7 +23,7 @@ void solveMaze(int goal) {
 	clock_t prevTime = clock();
 	while (1) {
 		clock_t currentTime = clock();
-		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;
+		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC*4.454;
 		prevTime = currentTime;
 
 		// check buttons
@@ -68,7 +68,7 @@ int explore() {
 
 	Control_reset();
 	printf("Done control reset\n");
-	Maze_init();
+	//Maze_init();
 	Kalman_init();
 	printf("Done kalman init\n");
 
@@ -76,7 +76,7 @@ int explore() {
 	while (1) {
 		//printf("Top of while\n");
 		clock_t currentTime = clock();
-		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;
+		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC*4.454;
 		prevTime = currentTime;
 		// check buttons
 		int button_pressed = Button_update();

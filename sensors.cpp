@@ -157,7 +157,9 @@ double Sensor_getGyro() {
   g[1] = (int16_t)(buf[2] | buf[3] << 8); //y
   g[2] = (int16_t)(buf[4] | buf[5] << 8); //z
 
-  return -(g[2] * RPS_PER_DIGIT - gyroOffset)-.07;
+  double ret = -(g[2] * RPS_PER_DIGIT - gyroOffset)-.07;
+  printf("sensors reads gyro as %f\n", ret);
+  return ret;
 }
 
 /* Return direction. */

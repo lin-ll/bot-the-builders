@@ -43,11 +43,11 @@ double theta;
 double matrix[3][4] = {
 	{1, 1, 1, 1},
 	{1, -1, -1, 1},
-	{1, 1, -1, -1}};
+	{1, -1, 1, -1}};
 
 int Control_init() {
-	pidRight = Pid_init(3.0, 1.0, 0.0);
-	pidTheta = Pid_init(-260.0, 1.0, 0.0);
+	pidRight = Pid_init(.1, 1.0, 0.0);
+	pidTheta = Pid_init(5.0, 1.0, 0.0);
 	destX = START;
 	destY = START;
 	Pid_setPoint(pidRight, 0.0);
@@ -218,6 +218,7 @@ int Control_update(double dt) {
 
 	right = getRightSpeed(dt);
 	theta = getThetaSpeed(dt);
+
 
 	switch (currDir) {
 		case NORTH:
