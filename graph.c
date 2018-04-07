@@ -34,7 +34,7 @@ Graph graph_create(int n)
     Graph g;
     int i;
 
-    g = (Graph) malloc(sizeof(struct graph) + sizeof(struct successors *) * (n-1));
+    g = (Graph) malloc(sizeof(struct graph));
     assert(g);
 
     g->n = n;
@@ -56,9 +56,12 @@ Graph graph_create(int n)
 void graph_destroy(Graph g)
 {
     int i;
+    printf("Debug C");
 
     for(i = 0; i < g->n; i++) free(g->alist[i]);
+    printf("Debug D");
     free(g);
+    printf("Debug E");
 }
 
 /* add an edge to an existing graph */
