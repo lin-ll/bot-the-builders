@@ -36,6 +36,7 @@ Graph graph_create(int n)
     int i;
 
     printf("Before changed line\n");
+    printf("Size is %d\n", (sizeof(struct graph) + sizeof(struct successors *) * (n-1)));
     g = (Graph) malloc(sizeof(struct graph) + sizeof(struct successors *) * (n-1));
     printf("after changed line\n");
     assert(g);
