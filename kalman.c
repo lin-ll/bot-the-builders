@@ -259,8 +259,13 @@ void Kalman_update(double dt){
 	}
 
 	// TODO use gyro
-	double gyro = Sensor_getGyro();
+	double gyro;
+	for(int j = 0; j<3; j++)
+		gyro += Sensor_getGyro();
+		
+	gyro = gyro/3;
 	printf("\t\t\t\tgyro: %.4f", gyro);
+	
 	double compass = NAN;
 
 	double control[3];
