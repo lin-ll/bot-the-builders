@@ -11,6 +11,7 @@ void Control_setDir(int direction);
 // communicates with motors.c
 // returns whether robot is at destination
 int Control_update(double dt);
+int Control_update2();
 
 // Called by Kalman for control vector
 double Control_getForward();

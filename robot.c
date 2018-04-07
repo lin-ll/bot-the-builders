@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <pigpiod_if2.h>
 #include "kalman.h"
+#include <math.h>
 
 int main();
 
@@ -130,6 +131,56 @@ int explore() {
 	return 0;
 }
 
+int trash() {
+	printf("Entering trash\n");
+	// green button triggers explore
+	int button_pressed = -1;
+	while (button_pressed != BUTTON_GREEN) {
+		button_pressed = Button_update();
+	}
+	Led_setColor(0, MAX_COLOR, 0); //green
+
+	int dir = NORTH;
+
+	while (1) {
+		double sDist = Sensor_getShort(dir);
+		Control_update2();
+
+		if(!isnan(sDist) && sDist <= 90){
+			printf("We're there!\n");
+			// we're there!
+
+			double dist = Sensor_getLong(NORTH);
+			if(!isnan(dist) && dist > 180) {
+				dir = NORTH;
+				Control_setDir(dir);
+				continue;
+			}
+
+			dist = Sensor_getLong(EAST);
+			if(!isnan(dist) && dist > 180) {
+				dir = EAST;
+				Control_setDir(dir);
+				continue;
+			}
+
+			dist = Sensor_getLong(WEST);
+			if(!isnan(dist) && dist > 180) {
+				dir = WEST;
+				Control_setDir(dir);
+				continue;
+			}
+
+			dist = Sensor_getLong(SOUTH);
+			if(!isnan(dist) && dist > 180) {
+				dir = SOUTH;
+				Control_setDir(dir);
+				continue;
+			}
+		}
+	}
+}
+
 int main() {
 	// initialize everything
 	int pi = pigpio_start(NULL, NULL);
@@ -142,7 +193,9 @@ int main() {
 
 	Led_setColor(MAX_COLOR, MAX_COLOR, 0); //orange
 
-	int result = explore();
+	int result = trash();
+
+	// int result = explore();
 	Led_off();
 	if (result == -1) {
 		return -1;

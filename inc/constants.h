@@ -11,8 +11,8 @@
 
 #define NORTH 0
 #define SOUTH 1
-#define EAST 2
-#define WEST 3
+#define WEST 2
+#define EAST 3
 
 #define TRUE 1
 #define FALSE 0

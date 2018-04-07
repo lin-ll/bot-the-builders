@@ -208,6 +208,58 @@ void Control_setDir(int dir) {
 	}
 }
 
+double getError(double left, double right){
+	if(isnan(left)){
+		if(isnan(right)){
+			return 0;
+		} else {
+			return 90.0 - right;
+		}
+	} else {
+		if(isnan(right)){
+			return left - 90.0;
+		} else {
+			return ((90.0 - right)+(left - 90.0))/2;
+		}
+	}
+}
+
+int Control_update2() {
+
+	switch (currDir) {
+		case NORTH:
+			double left = Sensor_getShort(WEST);
+			double right = Sensor_getShort(EAST);
+
+			rightSpeed = getError(left, right);
+			setMotors(speed, rightSpeed, 0);
+			break;
+		case SOUTH:
+			double left = Sensor_getShort(EAST);
+			double right = Sensor_getShort(WEST);
+
+			rightSpeed = getError(left, right);
+			setMotors(-speed, -rightSpeed, 0);
+			break;
+		case EAST:
+			double left = Sensor_getShort(NORTH);
+			double right = Sensor_getShort(SOUTH);
+
+			rightSpeed = getError(left, right);
+			setMotors(-rightSpeed, speed, 0);
+			break;
+		case WEST:
+			double left = Sensor_getShort(SOUTH);
+			double right = Sensor_getShort(NORTH);
+
+			rightSpeed = getError(left, right);
+			setMotors(rightSpeed, -speed, 0);
+			break;
+	}
+
+	return 0;
+}
+
 int Control_update(double dt) {
 	forward = getForwardSpeed();
 	if (forward == 0.0) {
