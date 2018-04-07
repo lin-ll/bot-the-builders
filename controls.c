@@ -97,6 +97,28 @@ int getForwardSpeed() {
 	return desiredSpeed;
 }
 
+// primitive error correction as backup
+double getRight(double dt) {
+		// FRONT, BACK, LEFT, RIGHT for Sensor order
+		double error;
+		switch (currDir) {
+			case NORTH:
+				error = Sensor_getShort(3) - 90.0;
+				break;
+			case SOUTH:
+				error = Sensor_getShort(2) - 90.0;
+				break;
+			case EAST:
+				error = Sensor_getShort(1) - 90.0;
+				break;
+			case WEST:
+				error = Sensor_getShort(0) - 90.0;
+				break;
+		}
+
+		return error / dt;
+}
+
 double getRightSpeed(double dt) {
 	// positive error means right-hand-side of the line
 	double error;
