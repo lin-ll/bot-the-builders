@@ -13,6 +13,7 @@ void testShort() {
     double reading3 = Sensor_getShort(3);
 
     printf("%f\t%f\t%f\t%f\n", reading0, reading1, reading2, reading3);
+    usleep(500000);
   }
 }
 
@@ -24,6 +25,7 @@ void testLong() {
     double reading3 = Sensor_getLong(3);
 
     printf("%f\t%f\t%f\t%f\n", reading0, reading1, reading2, reading3);
+    usleep(500000);
   }
 }
 
@@ -37,10 +39,10 @@ int main(){
   printf("DONE SENSOR INIT\n");
 
   // printf("Testing short distance sensors:\n");
-  // testShort();
+  testShort();
 
   printf("Testing long distance sensors:\n");
-  testLong();
+  //testLong();
 
   return 0;
 }
