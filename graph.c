@@ -26,7 +26,10 @@ adjlist_node_p createNode(int v)
 graph_p createGraph(int n, graph_type_e type)
 {
     int i;
-    graph_p graph = (graph_p)malloc(sizeof(graph_t));
+    size_t blah = sizeof(graph_t);
+    printf("before create\n");
+    graph_p graph = (graph_p)malloc(blah);
+    printf("after create\n");
     if(!graph)
         err_exit("Unable to allocate memory for graph");
     graph->num_vertices = n;

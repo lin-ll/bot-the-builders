@@ -67,8 +67,8 @@ int explore() {
 	int controls_finished = 0;
 
 	Control_reset();
-	printf("Done control reset");
-	//Maze_init();
+	printf("Done control reset\n");
+	Maze_init();
 	Kalman_init();
 	printf("Done kalman init\n");
 
@@ -83,7 +83,7 @@ int explore() {
 		if (button_pressed == BUTTON_RED) {
 			Led_setColor(MAX_COLOR, 0, 0); // red
 			Motor_completeStop();
-			//Maze_reset();
+			Maze_reset();
 			usleep(300000);
 			return explore();
 		}

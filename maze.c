@@ -56,6 +56,7 @@ void Maze_clearPath() {
 // Visualize the maze and parse it into a graph. Descritize each unit of maze
 // into a vertex, and connect them with edges of unit length. Uses DFS.
 void Maze_init() {
+  printf("in maze init\n");
 	maze = createGraph(MAZE_AREA, UNDIRECTED);
 	// connect center squares
 	addEdge(maze, 119, 120);

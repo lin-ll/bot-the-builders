@@ -242,7 +242,10 @@ double combine_vt(double encoder, double control, double gyro){
 
 
 void Kalman_update(double dt, clock_t currentTime){
-	printf("dt is %f\n", dt);
+	static double total_time = 0;
+	total_time += dt;
+	printf("dt is %f, total is %f\n", dt, total_time);
+
 	// TODO :(
 	double encoders[4];
 	for(int i=0; i<3; i++){

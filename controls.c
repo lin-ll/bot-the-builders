@@ -56,10 +56,14 @@ int Control_init() {
 }
 
 int Control_reset() {
+	printf("control reset at top\n");
 	Pid_reset(pidRight);
 	Pid_reset(pidTheta);
+	printf("control reset in middle\n");
 	Pid_setPoint(pidRight, 0.0);
 	Pid_setPoint(pidTheta, 0.0);
+	printf("control reset at end\n");
+
 	return 0;
 }
 
