@@ -12,7 +12,7 @@ static int desiredSpeeds[4];
 static int pi;
 
 //const double MOTOR_CORRECTION[4] = {1,1,1,1};
-const double MOTOR_CORRECTION[4] = {0.60, 1.0, 1.0, .85};
+const double MOTOR_CORRECTION[4] = {0.85, 1.0, 1.0, 0.7};
 
 int Motor_init(int pifd) {
   pi = pifd;

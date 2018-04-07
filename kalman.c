@@ -439,9 +439,10 @@ int Kalman_update_given_sensors(double dt, double *encoders, double *distances, 
 	print();
 	printf("\n");
 
-	printf("distances[dir] = %f\n", distances[dir]);
+	printf("distances[%d] = %f\n", dir, distances[dir]);
 
 	if(!isnan(distances[dir]) && distances[dir] <= 90){
+		printf("We'rethere!i\n");
 		// we're there!
 		if(!isnan(distances[0]) && distances[0] > 180) {
 			return 0;
@@ -452,6 +453,7 @@ int Kalman_update_given_sensors(double dt, double *encoders, double *distances, 
 		} else if(!isnan(distances[1]) && distances[1] > 180) {
 			return 1;
 		} else {
+			printf("Didn't find anywhere to go\n");
 			return -1;
 		}
 	}
