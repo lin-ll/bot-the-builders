@@ -9,7 +9,7 @@
 
 //TODO: create heap_destroy method?
 
-static Graph maze; // graph recording walls and such
+static graph_p maze; // graph recording walls and such
 static int traversed[MAZE_SIZE][MAZE_SIZE] = {0}; // record of traversed squares
 #define MAZE_AREA (MAZE_SIZE * MAZE_SIZE) // size of maze
 static int currPriority = MAZE_AREA + 1;
@@ -56,12 +56,12 @@ void Maze_clearPath() {
 // Visualize the maze and parse it into a graph. Descritize each unit of maze
 // into a vertex, and connect them with edges of unit length. Uses DFS.
 void Maze_init() {
-	maze = graph_create(MAZE_AREA);
+	maze = createGraph(MAZE_AREA, UNDIRECTED);
 	// connect center squares
-	graph_add_edge(maze, 119, 120);
-	graph_add_edge(maze, 119, 135);
-	graph_add_edge(maze, 120, 136);
-	graph_add_edge(maze, 135, 136);
+	addEdge(maze, 119, 120);
+	addEdge(maze, 119, 135);
+	addEdge(maze, 120, 136);
+	addEdge(maze, 135, 136);
 	currRow = 0;
 	currCol = 0;
 	stepTrace = heap_init();
@@ -76,31 +76,31 @@ void Maze_reset() {
 			traversed[i][j] = 0;
 		}
 	}
-	graph_destroy(maze);
+	destroyGraph(maze);
 }
 
 void add_edges (int upWall, int downWall, int leftWall, int rightWall, int nodeRef) {
 	if (currCol != 0 && leftWall == 0) {
-		if (!graph_has_edge(maze, nodeRef, nodeRef - 1)) {
-			graph_add_edge(maze, nodeRef, nodeRef - 1);
+		if (!hasEdge(maze, nodeRef, nodeRef - 1)) {
+			addEdge(maze, nodeRef, nodeRef - 1);
 		}
 	}
 	// right
 	if (currCol != MAZE_SIZE - 1 && rightWall == 0) {
-		if (!graph_has_edge(maze, nodeRef, nodeRef + 1)) {
-			graph_add_edge(maze, nodeRef, nodeRef + 1);
+		if (!hasEdge(maze, nodeRef, nodeRef + 1)) {
+			addEdge(maze, nodeRef, nodeRef + 1);
 		}
 	}
 	// up
 	if (currRow != 0 && upWall == 0) {
-		if (!graph_has_edge(maze, nodeRef, nodeRef - MAZE_SIZE)) {
-			graph_add_edge(maze, nodeRef, nodeRef - MAZE_SIZE);
+		if (!hasEdge(maze, nodeRef, nodeRef - MAZE_SIZE)) {
+			addEdge(maze, nodeRef, nodeRef - MAZE_SIZE);
 		}
 	}
 	// down
 	if (currRow != MAZE_SIZE - 1 && downWall == 0) {
-		if (!graph_has_edge(maze, nodeRef, nodeRef + MAZE_SIZE)) {
-				graph_add_edge(maze, nodeRef, nodeRef + MAZE_SIZE);
+		if (!hasEdge(maze, nodeRef, nodeRef + MAZE_SIZE)) {
+				addEdge(maze, nodeRef, nodeRef + MAZE_SIZE);
 		}
 	}
 }
@@ -121,7 +121,7 @@ int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 	add_edges(upWall, downWall, leftWall, rightWall, nodeRef);
 
 	// left
-	if (currCol != 0 && graph_has_edge(maze, nodeRef, nodeRef - 1)) {
+	if (currCol != 0 && hasEdge(maze, nodeRef, nodeRef - 1)) {
 		if (traversed[currRow][currCol - 1] == 0) {
 			currCol--;
 			push(stepTrace, currPriority, nodeRef);
@@ -129,7 +129,7 @@ int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 		}
 	}
 	// right
-	if (currCol != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + 1)) {
+	if (currCol != MAZE_SIZE - 1 && hasEdge(maze, nodeRef, nodeRef + 1)) {
 		if (traversed[currRow][currCol + 1] == 0) {
 			currCol++;
 			push(stepTrace, currPriority, nodeRef);
@@ -137,7 +137,7 @@ int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 		}
 	}
 	// up
-	if (currRow != 0 && graph_has_edge(maze, nodeRef, nodeRef - MAZE_SIZE)) {
+	if (currRow != 0 && hasEdge(maze, nodeRef, nodeRef - MAZE_SIZE)) {
 		if (traversed[currRow - 1][currCol] == 0) {
 			currRow--;
 			push(stepTrace, currPriority, nodeRef);
@@ -145,7 +145,7 @@ int Maze_dfs(int upWall, int downWall, int leftWall, int rightWall) {
 		}
 	}
 	// down
-	if (currRow != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + MAZE_SIZE)) {
+	if (currRow != MAZE_SIZE - 1 && hasEdge(maze, nodeRef, nodeRef + MAZE_SIZE)) {
 		if (traversed[currRow + 1][currCol] == 0) {
 			currRow++;
 			push(stepTrace, currPriority, nodeRef);
@@ -180,7 +180,7 @@ int Maze_isExplored() {
 
 // Find the shortest path given the graph representaion of the maze. Use
 // Dijkstra's algorithm.
-void findShortestPath(Graph g, int start, int finish) {
+void findShortestPath(graph_p g, int start, int finish) {
 	for (int i = 0; i < MAZE_SIZE; i++) {
 		for (int j = 0; j < MAZE_SIZE; j++) {
 			distances[i][j] = 10000;
@@ -200,28 +200,28 @@ void findShortestPath(Graph g, int start, int finish) {
 	while (nodeRef != finish) {
 
 		// left
-		if (col != 0 && graph_has_edge(maze, nodeRef, nodeRef - 1) == 0) {
+		if (col != 0 && hasEdge(maze, nodeRef, nodeRef - 1) == 0) {
 			if (distances[row][col - 1] > distances[row][col] + 1) {
 				distances[row][col - 1] = distances[row][col] + 1;
 				push(unvisited, distances[row][col - 1], nodeRef - 1);
 			}
 		}
 		// right
-		if (col != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + 1) == 0) {
+		if (col != MAZE_SIZE - 1 && hasEdge(maze, nodeRef, nodeRef + 1) == 0) {
 			if (distances[row][col + 1] > distances[row][col] + 1) {
 				distances[row][col + 1] = distances[row][col] + 1;
 				push(unvisited, distances[row][col + 1], nodeRef + 1);
 			}
 		}
 		// up
-		if (row != 0 && graph_has_edge(maze, nodeRef, nodeRef - MAZE_SIZE) == 0) {
+		if (row != 0 && hasEdge(maze, nodeRef, nodeRef - MAZE_SIZE) == 0) {
 			if (distances[row - 1][col] > distances[row][col] + 1) {
 				distances[row - 1][col] = distances[row][col] + 1;
 				push(unvisited, distances[row - 1][col], nodeRef - MAZE_SIZE);
 			}
 		}
 		// down
-		if (row != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + MAZE_SIZE) == 0) {
+		if (row != MAZE_SIZE - 1 && hasEdge(maze, nodeRef, nodeRef + MAZE_SIZE) == 0) {
 			if (distances[row + 1][col] > distances[row][col] + 1) {
 				distances[row + 1][col] = distances[row][col] + 1;
 				push(unvisited, distances[row + 1][col], nodeRef + MAZE_SIZE);
@@ -247,7 +247,7 @@ void getShortestPath(int **d, int finish) {
 		col = getColFromInt(nodeRef);
 
 		// left
-		if (col != 0 && graph_has_edge(maze, nodeRef, nodeRef - 1) == 0) {
+		if (col != 0 && hasEdge(maze, nodeRef, nodeRef - 1) == 0) {
 			if (d[row][col - 1] < d[row][col]) {
 				push(path, d[row][col - 1], nodeRef - 1);
 				currDistance = d[row][col - 1];
@@ -257,7 +257,7 @@ void getShortestPath(int **d, int finish) {
 		}
 
 		// right
-		if (col != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + 1) == 0) {
+		if (col != MAZE_SIZE - 1 && hasEdge(maze, nodeRef, nodeRef + 1) == 0) {
 			if (d[row][col + 1] < d[row][col]) {
 				push(path, d[row][col + 1], nodeRef + 1);
 				currDistance = d[row][col + 1];
@@ -267,7 +267,7 @@ void getShortestPath(int **d, int finish) {
 		}
 
 		// up
-		if (row != 0 && graph_has_edge(maze, nodeRef, nodeRef - MAZE_SIZE) == 0) {
+		if (row != 0 && hasEdge(maze, nodeRef, nodeRef - MAZE_SIZE) == 0) {
 			if (d[row - 1][col] < d[row][col]) {
 				push(path, d[row - 1][col], nodeRef - MAZE_SIZE);
 				currDistance = d[row - 1][col];
@@ -277,7 +277,7 @@ void getShortestPath(int **d, int finish) {
 		}
 
 		// down
-		if (row != MAZE_SIZE - 1 && graph_has_edge(maze, nodeRef, nodeRef + MAZE_SIZE) == 0) {
+		if (row != MAZE_SIZE - 1 && hasEdge(maze, nodeRef, nodeRef + MAZE_SIZE) == 0) {
 			if (d[row + 1][col] < d[row][col]) {
 				push(path, d[row + 1][col], nodeRef + MAZE_SIZE);
 				currDistance = d[row + 1][col];
@@ -322,4 +322,3 @@ int Maze_followPath() {
 
 	return -1;
 }
-

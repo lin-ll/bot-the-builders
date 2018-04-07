@@ -1,42 +1,49 @@
-/*----------------------------------------------------------------------------*/
-/* Taken from Yale CS.                                                        */
-/* http://www.cs.yale.edu/homes/aspnes/pinewiki/C(2f)Graphs.html              */
-/* Improved by Daniel Chae 													  */
-/*----------------------------------------------------------------------------*/
-/* basic directed graph type   */
+/*graph.h*/
+#ifndef _GRAPH_H_
+#define _GRAPH_H_
 
-#ifndef GRAPH_INCLUDED
-#define GRAPH_INCLUDED
+typedef enum {UNDIRECTED=0,DIRECTED} graph_type_e;
 
-/* when we are willing to call bsearch */
-#define BSEARCH_THRESHOLD (10)
+/* Adjacency list node*/
+typedef struct adjlist_node
+{
+    int vertex;                /*Index to adjacency list array*/
+    struct adjlist_node *next; /*Pointer to the next node*/
+}adjlist_node_t, *adjlist_node_p;
 
-typedef struct graph *Graph;
+/* Adjacency list */
+typedef struct adjlist
+{
+    int num_members;           /*number of members in the list (for future use)*/
+    adjlist_node_t *head;      /*head of the adjacency linked list*/
+}adjlist_t, *adjlist_p;
 
-/* create a new graph with n vertices labeled 0..n-1 and no edges */
-Graph graph_create(int n);
+/* Graph structure. A graph is an array of adjacency lists.
+   Size of array will be number of vertices in graph*/
+typedef struct graph
+{
+    graph_type_e type;        /*Directed or undirected graph */
+    int num_vertices;         /*Number of vertices*/
+    adjlist_p adjListArr;     /*Adjacency lists' array*/
+}graph_t, *graph_p;
 
-/* free all space used by graph */
-void graph_destroy(Graph);
+/* Exit function to handle fatal errors*/
+__inline void err_exit(char* msg)
+{
+    printf("[Fatal Error]: %s \nExiting...\n", msg);
+    exit(1);
+}
 
-/* add an edge to an existing graph */
-/* doing this more than once may have unpredictable results */
-void graph_add_edge(Graph, int source, int sink);
+/* Function to create a graph with n vertices; Creates both directed and undirected graphs*/
+graph_p createGraph(int n, graph_type_e type);
 
-/* return the number of vertices/edges in the graph */
-int graph_vertex_count(Graph);
-int graph_edge_count(Graph);
+/*Destroys the graph*/
+void destroyGraph(graph_p graph);
 
-/* return the out-degree of a vertex */
-int graph_out_degree(Graph, int source);
+/* Adds an edge to a graph*/
+void addEdge(graph_t *graph, int src, int dest);
 
-/* return 1 if edge (source, sink) exists), 0 otherwise */
-int graph_has_edge(Graph, int source, int sink);
+/* Returns 1 if edge exists, 0 otherwise */
+int hasEdge(graph_t *graph, int src, int dest);
 
-/* invoke f on all edges (u,v) with source u */
-/* supplying data as final parameter to f */
-/* no particular order is guaranteed */
-void graph_foreach(Graph g, int source,
-        void (*f)(Graph g, int source, int sink, void *data),
-        void *data);
 #endif
