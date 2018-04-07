@@ -27,13 +27,6 @@ typedef struct graph
     adjlist_p adjListArr;     /*Adjacency lists' array*/
 }graph_t, *graph_p;
 
-/* Exit function to handle fatal errors*/
-__inline void err_exit(char* msg)
-{
-    printf("[Fatal Error]: %s \nExiting...\n", msg);
-    exit(1);
-}
-
 /* Function to create a graph with n vertices; Creates both directed and undirected graphs*/
 graph_p createGraph(int n, graph_type_e type);
 

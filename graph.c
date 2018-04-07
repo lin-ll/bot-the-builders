@@ -1,9 +1,14 @@
 /*graph.c*/
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "graph.h"
 
+/* Exit function to handle fatal errors*/
+__inline void err_exit(char* msg)
+{
+  printf("[Fatal Error]: %s \nExiting...\n", msg);
+  exit(1);
+}
 /* Function to create an adjacency list node*/
 adjlist_node_p createNode(int v)
 {
