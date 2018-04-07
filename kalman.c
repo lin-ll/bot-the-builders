@@ -244,7 +244,7 @@ double combine_vt(double encoder, double control, double gyro){
 int Kalman_update(double dt, clock_t currentTime, int dir){
 	static double total_time = 0;
 	total_time += dt;
-	printf("dt is %f, total is %f\n", dt, total_time, int dir);
+	printf("dt is %f, total is %f\n", dt, total_time);
 
 	// TODO :(
 	double encoders[4];
@@ -439,15 +439,17 @@ int Kalman_update_given_sensors(double dt, double *encoders, double *distances, 
 	print();
 	printf("\n");
 
-	if(!isnan(distances[dir]) && distances[dir] <= 9){
+	printf("distances[dir] = %f\n", distances[dir]);
+
+	if(!isnan(distances[dir]) && distances[dir] <= 90){
 		// we're there!
-		if(!isnan(distances[0]) && distances[0] > 18) {
+		if(!isnan(distances[0]) && distances[0] > 180) {
 			return 0;
-		} else if(!isnan(distances[3]) && distances[3] > 18) {
+		} else if(!isnan(distances[3]) && distances[3] > 180) {
 			return 3;
-		} else if(!isnan(distances[2]) && distances[2] > 18) {
+		} else if(!isnan(distances[2]) && distances[2] > 180) {
 			return 2;
-		} else if(!isnan(distances[1]) && distances[1] > 18) {
+		} else if(!isnan(distances[1]) && distances[1] > 180) {
 			return 1;
 		} else {
 			return -1;

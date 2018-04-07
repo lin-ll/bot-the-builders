@@ -18,6 +18,7 @@ clock_t prevTime;
 int dir = 0;
 
 void solveMaze(int goal) {
+	/*
 	Maze_assignPath(goal);
 
 	int controls_finished = 0;
@@ -54,6 +55,7 @@ void solveMaze(int goal) {
 
 		Kalman_update(dt, currentTime);
 	}
+	*/
 }
 
 int explore() {
@@ -91,14 +93,12 @@ int explore() {
 		}
 
 		clock_t diff = clock() - currentTime;
-		printf("A %d\n", diff);
 
 		//printf("Debug A\n");
 		// do controls thing
 		controls_finished = Control_update(dt);
 
 		diff = clock() - currentTime;
-		printf("B %d\n", diff);
 		if (controls_finished) {
 
 			//printf("Debug B\n");
@@ -121,7 +121,6 @@ int explore() {
 		}
 
 		diff = clock() - currentTime;
-		printf("C %d\n", diff);
 		//printf("Debug C\n");
 
 		int newDir = Kalman_update(dt, currentTime, dir);
@@ -129,10 +128,10 @@ int explore() {
 			Motor_completeStop();
 			Control_setDir(newDir);
 			Kalman_init(); // set us to 9,9
+			dir = newDir;
 		}
 
 		diff = clock() - currentTime;
-		printf("D %d\n", diff);
 	}
 	return 0;
 }

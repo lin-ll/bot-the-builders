@@ -1,4 +1,3 @@
-/*----------------------------------------------------------------------------*/
 /* CONTROLS receives a direction from maze and sets motor desired values                 */
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
@@ -97,9 +96,8 @@ int getForwardSpeed() {
 	}
 
 	// Don't stop!
-	double speedFraction = MIN_SPEED_FRACTION + (1-MIN_SPEED_FRACTION) * (forwardDist / SLOW_DIST);
-	Led_setColor((int)(MAX_COLOR - MAX_COLOR * speedFraction), (int)(MAX_COLOR * speedFraction), 0); // transition green->red
-	desiredSpeed = speed * speedFraction;
+	//Led_setColor((int)(MAX_COLOR - MAX_COLOR * speedFraction), (int)(MAX_COLOR * speedFraction), 0); // transition green->red
+	int desiredSpeed = speed;
 	Led_setColor(MAX_COLOR, MAX_COLOR, 0); // Yellow
 	return desiredSpeed;
 }
