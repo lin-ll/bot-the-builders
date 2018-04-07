@@ -1,11 +1,13 @@
 # Macros
-CC = g++
+CC = g++ -std=c++11
 IDIR = ./inc
-CFLAGS = -I$(IDIR) -Wall -pthread -lrt -lm -lpigpiod_if2 -std=c++11
+CFLAGS = -I$(IDIR) -Wall -pthread -lrt -lm -lpigpiod_if2 
 
 # Pattern rule
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
+adafruit_distance.o: adafruit_distance.c
+	gcc $(CFLAGS) -c $<
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $<
 
@@ -45,3 +47,4 @@ maze: maze.o graph.o heap.o
 #motors.o: motors.h
 #sensors.o: sensors.h
 #graph.o: graph.h
+

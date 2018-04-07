@@ -21,7 +21,7 @@ void solveMaze(int goal) {
 	int controls_finished = 0;
 
 	clock_t prevTime = clock();
-	while (true) {
+	while (1) {
 		clock_t currentTime = clock();
 		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;
 		prevTime = currentTime;
@@ -60,7 +60,7 @@ int explore() {
 	int controls_finished = 0;
 
 	clock_t prevTime = clock();
-	while (true) {
+	while (1) {
 		printf("Top of while\n");
 		clock_t currentTime = clock();
 		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;

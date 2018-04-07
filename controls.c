@@ -9,6 +9,7 @@
 #include "leds.h"
 #include "constants.h"
 #include "pid.h"
+#include "sensors.h"
 
 // WRITING UNDER THE ASSUMED FRAMEWORK:
 /*
