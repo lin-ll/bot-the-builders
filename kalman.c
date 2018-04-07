@@ -79,6 +79,12 @@ void print() {
 	printf("%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t", x, y, t, vx, vy, vt);
 }
 
+void print_vec(double *vec, int len){
+	for(int i=0; i<len; i++){
+		printf("%.1f\t", vec[i]);
+	}
+	printf("\n");
+}
 
 void print_distances(double *distances) {
 	for(int i=0; i<8; i++){
@@ -278,7 +284,9 @@ void Kalman_update(double dt){
  **/
 void Kalman_update_given_sensors(double dt, double *encoders, double *distances, double gyro, double compass, double *control){
 
+	printf("Distances, Controls\n");
 	print_distances(distances);
+	print_vec(control, 3);
 
 	printf("Top of update\n");
 	print();
@@ -320,6 +328,8 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 
 	double dist_x,dist_y; // measured x and y location
 	interpret_distance(distances, &dist_x, &dist_y);
+
+	printf("Interpreted x,y: %.1f, %.1f\n", dist_x, dist_y);
 
 
 	// TODO redo this if we fix encoders
@@ -379,6 +389,12 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 
 
 
+	printf("z and x_hat\n");
+	print_vec(z, 6);
+	print_vec(x_hat, 6);
+
+
+
 	/* TODO: read the comment above. Create an R matrix for sensor noise covariances, and do the
 	   actual kalman update step, equations 18 and 19 here
 	   http://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/(but H=I so it's easy)
@@ -403,4 +419,5 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 
 	printf("Bottom of update\n");
 	print();
+	printf("\n");
 }
