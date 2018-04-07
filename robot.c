@@ -55,6 +55,7 @@ void solveMaze(int goal) {
 }
 
 int explore() {
+	printf("Entering explore\n");
 	// green button triggers explore
 	int button_pressed = -1;
 	while (button_pressed != BUTTON_GREEN) {
@@ -66,8 +67,10 @@ int explore() {
 	int controls_finished = 0;
 
 	Control_init();
+	printf("Done control init");
 	//Maze_init();
 	Kalman_init();
+	printf("Done kalman init\n");
 
 	clock_t prevTime = clock();
 	while (1) {
@@ -82,9 +85,7 @@ int explore() {
 			Motor_completeStop();
 			//Maze_reset();
 			usleep(300000);
-			Led_off();
-			explore();
-			return -1;
+			return explore();
 		}
 
 		clock_t diff = clock() - currentTime;

@@ -46,12 +46,17 @@ double matrix[3][4] = {
 	{1, 1, -1, -1}};
 
 int Control_init() {
+	printf("control init A\n");
 	pidRight = Pid_init(3.0, 1.0, 0.0);
+	printf("control init B\n");
 	pidTheta = Pid_init(-260.0, 1.0, 0.0);
+	printf("control init C\n");
 	destX = START;
 	destY = START;
 	Pid_setPoint(pidRight, 0.0);
+	printf("control init D\n");
 	Pid_setPoint(pidTheta, 0.0);
+	printf("control init E\n");
 	return 0;
 }
 
