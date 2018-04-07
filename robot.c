@@ -111,7 +111,7 @@ int explore() {
 		printf("C %d\n", diff);
 		//printf("Debug C\n");
 
-		Kalman_update(dt);
+		Kalman_update(dt, currentTime);
 
 		diff = clock() - currentTime;
 		printf("D %d\n", diff);

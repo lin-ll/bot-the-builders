@@ -242,7 +242,7 @@ double combine_vt(double encoder, double control, double gyro){
 
 
 
-void Kalman_update(double dt){
+void Kalman_update(double dt, clock_t currentTime){
 
 	// TODO :(
 	double encoders[4];
@@ -267,6 +267,9 @@ void Kalman_update(double dt){
 	control[0] = Control_getForward();
 	control[1] = Control_getRight();
 	control[2] = Control_getTheta();
+
+	clock_t diff = clock() - currentTime;
+	printf("E %d\n", diff);
 
 	Kalman_update_given_sensors(dt, encoders, distances, gyro, compass, control);
 
