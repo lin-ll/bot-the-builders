@@ -25,7 +25,7 @@ double tempVec[NUM];
 
 /* In each step, how much uncertainty is there in our prediction? */
 /* I really really am unsure of these values; if it fails miserably try dividing them by 10 ?? */
-double Q_diag[NUM] = {1.0, 1.0, 0.0081, 4.0, 4.0, .0289};
+double Q_diag[NUM] = {25.0, 25.0, 0.0081, 9.0, 9.0, .0289};
 
 // initialize F with identity, other entries will be changed in update
 double F[NUM*NUM] =
@@ -367,7 +367,7 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 			z[3] = x_hat[3];
 			R[NUM*3+3] = 110889;
 	} else {
-			z[2] = vx_estimate;
+			z[3] = vx_estimate;
 			R[NUM*3+3] = 10.0;
 	}
 
