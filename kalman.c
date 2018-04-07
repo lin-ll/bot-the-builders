@@ -4,6 +4,7 @@
 #include <time.h>
 #include "sensors.h"
 #include <stdio.h>
+#include "controls.h"
 
 /* Naming conventions and general info from here:
    http://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/   */
@@ -78,6 +79,12 @@ void print() {
 	printf("%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t", x, y, t, vx, vy, vt);
 }
 
+void print_vec(double *vec, int len){
+	for(int i=0; i<len; i++){
+		printf("%.1f\t", vec[i]);
+	}
+	printf("\n");
+}
 
 void print_distances(double *distances) {
 	for(int i=0; i<8; i++){
@@ -217,15 +224,25 @@ double interpret_encoders(double *encoders, double *vx, double *vy, double *vt){
 	return encoders[0]-encoders[1]+encoders[2]-encoders[3];
 }
 
-double combine_vt(double encoder, double gyro){
+double combine_vx(double encoder, double control){
 	// TODO do better than this if we fix encoders
-	return gyro;
+	return control;
+}
+
+double combine_vy(double encoder, double control){
+	// TODO do better than this if we fix encoders
+	return control;
+}
+
+double combine_vt(double encoder, double control, double gyro){
+	// TODO do better than this if we fix encoders
+	return .5*control + .5*gyro;
 }
 
 
 
 
-void Kalman_update(double dt, double *control){
+void Kalman_update(double dt){
 
 	// TODO :(
 	double encoders[4];
@@ -245,6 +262,11 @@ void Kalman_update(double dt, double *control){
 	double gyro = 0*Sensor_getGyro();
 	double compass = NAN;
 
+	control[3];
+	control[0] = Control_getForward();
+	control[1] = Control_getRight();
+	control[2] = Control_getTheta();
+
 	Kalman_update_given_sensors(dt, encoders, distances, gyro, compass, control);
 
 }
@@ -262,10 +284,15 @@ void Kalman_update(double dt, double *control){
  **/
 void Kalman_update_given_sensors(double dt, double *encoders, double *distances, double gyro, double compass, double *control){
 
+	printf("Distances, Controls\n");
 	print_distances(distances);
+	print_vec(control, 3);
 
 	printf("Top of update\n");
 	print();
+
+
+
 	/* First, the predict step. Without sensors, what do we guess the new x is?
 	   We write a matrix that will take old x to new x */
 	F[3] = dt; // x += vx*dt
@@ -302,6 +329,8 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 	double dist_x,dist_y; // measured x and y location
 	interpret_distance(distances, &dist_x, &dist_y);
 
+	printf("Interpreted x,y: %.1f, %.1f\n", dist_x, dist_y);
+
 
 	// TODO redo this if we fix encoders
 	//double encoder_vx, encoder_vy, encoder_vt;
@@ -310,8 +339,9 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 	double encoder_vy = NAN;
 	double encoder_vt = NAN;
 
-
-	double vt_estimate = combine_vt(encoder_vt, gyro);
+	double vx_estimate = combine_vx(encoder_vx, control[0]);
+	double vy_estimate = combine_vy(encoder_vy, control[1]);
+	double vt_estimate = combine_vt(encoder_vt, control[2], gyro);
 
 
 
@@ -333,19 +363,19 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 
 	z[2] = 0; // TODO compass
 
-	if (isnan(encoder_vx)) {
+	if (isnan(vx_estimate)) {
 			z[3] = x_hat[3];
 			R[NUM*3+3] = 110889;
 	} else {
-			z[2] = encoder_vx;
+			z[2] = vx_estimate;
 			R[NUM*3+3] = 10.0;
 	}
 
-	if (isnan(encoder_vy)) {
+	if (isnan(vy_estimate)) {
 			z[4] = x_hat[4];
 			R[NUM*4+4] = 110889;
 	} else {
-			z[4] = encoder_vy;
+			z[4] = vy_estimate;
 			R[NUM*3+3] = 10.0;
 	}
 
@@ -356,6 +386,12 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 			z[5] = vt_estimate;
 			R[NUM*5+5] = 0.01;
 	}
+
+
+
+	printf("z and x_hat\n");
+	print_vec(z, 6);
+	print_vec(x_hat, 6);
 
 
 
@@ -383,4 +419,5 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 
 	printf("Bottom of update\n");
 	print();
+	printf("\n");
 }

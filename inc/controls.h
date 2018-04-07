@@ -11,4 +11,9 @@ void Control_setDir(int direction);
 // returns whether robot is at destination
 int Control_update(double dt);
 
+// Called by Kalman for control vector
+double Control_getForward();
+double Control_getRight();
+double Control_getTheta();
+
 #endif
