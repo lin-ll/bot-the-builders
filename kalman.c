@@ -242,7 +242,7 @@ double combine_vt(double encoder, double control, double gyro){
 
 
 void Kalman_update(double dt, clock_t currentTime){
-
+	printf("dt is %f\n", dt);
 	// TODO :(
 	double encoders[4];
 	for(int i=0; i<3; i++){
@@ -317,6 +317,11 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 	F[8] = -dt * x[3]; // y -= t*(dt*vx)
 
 	mat_vec_mult(F, x, x_hat);
+
+	printf("x and x_hat\n");
+	print_vec(x, 6);
+	print_vec(x_hat, 6);
+
 	mat_mult(F, P, temp);
 	mat_mult_btrans(temp, F, P_hat); // P_hat = F*P*transpost(F)
 
