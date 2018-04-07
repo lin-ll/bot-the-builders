@@ -77,9 +77,15 @@ int explore() {
 			return -1;
 		}
 
+		clock_t diff = clock() - currentTime;
+		printf("A %d\n", diff);
+
 		//printf("Debug A\n");
 		// do controls thing
 		controls_finished = Control_update(dt);
+
+		clock_t diff = clock() - currentTime;
+		printf("B %d\n", diff);
 		if (controls_finished) {
 
 			//printf("Debug B\n");
@@ -100,9 +106,15 @@ int explore() {
 			*/
 			Control_setDir(0);
 		}
+
+		clock_t diff = clock() - currentTime;
+		printf("C %d\n", diff);
 		//printf("Debug C\n");
 
 		Kalman_update(dt);
+
+		clock_t diff = clock() - currentTime;
+		printf("D %d\n", diff);
 	}
 	return 0;
 }
