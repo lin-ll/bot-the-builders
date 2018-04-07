@@ -7,6 +7,7 @@
 #include "motors.h"
 #include "kalman.h"
 #include "leds.h"
+#include <math.h>
 #include "constants.h"
 #include "pid.h"
 #include "sensors.h"
@@ -24,7 +25,7 @@ const int START = SQUARE_SIZE / 2;
 static PID_T pidRight;
 static PID_T pidTheta;
 
-static int speed = MOTOR_RANGE / 4; // TODO dynamically change this?
+static int speed = MOTOR_RANGE / 2; // TODO dynamically change this?
 static double destX;
 static double destY;
 static int currDir;
@@ -225,32 +226,34 @@ double getError(double left, double right){
 }
 
 int Control_update2() {
-
+	double left;
+	double right;
+	double rightSpeed;
 	switch (currDir) {
 		case NORTH:
-			double left = Sensor_getShort(WEST);
-			double right = Sensor_getShort(EAST);
+			left = Sensor_getShort(WEST);
+			right = Sensor_getShort(EAST);
 
 			rightSpeed = getError(left, right);
 			setMotors(speed, rightSpeed, 0);
 			break;
 		case SOUTH:
-			double left = Sensor_getShort(EAST);
-			double right = Sensor_getShort(WEST);
+			left = Sensor_getShort(EAST);
+			right = Sensor_getShort(WEST);
 
 			rightSpeed = getError(left, right);
 			setMotors(-speed, -rightSpeed, 0);
 			break;
 		case EAST:
-			double left = Sensor_getShort(NORTH);
-			double right = Sensor_getShort(SOUTH);
+			left = Sensor_getShort(NORTH);
+			right = Sensor_getShort(SOUTH);
 
 			rightSpeed = getError(left, right);
 			setMotors(-rightSpeed, speed, 0);
 			break;
 		case WEST:
-			double left = Sensor_getShort(SOUTH);
-			double right = Sensor_getShort(NORTH);
+			left = Sensor_getShort(SOUTH);
+			right = Sensor_getShort(NORTH);
 
 			rightSpeed = getError(left, right);
 			setMotors(rightSpeed, -speed, 0);

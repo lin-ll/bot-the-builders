@@ -143,6 +143,15 @@ int trash() {
 	int dir = NORTH;
 
 	while (1) {
+		int button_pressed = Button_update();
+                if (button_pressed == BUTTON_RED) {
+                        Led_setColor(MAX_COLOR, 0, 0); // red
+                        Motor_completeStop();
+                        usleep(300000);
+                        return trash();
+                }
+
+
 		double sDist = Sensor_getShort(dir);
 		Control_update2();
 
