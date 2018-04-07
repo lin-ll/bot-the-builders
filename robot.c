@@ -20,9 +20,9 @@ void solveMaze(int goal) {
 
 	int controls_finished = 0;
 
-	clock_t prevTime = time();
+	clock_t prevTime = clock();
 	while (1) {
-		clock_t currentTime = time();
+		clock_t currentTime = clock();
 		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC*4.454;
 		prevTime = currentTime;
 
@@ -68,14 +68,14 @@ int explore() {
 
 	Control_reset();
 	printf("Done control reset\n");
-	Maze_init();
+	//Maze_init();
 	Kalman_init();
 	printf("Done kalman init\n");
 
-	clock_t prevTime = time();
+	clock_t prevTime = clock();
 	while (1) {
 		//printf("Top of while\n");
-		clock_t currentTime = time();
+		clock_t currentTime = clock();
 		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC*4.454;
 		prevTime = currentTime;
 		// check buttons
@@ -88,14 +88,14 @@ int explore() {
 			return explore();
 		}
 
-		clock_t diff = time() - currentTime;
+		clock_t diff = clock() - currentTime;
 		printf("A %d\n", diff);
 
 		//printf("Debug A\n");
 		// do controls thing
 		controls_finished = Control_update(dt);
 
-		diff = time() - currentTime;
+		diff = clock() - currentTime;
 		printf("B %d\n", diff);
 		if (controls_finished) {
 
@@ -118,13 +118,13 @@ int explore() {
 			Control_setDir(0);
 		}
 
-		diff = time() - currentTime;
+		diff = clock() - currentTime;
 		printf("C %d\n", diff);
 		//printf("Debug C\n");
 
 		Kalman_update(dt, currentTime);
 
-		diff = time() - currentTime;
+		diff = clock() - currentTime;
 		printf("D %d\n", diff);
 	}
 	return 0;

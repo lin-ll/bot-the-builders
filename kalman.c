@@ -261,7 +261,6 @@ void Kalman_update(double dt, clock_t currentTime){
 		distances[4+i] = NAN; //Sensor_getLong(i);
 	}
 
-	// TODO use gyro
 	double gyro = 0;
 	for(int j = 0; j<3; j++)
 		gyro += Sensor_getGyro();
