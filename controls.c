@@ -96,16 +96,10 @@ int getForwardSpeed() {
 			break;
 	}
 
-	double desiredSpeed = speed;;
-	if (forwardDist <= STOP_DIST) {
-		// This means speed 0, but also signifies we've arrived
-		Led_setColor(0, 0, MAX_COLOR); // Blue, means we're waiting for maze now
-		desiredSpeed = 0;
-	} else if (forwardDist <= SLOW_DIST) {
-		double speedFraction = MIN_SPEED_FRACTION + (1-MIN_SPEED_FRACTION) * (forwardDist / SLOW_DIST);
-		Led_setColor((int)(MAX_COLOR - MAX_COLOR * speedFraction), (int)(MAX_COLOR * speedFraction), 0); // transition green->red
-		desiredSpeed = speed * speedFraction;
-	}
+	// Don't stop!
+	double speedFraction = MIN_SPEED_FRACTION + (1-MIN_SPEED_FRACTION) * (forwardDist / SLOW_DIST);
+	Led_setColor((int)(MAX_COLOR - MAX_COLOR * speedFraction), (int)(MAX_COLOR * speedFraction), 0); // transition green->red
+	desiredSpeed = speed * speedFraction;
 	Led_setColor(MAX_COLOR, MAX_COLOR, 0); // Yellow
 	return desiredSpeed;
 }

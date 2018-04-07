@@ -241,10 +241,10 @@ double combine_vt(double encoder, double control, double gyro){
 
 
 
-void Kalman_update(double dt, clock_t currentTime){
+int Kalman_update(double dt, clock_t currentTime, int dir){
 	static double total_time = 0;
 	total_time += dt;
-	printf("dt is %f, total is %f\n", dt, total_time);
+	printf("dt is %f, total is %f\n", dt, total_time, int dir);
 
 	// TODO :(
 	double encoders[4];
@@ -278,7 +278,7 @@ void Kalman_update(double dt, clock_t currentTime){
 	clock_t diff = clock() - currentTime;
 	printf("E %d\n", diff);
 
-	Kalman_update_given_sensors(dt, encoders, distances, gyro, compass, control);
+	return Kalman_update_given_sensors(dt, encoders, distances, gyro, compass, control, dir);
 
 }
 
@@ -293,7 +293,7 @@ void Kalman_update(double dt, clock_t currentTime){
  * Distance sensors are +y,-y,+x,-x for short, then those four for long
  *
  **/
-void Kalman_update_given_sensors(double dt, double *encoders, double *distances, double gyro, double compass, double *control){
+int Kalman_update_given_sensors(double dt, double *encoders, double *distances, double gyro, double compass, double *control, int dir){
 
 	//printf("Distances, Controls\n");
 	//print_distances(distances);
@@ -438,4 +438,19 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 	printf("Bottom of update\n");
 	print();
 	printf("\n");
+
+	if(!isnan(distances[dir]) && distances[dir] <= 9){
+		// we're there!
+		if(!isnan(distances[0]) && distances[0] > 18) {
+			return 0;
+		} else if(!isnan(distances[3]) && distances[3] > 18) {
+			return 3;
+		} else if(!isnan(distances[2]) && distances[2] > 18) {
+			return 2;
+		} else if(!isnan(distances[1]) && distances[1] > 18) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}
 }

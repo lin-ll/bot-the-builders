@@ -15,6 +15,8 @@ int main();
 
 clock_t prevTime;
 
+int dir = 0;
+
 void solveMaze(int goal) {
 	Maze_assignPath(goal);
 
@@ -122,7 +124,12 @@ int explore() {
 		printf("C %d\n", diff);
 		//printf("Debug C\n");
 
-		Kalman_update(dt, currentTime);
+		int newDir = Kalman_update(dt, currentTime, dir);
+		if(newDir != -1){
+			Motor_completeStop();
+			Control_setDir(newDir);
+			Kalman_init(); // set us to 9,9
+		}
 
 		diff = clock() - currentTime;
 		printf("D %d\n", diff);

@@ -1,0 +1,62 @@
+[1mdiff --git a/robot.c b/robot.c[m
+[1mindex 52f653a..a276073 100644[m
+[1m--- a/robot.c[m
+[1m+++ b/robot.c[m
+[36m@@ -20,9 +20,9 @@[m [mvoid solveMaze(int goal) {[m
+ [m
+ 	int controls_finished = 0;[m
+ [m
+[31m-	clock_t prevTime = clock();[m
+[32m+[m	[32mclock_t prevTime = time();[m
+ 	while (1) {[m
+[31m-		clock_t currentTime = clock();[m
+[32m+[m		[32mclock_t currentTime = time();[m
+ 		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;[m
+ 		prevTime = currentTime;[m
+ [m
+[36m@@ -72,10 +72,10 @@[m [mint explore() {[m
+ 	Kalman_init();[m
+ 	printf("Done kalman init\n");[m
+ [m
+[31m-	clock_t prevTime = clock();[m
+[32m+[m	[32mclock_t prevTime = time();[m
+ 	while (1) {[m
+ 		//printf("Top of while\n");[m
+[31m-		clock_t currentTime = clock();[m
+[32m+[m		[32mclock_t currentTime = time();[m
+ 		double dt = (double)(currentTime - prevTime)/CLOCKS_PER_SEC;[m
+ 		prevTime = currentTime;[m
+ 		// check buttons[m
+[36m@@ -88,14 +88,14 @@[m [mint explore() {[m
+ 			return explore();[m
+ 		}[m
+ [m
+[31m-		clock_t diff = clock() - currentTime;[m
+[32m+[m		[32mclock_t diff = time() - currentTime;[m
+ 		printf("A %d\n", diff);[m
+ [m
+ 		//printf("Debug A\n");[m
+ 		// do controls thing[m
+ 		controls_finished = Control_update(dt);[m
+ [m
+[31m-		diff = clock() - currentTime;[m
+[32m+[m		[32mdiff = time() - currentTime;[m
+ 		printf("B %d\n", diff);[m
+ 		if (controls_finished) {[m
+ [m
+[36m@@ -118,13 +118,13 @@[m [mint explore() {[m
+ 			Control_setDir(0);[m
+ 		}[m
+ [m
+[31m-		diff = clock() - currentTime;[m
+[32m+[m		[32mdiff = time() - currentTime;[m
+ 		printf("C %d\n", diff);[m
+ 		//printf("Debug C\n");[m
+ [m
+ 		Kalman_update(dt, currentTime);[m
+ [m
+[31m-		diff = clock() - currentTime;[m
+[32m+[m		[32mdiff = time() - currentTime;[m
+ 		printf("D %d\n", diff);[m
+ 	}[m
+ 	return 0;[m
