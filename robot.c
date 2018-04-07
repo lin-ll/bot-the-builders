@@ -50,7 +50,7 @@ void solveMaze(int goal) {
 			Control_setDir(dir);
 		}
 
-		Kalman_update(dt, NULL);
+		Kalman_update(dt);
 	}
 }
 
@@ -102,7 +102,7 @@ int explore() {
 		}
 		printf("Debug C\n");
 
-		Kalman_update(dt, NULL);
+		Kalman_update(dt);
 	}
 	return 0;
 }

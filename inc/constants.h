@@ -22,8 +22,8 @@
 #define HALF_CHASSIS_SIZE 40 // mm from robot center to distance sensor
 
 // multiply by these to convert motor setting (0-255) into meters/radians per second
-#define MOTOR_TO_MPS TODO
-#define MOTOR_TO_RPS TODO
+#define MOTOR_TO_MPS (18.0/127.0)
+#define MOTOR_TO_RPS (6.28/(3.0*127.0))
 
 #define PI 3.1415926536
 #define TWO_PI (2*3.1415926536)

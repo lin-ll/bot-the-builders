@@ -262,7 +262,7 @@ void Kalman_update(double dt){
 	double gyro = 0*Sensor_getGyro();
 	double compass = NAN;
 
-	control[3];
+	double control[3];
 	control[0] = Control_getForward();
 	control[1] = Control_getRight();
 	control[2] = Control_getTheta();

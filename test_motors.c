@@ -9,6 +9,7 @@ const int F = 0;
 const int R = 1;
 const int B = 2;
 const int L = 3;
+const int S = 4;
 
 int pi = 0;
 
@@ -28,6 +29,10 @@ void set(int direction, int speed) {
 			speeds[0] = -speed;
 			speeds[3] = -speed;
 			break;
+		case S:
+			speeds[0] = -speed;
+			speeds[2] = -speed;
+			break;
 	}
 	Motor_set(speeds);
 }
@@ -38,12 +43,18 @@ int main(){
 	int speed = 255;
 	int time = 2000000;
 
+	set(S, 255/2);
+	usleep(3000000);
+	Motor_off();
+
+	/*
 	for (int i = 0; i < 4; i++) {
 		set(i, speed);
 		usleep(time);
 		Motor_off();
 		usleep(500000);
 	}
+	*/
 
 	return 0;
 }
