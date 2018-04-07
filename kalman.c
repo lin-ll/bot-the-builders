@@ -259,7 +259,7 @@ void Kalman_update(double dt, clock_t currentTime){
 	}
 
 	// TODO use gyro
-	double gyro;
+	double gyro = 0;
 	for(int j = 0; j<3; j++)
 		gyro += Sensor_getGyro();
 		

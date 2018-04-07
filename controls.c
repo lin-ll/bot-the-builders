@@ -57,9 +57,10 @@ int Control_init() {
 
 int Control_reset() {
 	Pid_reset(pidRight);
-	Pid_reset(pidTheta)
+	Pid_reset(pidTheta);
 	Pid_setPoint(pidRight, 0.0);
 	Pid_setPoint(pidTheta, 0.0);
+	return 0;
 }
 
 /* These 3 are used for the control vector in Kalman */
