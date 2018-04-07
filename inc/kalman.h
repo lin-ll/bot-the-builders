@@ -6,6 +6,8 @@
 #ifndef KALMAN_H
 #define KALMAN_H
 
+#include <time.h>
+
 /* Kalman filter for estimating position */
 
 // THIS NEEDS SOME MORE POLISHING ~DC

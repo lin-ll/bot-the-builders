@@ -50,14 +50,24 @@ void solveMaze(int goal) {
 			Control_setDir(dir);
 		}
 
-		Kalman_update(dt);
+		Kalman_update(dt, currentTime);
 	}
 }
 
 int explore() {
+	// green button triggers explore
+	int button_pressed = -1;
+	while (button_pressed != BUTTON_GREEN) {
+		button_pressed = Button_update();
+	}
+	Led_setColor(0, MAX_COLOR, 0); //green
 	//printf("Explore\n");
 	int dir;
 	int controls_finished = 0;
+
+	Control_init();
+	//Maze_init();
+	Kalman_init();
 
 	clock_t prevTime = clock();
 	while (1) {
@@ -70,10 +80,10 @@ int explore() {
 		if (button_pressed == BUTTON_RED) {
 			Led_setColor(MAX_COLOR, 0, 0); // red
 			Motor_completeStop();
-			Maze_reset();
+			//Maze_reset();
 			usleep(300000);
 			Led_off();
-			main();
+			explore();
 			return -1;
 		}
 
@@ -125,20 +135,11 @@ int main() {
 	Button_init(pi);
 	Led_init(pi);
 	Sensor_init(pi);
-	Control_init();
-	Maze_init();
-	Kalman_init();
 
 	printf("IN MAIN\n");
 
 	Led_setColor(MAX_COLOR, MAX_COLOR, 0); //orange
 
-	// green button triggers explore
-	int button_pressed = -1;
-	while (button_pressed != BUTTON_GREEN) {
-		button_pressed = Button_update();
-	}
-	Led_setColor(0, MAX_COLOR, 0); //green
 	int result = explore();
 	Led_off();
 	if (result == -1) {
@@ -152,7 +153,8 @@ int main() {
 		Led_off();
 	}
 
-	button_pressed = -1;
+	int button_pressed = -1;
+
 	while (button_pressed != BUTTON_BLUE) {
 		button_pressed = Button_update();
 	}
