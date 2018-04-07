@@ -3,6 +3,7 @@
 
 // initialized Control pid and other instance variables
 int Control_init();
+int Control_reset();
 
 // sets direction of movement
 void Control_setDir(int direction);

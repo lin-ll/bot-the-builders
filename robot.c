@@ -66,8 +66,8 @@ int explore() {
 	int dir;
 	int controls_finished = 0;
 
-	Control_init();
-	printf("Done control init");
+	Control_reset();
+	printf("Done control reset");
 	//Maze_init();
 	Kalman_init();
 	printf("Done kalman init\n");
@@ -136,6 +136,7 @@ int main() {
 	Button_init(pi);
 	Led_init(pi);
 	Sensor_init(pi);
+	Control_init();
 
 	printf("IN MAIN\n");
 
