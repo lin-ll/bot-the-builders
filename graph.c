@@ -5,6 +5,7 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
 #include "graph.h"
 
@@ -34,7 +35,9 @@ Graph graph_create(int n)
     Graph g;
     int i;
 
-    g = (Graph) malloc(sizeof(struct graph));
+    printf("Before changed line\n");
+    g = (Graph) malloc(sizeof(struct graph) + sizeof(struct successors *) * (n-1));
+    printf("after changed line\n");
     assert(g);
 
     g->n = n;
