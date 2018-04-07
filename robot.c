@@ -114,7 +114,7 @@ int main() {
 	Led_init(pi);
 	Sensor_init(pi);
 	Control_init();
-	//Maze_init();
+	Maze_init();
 	Kalman_init();
 
 	printf("IN MAIN\n");
