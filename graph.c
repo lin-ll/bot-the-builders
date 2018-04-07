@@ -1,6 +1,12 @@
 /*graph.c*/
 #include <stdio.h>
 #include <stdlib.h>
+<<<<<<< HEAD
+=======
+#include <assert.h>
+#include <stdio.h>
+
+>>>>>>> e751bcd47a77dcdaa6b6fa7b0d76900d9aa20040
 #include "graph.h"
 
 /* Function to create an adjacency list node*/
@@ -20,6 +26,7 @@ adjlist_node_p createNode(int v)
 graph_p createGraph(int n, graph_type_e type)
 {
     int i;
+<<<<<<< HEAD
     graph_p graph = (graph_p)malloc(sizeof(graph_t));
     if(!graph)
         err_exit("Unable to allocate memory for graph");
@@ -35,6 +42,30 @@ graph_p createGraph(int n, graph_type_e type)
     {
         graph->adjListArr[i].head = NULL;
         graph->adjListArr[i].num_members = 0;
+=======
+    printf("Debug C");
+
+    for(i = 0; i < g->n; i++) free(g->alist[i]);
+    printf("Debug D");
+    free(g);
+    printf("Debug E");
+}
+
+/* add an edge to an existing graph */
+void graph_add_edge(Graph g, int u, int v)
+{
+    assert(u >= 0);
+    assert(u < g->n);
+    assert(v >= 0);
+    assert(v < g->n);
+
+    /* do we need to grow the list? */
+    while(g->alist[u]->d >= g->alist[u]->len) {
+        g->alist[u]->len *= 2;
+        g->alist[u] = (successors *)
+            realloc(g->alist[u],
+                sizeof(struct successors) + sizeof(int) * (g->alist[u]->len - 1));
+>>>>>>> e751bcd47a77dcdaa6b6fa7b0d76900d9aa20040
     }
 
     return graph;

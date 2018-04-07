@@ -9,6 +9,7 @@
 #include "leds.h"
 #include "constants.h"
 #include "pid.h"
+#include "sensors.h"
 
 // WRITING UNDER THE ASSUMED FRAMEWORK:
 /*
@@ -23,7 +24,7 @@ const int START = SQUARE_SIZE / 2;
 static PID_T pidRight;
 static PID_T pidTheta;
 
-static int speed = MOTOR_RANGE / 4; // TODO dynamically change this?
+static int speed = MOTOR_RANGE / 5; // TODO dynamically change this?
 static double destX;
 static double destY;
 static int currDir;
@@ -45,8 +46,8 @@ double matrix[3][4] = {
 	{1, 1, -1, -1}};
 
 int Control_init() {
-	pidRight = Pid_init(1.0, 0.0, 0.0);
-	pidTheta = Pid_init(1.0, 0.0, 0.0);
+	pidRight = Pid_init(3.0, 1.0, 0.0);
+	pidTheta = Pid_init(-260.0, 1.0, 0.0);
 	destX = START;
 	destY = START;
 	Pid_setPoint(pidRight, 0.0);

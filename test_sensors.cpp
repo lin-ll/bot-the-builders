@@ -34,6 +34,7 @@ void testGyro() {
   for (int i = 0; i < 1000; i++) {
     double reading = Sensor_getGyro();
     printf("%f\n", reading);
+    usleep(250000);
   }
 }
 
@@ -63,10 +64,10 @@ int main(){
   // testLong();
 
   // printf("Testing gyro:\n");
-  // testGyro();
+  testGyro();
 
   printf("Testing compass:\n");
-  testCompass();
+  // testCompass();
 
   printf("TURNING SENSORS OFF\n");
   Sensor_free();

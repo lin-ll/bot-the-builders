@@ -81,7 +81,7 @@ void adafruit_distance_write8(int address, int data)
 void adafruit_distance_write16(int address, int data)
 {
   int i;
-  i2c_write_word_data(pi_handle, current_handle, address, data);
+  i = i2c_write_word_data(pi_handle, current_handle, address, data);
   printf("Writing data %x to address %x returned %d\n", data, address, i);
 }
 
@@ -168,7 +168,7 @@ int adafruit_distance_readRange(int sensor_handle) {
   current_handle = sensor_handle;
 
   int readOutput;
-  int count = 0;
+  //int count = 0;
   while (! ((readOutput=adafruit_distance_read8(VL6180X_REG_RESULT_RANGE_STATUS)) & 0x01)) {
     //printf("readOutput = %x\n", readOutput); fflush(stdout);
     //count++;

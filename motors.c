@@ -11,6 +11,9 @@ const int BACKWARD_PINS[4] = {UPPER_LEFT_BACKWARD, UPPER_RIGHT_BACKWARD, LOWER_L
 static int desiredSpeeds[4];
 static int pi;
 
+//const double MOTOR_CORRECTION[4] = {1,1,1,1};
+const double MOTOR_CORRECTION[4] = {0.85, 1.0, 1.0, .85};
+
 int Motor_init(int pifd) {
   pi = pifd;
 
@@ -45,7 +48,7 @@ void Motor_adjust(int forwardMotor, int backwardMotor, int speed) {
 void Motor_set(int* speeds) {
   for (int i = 0; i < 4; i++) {
     desiredSpeeds[i] = speeds[i];
-    Motor_adjust(FORWARD_PINS[i], BACKWARD_PINS[i], speeds[i]);
+    Motor_adjust(FORWARD_PINS[i], BACKWARD_PINS[i], MOTOR_CORRECTION[i]*speeds[i]);
   }
 }
 

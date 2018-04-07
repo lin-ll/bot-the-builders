@@ -16,6 +16,8 @@ const int LONG_DIST_ADDRS[4] = {0x31, 0x30, 0x2F, 0x2E};
 const int SHORT_SHUTDOWN_PINS[4] = {SHORT_PIN_FRONT, SHORT_PIN_BACK, SHORT_PIN_LEFT, SHORT_PIN_RIGHT};
 const int LONG_SHUTDOWN_PINS[4] = {LONG_PIN_FRONT, LONG_PIN_BACK, LONG_PIN_LEFT, LONG_PIN_RIGHT};
 
+const int SHORT_ADJUSTMENT[4] = {-4, -4, -4, 0}; // add these to readings
+
 // The datasheet gives 8.75mdps/digit for default sensitivity
 const double RPS_PER_DIGIT = 0.00875*TWO_PI/360;
 
@@ -155,7 +157,7 @@ double Sensor_getGyro() {
   g[1] = (int16_t)(buf[2] | buf[3] << 8); //y
   g[2] = (int16_t)(buf[4] | buf[5] << 8); //z
 
-  return g[2] * RPS_PER_DIGIT - gyroOffset;
+  return -(g[2] * RPS_PER_DIGIT - gyroOffset)-.07;
 }
 
 /* Return direction. */
@@ -195,13 +197,28 @@ void Sensor_calGyro(int n) {
 
 /* Return distance from short distance sensor in mm */
 double Sensor_getShort(int num) {
-  return HALF_CHASSIS_SIZE+(double)adafruit_distance_readRange(short_dist_handles[num]);
+  double ret = (double)adafruit_distance_readRange(short_dist_handles[num]);
+  ret += SHORT_ADJUSTMENT[num];
+  //printf("Short distance %d, %.1f\n", num, ret);
+  if(ret < 2 || ret > 199){
+	ret = NAN;
+  } else {
+	ret = HALF_CHASSIS_SIZE + ret;
+  }
+  return ret;
 }
 
 /* Return distance from long distance sensor in mm */
 double Sensor_getLong(int num) {
   VL53L0X sensor = long_dist_sensors[num];
-  return (double)sensor.readRangeSingleMillimeters();
+  double ret = (double)sensor.readRangeSingleMillimeters();
+  //printf("Long distance %d, %.1f\n", num, ret);
+  if(ret < 2 || ret > 290){
+	ret = NAN;
+  } else {
+	ret = HALF_CHASSIS_SIZE + ret;
+  }
+  return ret;
 }
 
 void Sensor_findWalls(int *walls) {

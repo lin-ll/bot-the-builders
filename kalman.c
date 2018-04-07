@@ -25,7 +25,7 @@ double tempVec[NUM];
 
 /* In each step, how much uncertainty is there in our prediction? */
 /* I really really am unsure of these values; if it fails miserably try dividing them by 10 ?? */
-double Q_diag[NUM] = {1.0, 1.0, 0.0081, 4.0, 4.0, .0289};
+double Q_diag[NUM] = {25.0, 25.0, 0.0081, 9.0, 9.0, .0289};
 
 // initialize F with identity, other entries will be changed in update
 double F[NUM*NUM] =
@@ -160,8 +160,8 @@ void Kalman_init(){
 	for(int i=0; i<NUM*NUM; i++){
 		P[i] = 0.0;
 	}
-	P[0] = 4.0; // (2.0mm)^2
-	P[7] = 4.0; // (2.0mm)^2
+	P[0] = 1.0; // (2.0mm)^2
+	P[7] = 1.0; // (2.0mm)^2
 	P[14] = 0.0289; // (0.17rad)^2
 
 }
@@ -236,13 +236,13 @@ double combine_vy(double encoder, double control){
 
 double combine_vt(double encoder, double control, double gyro){
 	// TODO do better than this if we fix encoders
-	return .5*control + .5*gyro;
+	return .1*control + .9*gyro;
 }
 
 
 
 
-void Kalman_update(double dt){
+void Kalman_update(double dt, clock_t currentTime){
 
 	// TODO :(
 	double encoders[4];
@@ -251,21 +251,25 @@ void Kalman_update(double dt){
 	}
 
 	double distances[8];
-	for(int i=0; i<3; i++){
+	for(int i=0; i<4; i++){
 		distances[i] = Sensor_getShort(i);
 	}
-	for(int i=0; i<3; i++){
+	for(int i=0; i<4; i++){
 		distances[4+i] = Sensor_getLong(i);
 	}
 
 	// TODO use gyro
-	double gyro = 0*Sensor_getGyro();
+	double gyro = Sensor_getGyro();
+	printf("\t\t\t\tgyro: %.4f", gyro);
 	double compass = NAN;
 
-	control[3];
+	double control[3];
 	control[0] = Control_getForward();
 	control[1] = Control_getRight();
 	control[2] = Control_getTheta();
+
+	clock_t diff = clock() - currentTime;
+	printf("E %d\n", diff);
 
 	Kalman_update_given_sensors(dt, encoders, distances, gyro, compass, control);
 
@@ -284,12 +288,13 @@ void Kalman_update(double dt){
  **/
 void Kalman_update_given_sensors(double dt, double *encoders, double *distances, double gyro, double compass, double *control){
 
-	printf("Distances, Controls\n");
-	print_distances(distances);
+	//printf("Distances, Controls\n");
+	//print_distances(distances);
+	printf("Control: ");
 	print_vec(control, 3);
 
-	printf("Top of update\n");
-	print();
+	//printf("Top of update\n");
+	//print();
 
 
 
@@ -362,12 +367,13 @@ void Kalman_update_given_sensors(double dt, double *encoders, double *distances,
 	}
 
 	z[2] = 0; // TODO compass
+	R[NUM*2+2] = 36.0; // 2pi squared?
 
 	if (isnan(vx_estimate)) {
 			z[3] = x_hat[3];
 			R[NUM*3+3] = 110889;
 	} else {
-			z[2] = vx_estimate;
+			z[3] = vx_estimate;
 			R[NUM*3+3] = 10.0;
 	}
 

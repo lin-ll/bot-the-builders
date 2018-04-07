@@ -11,7 +11,7 @@
 
 static graph_p maze; // graph recording walls and such
 static int traversed[MAZE_SIZE][MAZE_SIZE] = {0}; // record of traversed squares
-static int MAZE_AREA = MAZE_SIZE * MAZE_SIZE; // size of maze
+#define MAZE_AREA (MAZE_SIZE * MAZE_SIZE) // size of maze
 static int currPriority = MAZE_AREA + 1;
 
 static int currRow = 0; // current row
