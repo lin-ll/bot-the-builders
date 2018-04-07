@@ -24,7 +24,7 @@ const int START = SQUARE_SIZE / 2;
 static PID_T pidRight;
 static PID_T pidTheta;
 
-static int speed = MOTOR_RANGE / 5; // TODO dynamically change this?
+static int speed = MOTOR_RANGE / 4; // TODO dynamically change this?
 static double destX;
 static double destY;
 static int currDir;

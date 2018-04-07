@@ -1,7 +1,6 @@
 #include "inc/kalman.h"
 #include "inc/matrixInverse.h"
 #include <math.h> // for using NAN
-#include <time.h>
 #include "sensors.h"
 #include <stdio.h>
 #include "controls.h"
@@ -255,7 +254,8 @@ void Kalman_update(double dt, clock_t currentTime){
 		distances[i] = Sensor_getShort(i);
 	}
 	for(int i=0; i<4; i++){
-		distances[4+i] = Sensor_getLong(i);
+		// TODO undo this please
+		distances[4+i] = NAN; //Sensor_getLong(i);
 	}
 
 	// TODO use gyro
