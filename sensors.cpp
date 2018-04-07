@@ -157,7 +157,7 @@ double Sensor_getGyro() {
   g[1] = (int16_t)(buf[2] | buf[3] << 8); //y
   g[2] = (int16_t)(buf[4] | buf[5] << 8); //z
 
-  return g[2] * RPS_PER_DIGIT - gyroOffset;
+  return -(g[2] * RPS_PER_DIGIT - gyroOffset)-.07;
 }
 
 /* Return direction. */
@@ -199,7 +199,7 @@ void Sensor_calGyro(int n) {
 double Sensor_getShort(int num) {
   double ret = (double)adafruit_distance_readRange(short_dist_handles[num]);
   ret += SHORT_ADJUSTMENT[num];
-  printf("Short distance %d, %.1f\n", num, ret);
+  //printf("Short distance %d, %.1f\n", num, ret);
   if(ret < 2 || ret > 199){
 	ret = NAN;
   } else {
@@ -212,7 +212,7 @@ double Sensor_getShort(int num) {
 double Sensor_getLong(int num) {
   VL53L0X sensor = long_dist_sensors[num];
   double ret = (double)sensor.readRangeSingleMillimeters();
-  printf("Long distance %d, %.1f\n", num, ret);
+  //printf("Long distance %d, %.1f\n", num, ret);
   if(ret < 2 || ret > 290){
 	ret = NAN;
   } else {
